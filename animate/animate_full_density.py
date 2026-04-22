@@ -63,10 +63,41 @@ else:
     JUNCTION_SEGMENTS = PROJECT_ROOT / "data" / "processed" / "junction_segments.shp"
     OUTPUT = PROJECT_ROOT / "animate" / "_output" / "warsaw_transit_full.mp4"
 
-# Map extent - Central Warsaw, zoomed in
+# Map extent - Central Warsaw
 CENTRAL_WARSAW_X = 638000
 CENTRAL_WARSAW_Y = 487000
-FRAME_SIZE = 20000  # Zoomed in 2x
+FRAME_SIZE = 20000  # Base frame size (metres)
+
+# Dynamic zoom settings
+# Zoom timeline follows the day: wide at dawn, tight at noon, back out by 14:00
+ZOOM_START_SIZE  = 30000   # 1.5x base — zoomed out at animation start (~4:00)
+ZOOM_MIN_SIZE    = 14000   # 0.7x base — tightest zoom at noon (12:00)
+ZOOM_END_SIZE    = FRAME_SIZE  # back to base by 14:00, held for rest of day
+ZOOM_IN_START_H  = 4       # hour when zoom-in begins
+ZOOM_IN_END_H    = 12      # hour when tightest zoom is reached
+ZOOM_OUT_END_H   = 14      # hour when zoom settles back to base
+
+
+def get_frame_size(current_seconds):
+    """Return frame size (metres) for the given animation time using smooth interpolation."""
+    def smoothstep(t):
+        t = max(0.0, min(1.0, t))
+        return t * t * (3 - 2 * t)
+
+    t_in_start  = ZOOM_IN_START_H  * 3600
+    t_in_end    = ZOOM_IN_END_H    * 3600
+    t_out_end   = ZOOM_OUT_END_H   * 3600
+
+    if current_seconds <= t_in_start:
+        return ZOOM_START_SIZE
+    elif current_seconds <= t_in_end:
+        t = smoothstep((current_seconds - t_in_start) / (t_in_end - t_in_start))
+        return ZOOM_START_SIZE + (ZOOM_MIN_SIZE - ZOOM_START_SIZE) * t
+    elif current_seconds <= t_out_end:
+        t = smoothstep((current_seconds - t_in_end) / (t_out_end - t_in_end))
+        return ZOOM_MIN_SIZE + (ZOOM_END_SIZE - ZOOM_MIN_SIZE) * t
+    else:
+        return ZOOM_END_SIZE
 
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6'}
@@ -110,8 +141,8 @@ LAYER_STYLES = {
 STREAK_LENGTH = 180
 
 # Density calculation settings
-ROLLING_WINDOW_MINUTES = 10  # Count vehicles in past 10 minutes
-MAX_BRIGHTNESS_AT_PERCENTILE = 0.1  # 3% of estimated peak = max brightness (estimation is inflated)
+ROLLING_WINDOW_MINUTES = 15  # Count vehicles in past 10 minutes
+MAX_BRIGHTNESS_AT_PERCENTILE = 0.15  # 3% of estimated peak = max brightness (estimation is inflated)
 
 
 def create_animation():
@@ -301,8 +332,8 @@ def create_animation():
     ax.axis('off')
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-    # Set extent
-    half_size = FRAME_SIZE / 2
+    # Set initial extent to the widest zoom level so background layers cover full range
+    half_size = ZOOM_START_SIZE / 2
     xmin, xmax = CENTRAL_WARSAW_X - half_size, CENTRAL_WARSAW_X + half_size
     ymin, ymax = CENTRAL_WARSAW_Y - half_size, CENTRAL_WARSAW_Y + half_size
     ax.set_xlim(xmin, xmax)
@@ -397,6 +428,11 @@ def create_animation():
         current_seconds = start_seconds + (frame_num / total_frames) * duration_seconds
         current_time = f"{int(current_seconds // 3600):02d}:{int((current_seconds % 3600) // 60):02d}"
         frame_duration = duration_seconds / total_frames
+
+        # Dynamic zoom — update axes limits each frame
+        half = get_frame_size(current_seconds) / 2
+        ax.set_xlim(CENTRAL_WARSAW_X - half, CENTRAL_WARSAW_X + half)
+        ax.set_ylim(CENTRAL_WARSAW_Y - half, CENTRAL_WARSAW_Y + half)
 
         # Add new vehicles
         new_trips = schedule[
@@ -620,7 +656,7 @@ def create_animation():
                 dynamic_artists.append(dots)
 
         # Text
-        title_text = ax.text(0.02, 0.98, f"Warsaw Public Transit - {current_time}",
+        title_text = ax.text(0.02, 0.98, f"Warsaw Public Transit - {current_time} - 27.04.2026",
                transform=ax.transAxes, fontsize=24, color='white',
                verticalalignment='top', fontweight='bold',
                bbox=dict(boxstyle='round', facecolor='black', alpha=0.7), zorder=100)
