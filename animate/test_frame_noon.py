@@ -156,7 +156,7 @@ def main():
     # ── 3. Load transit data ──────────────────────────────────────────────────
     logger.info("Loading junction segments...")
     all_segments = []
-    for vtype in ["tram", "bus", "train"]:
+    for vtype in ["tram", "bus", "train", "metro"]:
         seg_file = PROCESSED / f"{vtype}_junction_segments.shp"
         if seg_file.exists():
             s = gpd.read_file(seg_file)
