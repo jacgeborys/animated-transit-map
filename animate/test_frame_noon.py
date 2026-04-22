@@ -68,13 +68,14 @@ COLOR_GRADIENTS = {
     "Tram":  {"dark": "#160000", "bright": "#ed1f1f"},
     "Bus":   {"dark": "#1b0020", "bright": "#b613d7"},
     "Train": {"dark": "#0a2e2a", "bright": "#3d9a8f"},
+    "Metro": {"dark": "#00101a", "bright": "#4fc3f7"},
 }
 LINE_WIDTHS      = {"Tram": 1.5, "Bus": 1.2, "Train": 1.5}
 GLOW_WIDTH       = 4.0
 GLOW_ALPHA       = 0.7
 BASE_BRIGHTNESS  = 0.15
 MAX_BRIGHTNESS   = 1.0
-VEHICLE_COLORS   = {"Tram": "#FF7075", "Bus": "#B46EFC", "Train": "#6BC9C6"}
+VEHICLE_COLORS   = {"Tram": "#FF7075", "Bus": "#B46EFC", "Train": "#6BC9C6", "Metro": "#4FC3F7"}
 VEHICLE_SIZES    = {"Tram": 16, "Bus": 12, "Train": 19}
 Z_ORDERS = {
     "Train": {"glow": 10, "line": 20},

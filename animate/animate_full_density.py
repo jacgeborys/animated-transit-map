@@ -100,21 +100,21 @@ def get_frame_size(current_seconds):
         return ZOOM_END_SIZE
 
 # Visual settings
-COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#FFB300'}
+COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4FC3F7'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.0}
 GLOW_WIDTH = 4.0
 GLOW_ALPHA = 0.7
 BASE_BRIGHTNESS = 0.15
 MAX_BRIGHTNESS = 1.0
-OUTLINE_COLORS = {'Tram': '#E63946', 'Bus': '#7209B7', 'Train': '#2A9D8F', 'Metro': '#E65C00'}
+OUTLINE_COLORS = {'Tram': '#E63946', 'Bus': '#7209B7', 'Train': '#2A9D8F', 'Metro': '#0288D1'}
 
 # Color gradients for density visualization
 COLOR_GRADIENTS = {
     'Tram':  {'dark': '#160000', 'bright': '#ed1f1f'},
     'Bus':   {'dark': '#1b0020', 'bright': '#b613d7'},
     'Train': {'dark': '#0a2e2a', 'bright': '#3d9a8f'},
-    'Metro': {'dark': '#1a0e00', 'bright': '#ffb300'},  # dark amber → bright amber/gold
+    'Metro': {'dark': '#00101a', 'bright': '#4fc3f7'},  # deep navy → bright sky blue
 }
 
 # Z-order layering (background → trains → buses → trams → metro on top)
