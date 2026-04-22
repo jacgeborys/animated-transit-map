@@ -85,14 +85,29 @@ COLOR_GRADIENTS = {
     'Train': {'dark': '#0a2e2a', 'bright': '#3d9a8f'}  # Dark green to moderate teal
 }
 
-# Z-order layering (trains bottom, buses middle, trams top)
+# Z-order layering (background → trains → buses → trams on top)
 Z_ORDERS = {
     'Train': {'glow': 10, 'line': 20},
     'Bus': {'glow': 30, 'line': 40},
     'Tram': {'glow': 50, 'line': 60}
 }
 
-STREAK_LENGTH = 150
+# Background map layers (OSM data)
+OSM_DIR = Path(r"D:\QGIS\mapy_warszawy_misc\data\osm")
+BACKGROUND_LAYERS = {
+    'forests':   OSM_DIR / 'forests.gpkg',
+    'water':     OSM_DIR / 'water.gpkg',
+    'waterways': OSM_DIR / 'waterways.gpkg',
+    'roads':     OSM_DIR / 'roads.shp',
+}
+LAYER_STYLES = {
+    'forests':   {'fc': '#060d06', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'water':     {'fc': '#05101a', 'ec': 'none',    'lw': 0,   'zorder': 2},
+    'waterways': {'fc': 'none',    'ec': '#05101a', 'lw': 0.8, 'zorder': 3},
+    'roads':     {'fc': 'none',    'ec': '#161616', 'lw': 0.5, 'zorder': 4},
+}
+
+STREAK_LENGTH = 180
 
 # Density calculation settings
 ROLLING_WINDOW_MINUTES = 10  # Count vehicles in past 10 minutes
@@ -280,8 +295,8 @@ def create_animation():
     logger.info(f"Pre-extracted {len(segment_coords)} segment geometries")
 
     # Setup figure (high quality)
-    fig, ax = plt.subplots(figsize=(16, 12), facecolor='#1a1a1a')
-    ax.set_facecolor('#1a1a1a')
+    fig, ax = plt.subplots(figsize=(16, 12), facecolor='#000000')
+    ax.set_facecolor('#000000')
     ax.set_aspect('equal')
     ax.axis('off')
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
@@ -292,6 +307,37 @@ def create_animation():
     ymin, ymax = CENTRAL_WARSAW_Y - half_size, CENTRAL_WARSAW_Y + half_size
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
+
+    # Draw static background map layers
+    logger.info("Drawing background map layers...")
+    from shapely.geometry import box as shapely_box
+    clip_box = shapely_box(xmin, ymin, xmax, ymax)
+    clip_gdf = gpd.GeoDataFrame(geometry=[clip_box], crs='EPSG:2180')
+
+    for name, path in BACKGROUND_LAYERS.items():
+        if not path.exists():
+            logger.warning(f"  Background layer not found, skipping: {path.name}")
+            continue
+        try:
+            bg = gpd.read_file(path)
+            if bg.crs is None:
+                bg = bg.set_crs('EPSG:4326')
+            if bg.crs.to_epsg() != 2180:
+                bg = bg.to_crs('EPSG:2180')
+            # Fix invalid polygons (buffer(0) destroys lines — skip for those)
+            if bg.geometry.geom_type.isin(['Polygon', 'MultiPolygon']).any():
+                bg['geometry'] = bg.geometry.buffer(0)
+            bg = bg[bg.geometry.is_valid & ~bg.geometry.is_empty]
+            bg = gpd.clip(bg, clip_gdf)
+            if bg.empty:
+                logger.warning(f"  {name}: no features in frame, skipping")
+                continue
+            style = LAYER_STYLES[name]
+            bg.plot(ax=ax, facecolor=style['fc'], edgecolor=style['ec'],
+                    linewidth=style['lw'], zorder=style['zorder'])
+            logger.info(f"  {name}: {len(bg)} features drawn")
+        except Exception as e:
+            logger.warning(f"  {name}: failed to load ({e}), skipping")
 
     # Draw static base network using LineCollection for efficiency
     logger.info("Drawing static base network with LineCollections...")
