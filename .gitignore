@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Data files
+data/
+out/
+animate/_output/
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.zip
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# QGIS
+*.qgz
+*.qgz.bak
+*.qgs
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Logs
+*.log
