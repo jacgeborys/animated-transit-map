@@ -70,13 +70,13 @@ COLOR_GRADIENTS = {
     "Train": {"dark": "#0a2e2a", "bright": "#3d9a8f"},
     "Metro": {"dark": "#00101a", "bright": "#4fc3f7"},
 }
-LINE_WIDTHS      = {"Tram": 1.5, "Bus": 1.2, "Train": 1.5}
+LINE_WIDTHS      = {"Tram": 1.5, "Bus": 1.2, "Train": 1.5, "Metro": 2.0}
 GLOW_WIDTH       = 4.0
 GLOW_ALPHA       = 0.7
 BASE_BRIGHTNESS  = 0.15
 MAX_BRIGHTNESS   = 1.0
 VEHICLE_COLORS   = {"Tram": "#FF7075", "Bus": "#B46EFC", "Train": "#6BC9C6", "Metro": "#4FC3F7"}
-VEHICLE_SIZES    = {"Tram": 16, "Bus": 12, "Train": 19}
+VEHICLE_SIZES    = {"Tram": 16, "Bus": 12, "Train": 19, "Metro": 22}
 Z_ORDERS = {
     "Train": {"glow": 10, "line": 20},
     "Bus":   {"glow": 30, "line": 40},
@@ -250,14 +250,14 @@ def main():
 
     # ── 6. Draw base transit segments ─────────────────────────────────────────
     logger.info("Drawing base transit segments...")
-    seg_by_type = {"Tram": [], "Bus": [], "Train": []}
+    seg_by_type = {"Tram": [], "Bus": [], "Train": [], "Metro": []}
     for _, seg in segments.iterrows():
         geom = seg.geometry
         if hasattr(geom, "coords"):
             x, y = geom.xy
             seg_by_type[seg["vehicle_ty"]].append(np.column_stack([x, y]))
 
-    for vtype in ["Train", "Bus", "Tram"]:
+    for vtype in ["Train", "Bus", "Tram", "Metro"]:
         if not seg_by_type[vtype]:
             continue
         dark = COLOR_GRADIENTS[vtype]["dark"]
@@ -300,7 +300,7 @@ def main():
 
     # ── 8. Draw vehicle dots ───────────────────────────────────────────────────
     logger.info("Drawing vehicle dots...")
-    by_type = {"Tram": [], "Bus": [], "Train": []}
+    by_type = {"Tram": [], "Bus": [], "Train": [], "Metro": []}
     for v in active_vehicles:
         by_type[v["vehicle"]].append(v["position"])
 
