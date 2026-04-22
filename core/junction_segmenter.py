@@ -588,7 +588,7 @@ def main():
     logger.info("\n🚊🚌🚆 Building separate networks for each vehicle type...")
 
     all_segments = []
-    vehicle_types = ['Bus', 'Train'] # 'Tram' ,
+    vehicle_types = ['Tram', 'Bus', 'Train', 'Metro']
     created_files = []
 
     for vehicle_type in vehicle_types:
@@ -618,7 +618,7 @@ def main():
         logger.info(f"{'='*60}")
 
         # Vehicle-specific snap distances
-        snap_distances = {'Tram': 50, 'Bus': 2, 'Train': 50}
+        snap_distances = {'Tram': 50, 'Bus': 2, 'Train': 50, 'Metro': 30}
         snap_dist = snap_distances.get(vehicle_type, 50)
         logger.info(f"Using snap distance: {snap_dist}m for {vehicle_type}")
 

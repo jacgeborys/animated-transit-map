@@ -100,27 +100,29 @@ def get_frame_size(current_seconds):
         return ZOOM_END_SIZE
 
 # Visual settings
-COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6'}
-VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19}
-LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5}  # Different widths per vehicle type
+COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#FFB300'}
+VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
+LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.0}
 GLOW_WIDTH = 4.0
 GLOW_ALPHA = 0.7
 BASE_BRIGHTNESS = 0.15
 MAX_BRIGHTNESS = 1.0
-OUTLINE_COLORS = {'Tram': '#E63946', 'Bus': '#7209B7', 'Train': '#2A9D8F'}
+OUTLINE_COLORS = {'Tram': '#E63946', 'Bus': '#7209B7', 'Train': '#2A9D8F', 'Metro': '#E65C00'}
 
 # Color gradients for density visualization
 COLOR_GRADIENTS = {
-    'Tram': {'dark': '#160000', 'bright': '#ed1f1f'},
-    'Bus': {'dark': '#1b0020', 'bright': '#b613d7'},
-    'Train': {'dark': '#0a2e2a', 'bright': '#3d9a8f'}  # Dark green to moderate teal
+    'Tram':  {'dark': '#160000', 'bright': '#ed1f1f'},
+    'Bus':   {'dark': '#1b0020', 'bright': '#b613d7'},
+    'Train': {'dark': '#0a2e2a', 'bright': '#3d9a8f'},
+    'Metro': {'dark': '#1a0e00', 'bright': '#ffb300'},  # dark amber → bright amber/gold
 }
 
-# Z-order layering (background → trains → buses → trams on top)
+# Z-order layering (background → trains → buses → trams → metro on top)
 Z_ORDERS = {
     'Train': {'glow': 10, 'line': 20},
-    'Bus': {'glow': 30, 'line': 40},
-    'Tram': {'glow': 50, 'line': 60}
+    'Bus':   {'glow': 30, 'line': 40},
+    'Tram':  {'glow': 50, 'line': 60},
+    'Metro': {'glow': 70, 'line': 80},  # metro always on top — only 2 lines, very distinct
 }
 
 # Background map layers (OSM data)
@@ -164,7 +166,7 @@ def create_animation():
         logger.info("Loading junction segments for all vehicle types...")
         all_segments = []
 
-        for vehicle_type in ['tram', 'bus', 'train']:
+        for vehicle_type in ['tram', 'bus', 'train', 'metro']:
             vehicle_file = PROJECT_ROOT / "data" / "processed" / f"{vehicle_type}_junction_segments.shp"
             if vehicle_file.exists():
                 veh_segs = gpd.read_file(vehicle_file)
@@ -375,7 +377,7 @@ def create_animation():
     from matplotlib.collections import LineCollection
 
     # Group segments by vehicle type
-    segments_by_type = {'Tram': [], 'Bus': [], 'Train': []}
+    segments_by_type = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
 
     for idx in range(len(segments)):
         coords = segment_coords[idx]
@@ -390,7 +392,7 @@ def create_animation():
         segments_by_type[vtype].append(points)
 
     # Create LineCollection for each vehicle type
-    for vtype in ['Train', 'Bus', 'Tram']:  # Draw in z-order
+    for vtype in ['Train', 'Bus', 'Tram', 'Metro']:  # Draw in z-order (metro on top)
         if not segments_by_type[vtype]:
             continue
 
@@ -606,8 +608,8 @@ def create_animation():
             dynamic_artists.append(main_line)
 
         # Draw vehicles grouped by type
-        vehicles_by_type = {'Tram': [], 'Bus': [], 'Train': []}
-        streaks_by_type = {'Tram': [], 'Bus': [], 'Train': []}
+        vehicles_by_type = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
+        streaks_by_type = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
 
         for vehicle in vehicles:
             if 'position' in vehicle:
@@ -633,7 +635,7 @@ def create_animation():
                     streaks_by_type[vtype].append(streak_coords)
 
         # Draw each vehicle type
-        for vtype in ['Tram', 'Bus', 'Train']:
+        for vtype in ['Tram', 'Bus', 'Train', 'Metro']:
             positions = vehicles_by_type[vtype]
             streaks = streaks_by_type[vtype]
 
@@ -656,7 +658,7 @@ def create_animation():
                 dynamic_artists.append(dots)
 
         # Text
-        title_text = ax.text(0.02, 0.98, f"Warsaw Public Transit - {current_time} - 27.04.2026",
+        title_text = ax.text(0.02, 0.98, f"Warsaw Public Transit - 27.04.2026 {current_time}",
                transform=ax.transAxes, fontsize=24, color='white',
                verticalalignment='top', fontweight='bold',
                bbox=dict(boxstyle='round', facecolor='black', alpha=0.7), zorder=100)

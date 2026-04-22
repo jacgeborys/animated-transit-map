@@ -41,10 +41,11 @@ class RouteLineBuilder:
         
         # Load basic files
         self.parser.load_data()
-        
+
         # Filter by date and time
         service_id = self.parser.filter_by_date(target_date)
         self.parser.prepare_trips(service_id)
+        self.parser.expand_metro_frequencies()  # inject synthetic metro departures
         # self.parser.filter_by_time()  # COMMENTED OUT for full day animation
         
         # Load stops

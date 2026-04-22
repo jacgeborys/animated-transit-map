@@ -1,5 +1,6 @@
 """
-Module for parsing and filtering GTFS schedule data
+Module for parsing and filtering GTFS schedule data.
+Called internally by route_line_builder.py — do not run directly.
 """
 import pandas as pd
 from pathlib import Path
@@ -265,6 +266,99 @@ class GTFSParser:
 
         return shapes_with_counts
 
+    def expand_metro_frequencies(self):
+        """
+        Expand frequency-based metro trips (M1/M2) into synthetic individual departures.
+
+        Warsaw metro is defined in frequencies.txt with headways rather than explicit
+        trip times. This method generates one synthetic trip per departure so the rest
+        of the pipeline treats metro identically to buses/trams.
+
+        Adds synthetic rows to self.trips and self.stop_times.
+        """
+        freq_path = self.data_dir / "frequencies.txt"
+        if not freq_path.exists():
+            logger.info("No frequencies.txt — skipping metro expansion")
+            return
+
+        frequencies = pd.read_csv(freq_path)
+        metro_freq = frequencies[
+            frequencies['trip_id'].str.startswith(('M1:', 'M2:'), na=False)
+        ]
+        if metro_freq.empty:
+            logger.info("No metro entries in frequencies.txt")
+            return
+
+        # Load template trips directly from trips.txt to get shape_ids.
+        # We bypass the date filter here since metro shapes never change.
+        all_trips = pd.read_csv(self.data_dir / "trips.txt")
+        template_ids = metro_freq['trip_id'].unique()
+        metro_templates = all_trips[all_trips['trip_id'].isin(template_ids)].copy()
+        metro_templates['vehicle'] = 'Metro'
+
+        if metro_templates.empty:
+            logger.warning("Metro template trips not found in trips.txt")
+            return
+
+        logger.info(
+            f"Expanding {len(metro_freq)} metro frequency entries "
+            f"for routes: {metro_templates['route_id'].unique().tolist()}"
+        )
+
+        def _secs(t):
+            h, m, s = t.split(':')
+            return int(h) * 3600 + int(m) * 60 + int(s)
+
+        def _fmt(secs):
+            h, rem = divmod(int(secs), 3600)
+            m, s = divmod(rem, 60)
+            return f"{h:02d}:{m:02d}:{s:02d}"
+
+        synthetic_trips = []
+        synthetic_stops = []
+
+        for _, freq in metro_freq.iterrows():
+            tmpl = metro_templates[metro_templates['trip_id'] == freq['trip_id']]
+            if tmpl.empty:
+                continue
+            tmpl = tmpl.iloc[0]
+
+            start  = _secs(freq['start_time'])
+            end    = _secs(freq['end_time'])
+            headway = int(freq['headway_secs'])
+
+            t = start
+            while t < end:
+                syn_id  = f"{freq['trip_id']}__{t}"
+                dep_str = _fmt(t)
+                synthetic_trips.append({
+                    'trip_id':    syn_id,
+                    'route_id':   tmpl['route_id'],
+                    'service_id': tmpl.get('service_id', ''),
+                    'shape_id':   tmpl.get('shape_id', ''),
+                    'vehicle':    'Metro',
+                })
+                synthetic_stops.append({
+                    'trip_id':        syn_id,
+                    'stop_id':        'metro_0',
+                    'arrival_time':   dep_str,
+                    'departure_time': dep_str,
+                    'stop_sequence':  1,
+                })
+                t += headway
+
+        if not synthetic_trips:
+            logger.warning("No synthetic metro departures generated")
+            return
+
+        self.trips = pd.concat(
+            [self.trips, pd.DataFrame(synthetic_trips)], ignore_index=True
+        )
+        self.stop_times = pd.concat(
+            [self.stop_times, pd.DataFrame(synthetic_stops)], ignore_index=True
+        )
+        logger.info(f"Generated {len(synthetic_trips)} synthetic metro departures")
+
     def process(self, target_date: str) -> pd.DataFrame:
         """
         Complete processing pipeline
@@ -278,6 +372,7 @@ class GTFSParser:
         self.load_data()
         service_id = self.filter_by_date(target_date)
         self.prepare_trips(service_id)
+        self.expand_metro_frequencies()
         self.filter_by_time()
 
         return self.aggregate_trip_counts()
