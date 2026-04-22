@@ -266,13 +266,17 @@ class GTFSParser:
 
         return shapes_with_counts
 
-    def expand_metro_frequencies(self):
+    def expand_metro_frequencies(self, target_date: str = None):
         """
         Expand frequency-based metro trips (M1/M2) into synthetic individual departures.
 
         Warsaw metro is defined in frequencies.txt with headways rather than explicit
         trip times. This method generates one synthetic trip per departure so the rest
         of the pipeline treats metro identically to buses/trams.
+
+        target_date: YYYYMMDD string used to look up the correct metro service_id
+                     (e.g. 'PcM' for Mon-Thu) from calendar_dates.txt.
+                     Without this, all day patterns would be expanded simultaneously.
 
         Adds synthetic rows to self.trips and self.stop_times.
         """
@@ -289,11 +293,34 @@ class GTFSParser:
             logger.info("No metro entries in frequencies.txt")
             return
 
-        # Load template trips directly from trips.txt to get shape_ids.
-        # We bypass the date filter here since metro shapes never change.
+        # Find the metro-specific service_id active on target_date (e.g. 'PcM').
+        # calendar_dates.txt has both the regular service (e.g. '2026-04-27:PcS')
+        # and a separate metro entry (e.g. 'PcM') for the same date.
+        active_metro_service_ids = set()
+        if target_date is not None:
+            calendar = pd.read_csv(self.data_dir / "calendar_dates.txt")
+            date_int = int(target_date)
+            active_ids = calendar[
+                (calendar['date'] == date_int) &
+                (calendar['exception_type'] == 1)
+            ]['service_id'].tolist()
+            # Metro service_ids are short day-pattern codes like 'PcM', 'NdM', 'SbM'
+            active_metro_service_ids = {s for s in active_ids if not s.startswith('20')}
+            logger.info(f"Active metro service_ids for {target_date}: {active_metro_service_ids}")
+
+        # Load template trips from trips.txt and filter to active day pattern
         all_trips = pd.read_csv(self.data_dir / "trips.txt")
         template_ids = metro_freq['trip_id'].unique()
         metro_templates = all_trips[all_trips['trip_id'].isin(template_ids)].copy()
+
+        if active_metro_service_ids:
+            metro_templates = metro_templates[
+                metro_templates['service_id'].isin(active_metro_service_ids)
+            ]
+            # Filter frequencies to only those template trips
+            metro_freq = metro_freq[metro_freq['trip_id'].isin(metro_templates['trip_id'])]
+
+        metro_templates = metro_templates.copy()
         metro_templates['vehicle'] = 'Metro'
 
         if metro_templates.empty:
@@ -372,7 +399,7 @@ class GTFSParser:
         self.load_data()
         service_id = self.filter_by_date(target_date)
         self.prepare_trips(service_id)
-        self.expand_metro_frequencies()
+        self.expand_metro_frequencies(target_date)
         self.filter_by_time()
 
         return self.aggregate_trip_counts()
