@@ -15,7 +15,7 @@ OUTPUT_DIR = DATA_DIR / "output"
 GTFS_URL = "https://mkuran.pl/gtfs/warsaw.zip"
 
 # Processing parameters
-ANALYSIS_DATE = "20260119"  # Format: YYYYMMDD - will be updated to latest available
+ANALYSIS_DATE = "20260427"  # Format: YYYYMMDD - will be updated to latest available
 
 # Peak hours for analysis (two time ranges)
 PEAK_HOURS = [
