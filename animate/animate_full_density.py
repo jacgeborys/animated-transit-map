@@ -113,11 +113,11 @@ DEFAULT_SPEED = 4.7  # fallback
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4FC3F7'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
-VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
+# VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
 GLOW_WIDTH = 4.0
 GLOW_ALPHA = 0.7
-BASE_BRIGHTNESS = 0.35
+BASE_BRIGHTNESS = 0.2
 MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
@@ -162,12 +162,12 @@ ROAD_TIERS = [
 STREAK_LENGTH = 150
 
 # Density calculation settings
-ROLLING_WINDOW_MINUTES = 15
+ROLLING_WINDOW_MINUTES = 10
 # Direct brightness calibration — set to the vehicles/km value that should hit max brightness.
 # Segments above this value are clamped to full brightness.
 # Tune based on "Observed max density" printed at end of each run.
 # Rule of thumb: set to ~70-80% of observed max so peak segments glow fully.
-DENSITY_FOR_MAX_BRIGHTNESS = 45.0  # vehicles/km
+DENSITY_FOR_MAX_BRIGHTNESS = 40.0  # vehicles/km
 
 
 def create_animation():
@@ -639,8 +639,9 @@ def create_animation():
             vtype = segment_vtypes[idx]
             nb = min(max(brightness, 0.0), 1.0)
             gradient = COLOR_GRADIENTS.get(vtype, COLOR_GRADIENTS['Tram'])
-            main_color = interpolate_color(gradient['dark'], gradient['bright'], nb)
+            # Normalize so BASE_BRIGHTNESS → dark_color (matching static base), MAX → bright_color
             gp = (nb - BASE_BRIGHTNESS) / (MAX_BRIGHTNESS - BASE_BRIGHTNESS)
+            main_color = interpolate_color(gradient['dark'], gradient['bright'], max(0.0, gp))
             bh = gradient['bright']
             r, g, b = int(bh[1:3],16)/255, int(bh[3:5],16)/255, int(bh[5:7],16)/255
             bright_data[vtype]['segs'].append(segment_arrays[idx])
