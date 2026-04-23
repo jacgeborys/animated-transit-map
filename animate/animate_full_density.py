@@ -52,10 +52,10 @@ _gtfs_dirs = sorted((PROJECT_ROOT / "data" / "raw").glob("warsaw_gtfs_*"))
 GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 
 # Animation settings
-FPS = 20
-DURATION = 90  # seconds
-# FPS = 25
-# DURATION = 180  # seconds
+# FPS = 20
+# DURATION = 90  # seconds
+FPS = 25
+DURATION = 180  # seconds
 HOURS = 21  # hours of transit to show
 FFMPEG_PATH = r"C:\ffmpeg\bin\ffmpeg.exe"
 VEHICLE_FILTER = None  # 'Tram', 'Bus', 'Train', or None for all
@@ -162,8 +162,12 @@ ROAD_TIERS = [
 STREAK_LENGTH = 150
 
 # Density calculation settings
-ROLLING_WINDOW_MINUTES = 15  # Count vehicles in past 10 minutes
-MAX_BRIGHTNESS_AT_PERCENTILE = 0.40  # 30% of estimated peak = max brightness (estimation is inflated)
+ROLLING_WINDOW_MINUTES = 15
+# Direct brightness calibration — set to the vehicles/km value that should hit max brightness.
+# Segments above this value are clamped to full brightness.
+# Tune based on "Observed max density" printed at end of each run.
+# Rule of thumb: set to ~70-80% of observed max so peak segments glow fully.
+DENSITY_FOR_MAX_BRIGHTNESS = 40.0  # vehicles/km
 
 
 def create_animation():
@@ -316,77 +320,11 @@ def create_animation():
     else:
         logger.warning("stop_times.txt not found — using speed-based interpolation for all vehicles")
 
-    # Estimate peak density for brightness calibration
-    logger.info("Estimating peak density from schedule...")
     start_seconds = 4 * 3600
     duration_seconds = HOURS * 3600
-    sample_times = np.linspace(start_seconds, start_seconds + duration_seconds, 30)
 
-    # Pre-filter schedule for first stops only (846k → ~32k rows)
-    first_stops = schedule[schedule['stop_sequence'] == 1].copy()
-    logger.info(f"  Filtered to {len(first_stops)} first stops (from {len(schedule)} total)")
-
-    # Pre-compute trip durations and active time ranges
-    valid_trips = []
-    for _, trip in first_stops.iterrows():
-        trip_id = trip['trip_id']
-        shape_id = trip['shape_id']
-        if shape_id in route_lookup:
-            departure = trip['departure_seconds']
-
-            if trip_id in trip_stop_schedule:
-                trip_end = float(trip_stop_schedule[trip_id][0][-1])
-            else:
-                route_info = route_lookup[shape_id]
-                speed = VEHICLE_SPEEDS.get(route_info['vehicle'], DEFAULT_SPEED)
-                trip_end = departure + route_info['geometry'].length / speed
-
-            valid_trips.append({
-                'trip_id': trip_id,
-                'shape_id': shape_id,
-                'start': departure,
-                'end': trip_end
-            })
-
-    logger.info(f"  Processing {len(valid_trips)} valid trips across {len(sample_times)} sample times...")
-
-    max_expected_density = 0.0
-
-    for sample_time in sample_times:
-        segment_vehicle_counts = np.zeros(len(segments))
-
-        for trip in valid_trips:
-            if trip['start'] <= sample_time <= trip['end']:
-                shape_id = trip['shape_id']
-                if shape_id in route_to_segments:
-                    seg_indices = route_to_segments[shape_id]
-                    if seg_indices:
-                        trip_id = trip['trip_id']
-                        if trip_id in trip_stop_schedule:
-                            times, progresses = trip_stop_schedule[trip_id]
-                            progress = float(np.interp(sample_time, times, progresses))
-                        else:
-                            total_duration = trip['end'] - trip['start']
-                            progress = (sample_time - trip['start']) / total_duration if total_duration > 0 else 0
-                        seg_pos = min(int(progress * len(seg_indices)), len(seg_indices) - 1)
-                        segment_vehicle_counts[seg_indices[seg_pos]] += 1
-
-        # Calculate densities for this time point
-        for idx in range(len(segments)):
-            if segment_vehicle_counts[idx] > 0:
-                length_km = segments.iloc[idx]['length_km']
-                density = segment_vehicle_counts[idx] / length_km if length_km > 0 else 0
-                if density > max_expected_density:
-                    max_expected_density = density
-
-    # Set calibration point
-    density_for_max_brightness = max_expected_density * MAX_BRIGHTNESS_AT_PERCENTILE
-
-    logger.info(f"Brightness calibration:")
-    logger.info(f"  Base brightness: {BASE_BRIGHTNESS:.3f}")
-    logger.info(f"  Estimated peak density: {max_expected_density:.1f} vehicles/km")
-    logger.info(f"  Max brightness at {MAX_BRIGHTNESS_AT_PERCENTILE*100:.0f}% of peak = {density_for_max_brightness:.1f} vehicles/km")
-    logger.info(f"  Rolling window: {ROLLING_WINDOW_MINUTES} minutes")
+    density_for_max_brightness = DENSITY_FOR_MAX_BRIGHTNESS
+    logger.info(f"Brightness calibration: max brightness at {density_for_max_brightness:.1f} vehicles/km")
 
     # Build spatial index for fast segment lookups
     logger.info("Building spatial index for segments...")
@@ -838,13 +776,10 @@ def create_animation():
     plt.close()
 
     logger.info(f"Done! {OUTPUT}")
-    logger.info(f"\n📊 Density Statistics:")
-    logger.info(f"  Estimated peak density: {max_expected_density:.1f} vehicles/km")
-    logger.info(f"  Observed max density:   {observed_max_density:.1f} vehicles/km")
-    logger.info(f"  Calibrated for max brightness at: {density_for_max_brightness:.1f} vehicles/km")
-    logger.info(f"\n💡 Tip: If brightness range looks wrong, adjust MAX_BRIGHTNESS_AT_PERCENTILE")
-    logger.info(f"     Current: {MAX_BRIGHTNESS_AT_PERCENTILE*100:.0f}% of estimated peak")
-    logger.info(f"     Suggested: {(observed_max_density/max_expected_density)*100:.1f}% (based on observed)")
+    logger.info(f"Density statistics:")
+    logger.info(f"  Observed max density:          {observed_max_density:.1f} vehicles/km")
+    logger.info(f"  DENSITY_FOR_MAX_BRIGHTNESS:    {density_for_max_brightness:.1f} vehicles/km")
+    logger.info(f"  Tip: set DENSITY_FOR_MAX_BRIGHTNESS = {observed_max_density * 0.75:.1f} to push peak segments to full brightness")
     return 0
 
 
