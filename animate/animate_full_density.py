@@ -72,16 +72,16 @@ else:
 # Map extent - Central Warsaw
 CENTRAL_WARSAW_X = 638000
 CENTRAL_WARSAW_Y = 487000
-FRAME_SIZE = 20000  # Base frame size (metres)
+FRAME_SIZE = 22000  # Base frame size (metres)
 
 # Dynamic zoom settings
 # Zoom timeline follows the day: wide at dawn, tight at noon, back out by 14:00
 ZOOM_START_SIZE  = 30000   # 1.5x base — zoomed out at animation start (~4:00)
-ZOOM_MIN_SIZE    = 10000   # 0.7x base — tightest zoom at noon (12:00)
+ZOOM_MIN_SIZE    = 8000   # 0.7x base — tightest zoom at noon (12:00)
 ZOOM_END_SIZE    = FRAME_SIZE  # back to base by 14:00, held for rest of day
 ZOOM_IN_START_H  = 4       # hour when zoom-in begins
 ZOOM_IN_END_H    = 7      # hour when tightest zoom is reached
-ZOOM_OUT_END_H   = 14      # hour when zoom settles back to base
+ZOOM_OUT_END_H   = 9     # hour when zoom settles back to base
 
 
 def get_frame_size(current_seconds):
@@ -117,17 +117,17 @@ VEHICLE_SIZES = 0.8 * pd.Series(VEHICLE_SIZES)  # Scale down for better proporti
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
 GLOW_WIDTH = 4.0
 GLOW_ALPHA = 0.7
-BASE_BRIGHTNESS = 0.15
+BASE_BRIGHTNESS = 0.35
 MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Color gradients for density visualization
 COLOR_GRADIENTS = {
-    'Tram':  {'dark': '#160000', 'bright': '#ed1f1f'},
-    'Bus':   {'dark': '#1b0020', 'bright': '#b613d7'},
-    'Train': {'dark': '#0a2e2a', 'bright': '#3d9a8f'},
-    'Metro': {'dark': '#00101a', 'bright': '#4fc3f7'},  # deep navy → bright sky blue
+    'Tram':  {'dark': '#3d0005', 'bright': '#ff4444'},
+    'Bus':   {'dark': '#2d0040', 'bright': '#cc33ff'},
+    'Train': {'dark': '#0f3d38', 'bright': '#52c5b8'},
+    'Metro': {'dark': '#001e30', 'bright': '#6dd5fa'},
 }
 
 # Z-order layering (background → trains → buses → trams → metro on top)
@@ -146,9 +146,9 @@ BACKGROUND_LAYERS = {
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#0d1a0d', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'water':     {'fc': '#0a1e2e', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'roads':     {'fc': 'none',    'ec': '#2a2a2a', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
+    'forests':   {'fc': '#162e16', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
+    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
@@ -163,7 +163,7 @@ STREAK_LENGTH = 150
 
 # Density calculation settings
 ROLLING_WINDOW_MINUTES = 15  # Count vehicles in past 10 minutes
-MAX_BRIGHTNESS_AT_PERCENTILE = 0.30  # 30% of estimated peak = max brightness (estimation is inflated)
+MAX_BRIGHTNESS_AT_PERCENTILE = 0.40  # 30% of estimated peak = max brightness (estimation is inflated)
 
 
 def create_animation():
