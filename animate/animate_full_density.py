@@ -131,13 +131,13 @@ COLOR_GRADIENTS = {
     'Metro': {'dark': '#001e30', 'bright': '#c4eaff'},
 }
 
-# Z-order layering (background → trains → buses → trams → metro on top)
+# Z-order layering: Metro (bottom) → Train → Bus → Tram (top)
+# Lines all below vehicles; within lines/vehicles, same Metro→Tram order
 Z_ORDERS = {
-    'Metro': {'glow': 10, 'line': 20},
-    'Train': {'glow': 30, 'line': 40},
-    'Bus':   {'glow': 50, 'line': 60},
-    'Tram':  {'glow': 70, 'line': 80},
-
+    'Metro': {'glow': 10, 'line': 11, 'streak': 12, 'vehicle': 50},
+    'Train': {'glow': 20, 'line': 21, 'streak': 22, 'vehicle': 51},
+    'Bus':   {'glow': 30, 'line': 31, 'streak': 32, 'vehicle': 52},
+    'Tram':  {'glow': 40, 'line': 41, 'streak': 42, 'vehicle': 53},
 }
 
 # Background map layers (OSM data)
@@ -155,16 +155,16 @@ BACKGROUND_LAYERS = {
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'parks':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'meadow':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'leisure':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'leisure_relations':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'grass':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'cemeteries': {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'allotments': {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'forests':   {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'parks':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'meadow':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'leisure':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'leisure_relations':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'grass':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'cemeteries': {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'allotments': {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 1},
     'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 1},  # default (lowest tier)
+    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 3},
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
@@ -175,7 +175,7 @@ ROAD_TIERS = [
     ({'secondary', 'secondary_link'},                    0.7),
 ]
 
-STREAK_LENGTH = 180
+STREAK_LENGTH = 250
 
 # Density calculation settings
 ROLLING_WINDOW_MINUTES = 10
@@ -489,7 +489,7 @@ def create_animation():
         z = Z_ORDERS[vtype]
         glow = LineCollection([], linewidths=GLOW_WIDTH, capstyle='round', joinstyle='round', zorder=z['glow'])
         main = LineCollection([], linewidths=LINE_WIDTHS.get(vtype, 1.5), capstyle='round', joinstyle='round', zorder=z['line'] + 0.5)
-        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.2, capstyle='round', zorder=70)
+        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.2, capstyle='round', zorder=z['streak'])
         ax.add_collection(glow)
         ax.add_collection(main)
         ax.add_collection(streak)
@@ -498,7 +498,7 @@ def create_animation():
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
                         color=COLORS[vtype], alpha=0.8, marker=VEHICLE_MARKERS[vtype],
-                        edgecolors=OUTLINE_COLORS[vtype], linewidths=0.6, zorder=80)
+                        edgecolors=OUTLINE_COLORS[vtype], linewidths=0.6, zorder=z['vehicle'])
         vehicle_sc[vtype] = sc
 
     title_text = ax.text(0.02, 0.98, "", transform=ax.transAxes, fontsize=24, color='white',
