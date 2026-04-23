@@ -138,8 +138,16 @@ LAYER_STYLES = {
     'forests':   {'fc': '#060d06', 'ec': 'none',    'lw': 0,   'zorder': 1},
     'water':     {'fc': '#05101a', 'ec': 'none',    'lw': 0,   'zorder': 2},
     'waterways': {'fc': 'none',    'ec': '#05101a', 'lw': 0.8, 'zorder': 3},
-    'roads':     {'fc': 'none',    'ec': '#161616', 'lw': 0.5, 'zorder': 4},
+    'roads':     {'fc': 'none',    'ec': '#161616', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
 }
+
+# Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
+ROAD_HIGHWAY_FIELD = 'fclass'
+ROAD_TIERS = [
+    ({'motorway', 'motorway_link', 'expressway'},        1.4),
+    ({'trunk', 'trunk_link', 'primary', 'primary_link'}, 0.85),
+    ({'secondary', 'secondary_link'},                    0.5),
+]
 
 STREAK_LENGTH = 150
 
@@ -277,14 +285,17 @@ def create_animation():
     for sample_time in sample_times:
         segment_vehicle_counts = np.zeros(len(segments))
 
-        # Vectorized: check which trips are active at sample_time
         for trip in valid_trips:
             if trip['start'] <= sample_time <= trip['end']:
                 shape_id = trip['shape_id']
                 if shape_id in route_to_segments:
                     seg_indices = route_to_segments[shape_id]
                     if seg_indices:
-                        segment_vehicle_counts[seg_indices[0]] += 1
+                        # Distribute vehicle to segment based on progress through route
+                        total_duration = trip['end'] - trip['start']
+                        progress = (sample_time - trip['start']) / total_duration if total_duration > 0 else 0
+                        seg_pos = min(int(progress * len(seg_indices)), len(seg_indices) - 1)
+                        segment_vehicle_counts[seg_indices[seg_pos]] += 1
 
         # Calculate densities for this time point
         for idx in range(len(segments)):
@@ -367,9 +378,28 @@ def create_animation():
                 logger.warning(f"  {name}: no features in frame, skipping")
                 continue
             style = LAYER_STYLES[name]
-            bg.plot(ax=ax, facecolor=style['fc'], edgecolor=style['ec'],
-                    linewidth=style['lw'], zorder=style['zorder'])
-            logger.info(f"  {name}: {len(bg)} features drawn")
+            if name == 'roads' and ROAD_HIGHWAY_FIELD in bg.columns:
+                # Draw road tiers with varying widths (thicker = higher class)
+                drawn = 0
+                classified = set()
+                for classes, lw in ROAD_TIERS:
+                    tier_roads = bg[bg[ROAD_HIGHWAY_FIELD].isin(classes)]
+                    if not tier_roads.empty:
+                        tier_roads.plot(ax=ax, facecolor='none', edgecolor=style['ec'],
+                                        linewidth=lw, zorder=style['zorder'])
+                        drawn += len(tier_roads)
+                    classified |= classes
+                # Draw remaining roads at default (lowest tier) width
+                rest = bg[~bg[ROAD_HIGHWAY_FIELD].isin(classified)]
+                if not rest.empty:
+                    rest.plot(ax=ax, facecolor='none', edgecolor=style['ec'],
+                              linewidth=style['lw'], zorder=style['zorder'])
+                    drawn += len(rest)
+                logger.info(f"  {name}: {drawn} features drawn (tiered widths)")
+            else:
+                bg.plot(ax=ax, facecolor=style['fc'], edgecolor=style['ec'],
+                        linewidth=style['lw'], zorder=style['zorder'])
+                logger.info(f"  {name}: {len(bg)} features drawn")
         except Exception as e:
             logger.warning(f"  {name}: failed to load ({e}), skipping")
 
