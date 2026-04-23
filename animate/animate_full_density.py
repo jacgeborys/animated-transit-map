@@ -99,6 +99,11 @@ def get_frame_size(current_seconds):
     else:
         return ZOOM_END_SIZE
 
+# Average vehicle speeds (m/s) — used to estimate trip durations for animation
+# Tram: ~16 km/h, Bus: ~20 km/h, Train: ~54 km/h, Metro: ~36 km/h
+VEHICLE_SPEEDS = {'Tram': 4.5, 'Bus': 5.5, 'Train': 15.0, 'Metro': 10.0}
+DEFAULT_SPEED = 4.7  # fallback
+
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4FC3F7'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
@@ -131,14 +136,12 @@ OSM_DIR = Path(r"D:\QGIS\mapy_warszawy_misc\data\osm")
 BACKGROUND_LAYERS = {
     'forests':   OSM_DIR / 'forests.gpkg',
     'water':     OSM_DIR / 'water.gpkg',
-    'waterways': OSM_DIR / 'waterways.gpkg',
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
     'forests':   {'fc': '#060d06', 'ec': 'none',    'lw': 0,   'zorder': 1},
     'water':     {'fc': '#05101a', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'waterways': {'fc': 'none',    'ec': '#05101a', 'lw': 0.8, 'zorder': 3},
-    'roads':     {'fc': 'none',    'ec': '#161616', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
+    'roads':     {'fc': 'none',    'ec': '#1f1f1f', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
@@ -269,7 +272,9 @@ def create_animation():
         if shape_id in route_lookup:
             route_info = route_lookup[shape_id]
             route_length = route_info['geometry'].length
-            trip_duration = route_length / 4.7  # Average speed
+            vehicle = route_info['vehicle']
+            speed = VEHICLE_SPEEDS.get(vehicle, DEFAULT_SPEED)
+            trip_duration = route_length / speed
             departure = trip['departure_seconds']
 
             valid_trips.append({
@@ -479,7 +484,8 @@ def create_animation():
             if shape_id in route_lookup:
                 route_info = route_lookup[shape_id]
                 route_length = route_info['geometry'].length
-                trip_duration = route_length / 4.7
+                speed = VEHICLE_SPEEDS.get(route_info['vehicle'], DEFAULT_SPEED)
+                trip_duration = route_length / speed
 
                 vehicles.append({
                     'id': trip['trip_id'],
