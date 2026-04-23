@@ -54,8 +54,8 @@ GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 # Animation settings
 # FPS = 20
 # DURATION = 90  # seconds
-FPS = 20
-DURATION = 60  # seconds
+FPS = 30
+DURATION = 180  # seconds
 HOURS = 21  # hours of transit to show
 FFMPEG_PATH = r"C:\ffmpeg\bin\ffmpeg.exe"
 VEHICLE_FILTER = None  # 'Tram', 'Bus', 'Train', or None for all
@@ -159,10 +159,11 @@ ROAD_TIERS = [
     ({'secondary', 'secondary_link'},                    0.7),
 ]
 
-STREAK_LENGTH = 150
+STREAK_LENGTH = 180
 
 # Density calculation settings
 ROLLING_WINDOW_MINUTES = 10
+SEGMENT_TRACKING_STEP = 10  # real seconds between segment position checks (independent of FPS/DURATION)
 # Direct brightness calibration — set to the vehicles/km value that should hit max brightness.
 # Segments above this value are clamped to full brightness.
 # Tune based on "Observed max density" printed at end of each run.
@@ -551,24 +552,62 @@ def create_animation():
                     'end_abs': end_abs, 'sched': sched, 'current_segment': None
                 })
 
-        # Update vehicles — compute positions, segment tracking, collect draw data
+        # Update vehicles — sub-stepped segment tracking + single draw position
         active_vehicles = []
         vehicles_by_type = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
         streaks_by_type  = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
 
         for vehicle in vehicles:
-            if current_seconds > vehicle['end_abs']:
-                if vehicle['current_segment'] is not None:
-                    seg_idx = vehicle['current_segment']
-                    for visit in reversed(segment_vehicle_visits[seg_idx]):
-                        if visit[0] == vehicle['id'] and visit[2] is None:
-                            visit[2] = current_seconds
-                            break
+            expired = current_seconds > vehicle['end_abs']
+
+            # --- Segment tracking: sub-stepped at SEGMENT_TRACKING_STEP real seconds ---
+            track_from = vehicle.get('last_tracked', vehicle['start_time'])
+            track_to   = vehicle['end_abs'] if expired else current_seconds
+
+            if track_from < track_to:
+                t = track_from + SEGMENT_TRACKING_STEP
+                track_times = []
+                while t < track_to:
+                    track_times.append(t)
+                    t += SEGMENT_TRACKING_STEP
+                track_times.append(track_to)
+
+                for t in track_times:
+                    if vehicle['sched'] is not None:
+                        prog_t = float(np.interp(t, vehicle['sched'][0], vehicle['sched'][1]))
+                    else:
+                        elapsed = t - vehicle['start_time']
+                        dur = vehicle['end_abs'] - vehicle['start_time']
+                        prog_t = elapsed / dur if dur > 0 else 0
+
+                    pos_t = vehicle['route'].interpolate(prog_t, normalized=True)
+                    old_seg = vehicle['current_segment']
+                    new_seg = None
+                    shape_id = vehicle['shape_id']
+                    if shape_id in route_to_segments:
+                        nearby = segment_spatial_index.query(pos_t)
+                        for seg_idx in route_to_segments[shape_id]:
+                            if seg_idx in nearby:
+                                new_seg = seg_idx
+                                break
+                    if new_seg != old_seg:
+                        if old_seg is not None:
+                            for visit in reversed(segment_vehicle_visits[old_seg]):
+                                if visit[0] == vehicle['id'] and visit[2] is None:
+                                    visit[2] = t
+                                    break
+                        if new_seg is not None:
+                            segment_vehicle_visits[new_seg].append([vehicle['id'], t, None])
+                            vehicle['current_segment'] = new_seg
+
+                vehicle['last_tracked'] = track_to
+
+            if expired:
                 continue
 
+            # --- Drawing: position at current_seconds only ---
             if vehicle['sched'] is not None:
-                times, progresses = vehicle['sched']
-                progress = float(np.interp(current_seconds, times, progresses))
+                progress = float(np.interp(current_seconds, vehicle['sched'][0], vehicle['sched'][1]))
             else:
                 elapsed = current_seconds - vehicle['start_time']
                 dur = vehicle['end_abs'] - vehicle['start_time']
@@ -577,27 +616,6 @@ def create_animation():
             position = vehicle['route'].interpolate(progress, normalized=True)
             vehicle['position'] = position
             vehicle['progress'] = progress
-
-            old_segment = vehicle['current_segment']
-            shape_id = vehicle['shape_id']
-            new_segment = None
-            if shape_id in route_to_segments:
-                nearby = segment_spatial_index.query(position)
-                for seg_idx in route_to_segments[shape_id]:
-                    if seg_idx in nearby:
-                        new_segment = seg_idx
-                        break
-
-            if new_segment != old_segment:
-                if old_segment is not None:
-                    for visit in reversed(segment_vehicle_visits[old_segment]):
-                        if visit[0] == vehicle['id'] and visit[2] is None:
-                            visit[2] = current_seconds
-                            break
-                if new_segment is not None:
-                    segment_vehicle_visits[new_segment].append([vehicle['id'], current_seconds, None])
-                    vehicle['current_segment'] = new_segment
-
             active_vehicles.append(vehicle)
 
             vtype = vehicle['vehicle']
@@ -683,7 +701,7 @@ def create_animation():
 
         # Update text
         title_text.set_text(f"Warsaw Public Transit - 27.04.2026 {current_time}")
-        count_text.set_text(f"Active vehicles: {len(vehicles)}")
+        # count_text.set_text(f"Active vehicles: {len(vehicles)}")
 
         if frame_num % 60 == 0:
             pct = frame_num / total_frames * 100
