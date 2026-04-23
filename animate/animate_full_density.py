@@ -47,6 +47,10 @@ PROJECT_ROOT = Path(__file__).parent.parent
 ROUTE_LINES = PROJECT_ROOT / "data" / "processed" / "route_lines_continuous.shp"
 SCHEDULE = PROJECT_ROOT / "data" / "processed" / "schedule_for_animation.csv"
 
+# Auto-detect latest GTFS download for stop-by-stop interpolation
+_gtfs_dirs = sorted((PROJECT_ROOT / "data" / "raw").glob("warsaw_gtfs_*"))
+GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
+
 # Animation settings
 FPS = 25
 DURATION = 180  # seconds
@@ -255,6 +259,32 @@ def create_animation():
             'route_id': row['route_id']
         }
 
+    # Load stop-by-stop schedules for accurate position interpolation
+    trip_stop_schedule = {}
+    if GTFS_STOP_TIMES and GTFS_STOP_TIMES.exists():
+        logger.info(f"Loading stop times from {GTFS_STOP_TIMES.parent.name}...")
+        trip_ids_needed = set(schedule['trip_id'].unique())
+        st_raw = pd.read_csv(GTFS_STOP_TIMES, low_memory=False)
+        st_raw = st_raw[st_raw['trip_id'].isin(trip_ids_needed)]
+
+        def _parse_time(t):
+            h, m, s = t.split(':')
+            return int(h) * 3600 + int(m) * 60 + int(s)
+
+        for trip_id, grp in st_raw.groupby('trip_id'):
+            grp = grp.sort_values('stop_sequence')
+            max_dist = grp['shape_dist_traveled'].max()
+            if max_dist <= 0 or len(grp) < 2:
+                continue
+            times = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
+            progresses = (grp['shape_dist_traveled'] / max_dist).values.astype(np.float64)
+            trip_stop_schedule[trip_id] = (times, progresses)
+
+        logger.info(f"  Stop schedules loaded for {len(trip_stop_schedule):,} / {len(trip_ids_needed):,} trips")
+        logger.info(f"  Remaining trips will use speed-based fallback (e.g. Metro)")
+    else:
+        logger.warning("stop_times.txt not found — using speed-based interpolation for all vehicles")
+
     # Estimate peak density for brightness calibration
     logger.info("Estimating peak density from schedule...")
     start_seconds = 4 * 3600
@@ -268,19 +298,23 @@ def create_animation():
     # Pre-compute trip durations and active time ranges
     valid_trips = []
     for _, trip in first_stops.iterrows():
+        trip_id = trip['trip_id']
         shape_id = trip['shape_id']
         if shape_id in route_lookup:
-            route_info = route_lookup[shape_id]
-            route_length = route_info['geometry'].length
-            vehicle = route_info['vehicle']
-            speed = VEHICLE_SPEEDS.get(vehicle, DEFAULT_SPEED)
-            trip_duration = route_length / speed
             departure = trip['departure_seconds']
 
+            if trip_id in trip_stop_schedule:
+                trip_end = float(trip_stop_schedule[trip_id][0][-1])
+            else:
+                route_info = route_lookup[shape_id]
+                speed = VEHICLE_SPEEDS.get(route_info['vehicle'], DEFAULT_SPEED)
+                trip_end = departure + route_info['geometry'].length / speed
+
             valid_trips.append({
+                'trip_id': trip_id,
                 'shape_id': shape_id,
                 'start': departure,
-                'end': departure + trip_duration
+                'end': trip_end
             })
 
     logger.info(f"  Processing {len(valid_trips)} valid trips across {len(sample_times)} sample times...")
@@ -296,9 +330,13 @@ def create_animation():
                 if shape_id in route_to_segments:
                     seg_indices = route_to_segments[shape_id]
                     if seg_indices:
-                        # Distribute vehicle to segment based on progress through route
-                        total_duration = trip['end'] - trip['start']
-                        progress = (sample_time - trip['start']) / total_duration if total_duration > 0 else 0
+                        trip_id = trip['trip_id']
+                        if trip_id in trip_stop_schedule:
+                            times, progresses = trip_stop_schedule[trip_id]
+                            progress = float(np.interp(sample_time, times, progresses))
+                        else:
+                            total_duration = trip['end'] - trip['start']
+                            progress = (sample_time - trip['start']) / total_duration if total_duration > 0 else 0
                         seg_pos = min(int(progress * len(seg_indices)), len(seg_indices) - 1)
                         segment_vehicle_counts[seg_indices[seg_pos]] += 1
 
@@ -480,31 +518,37 @@ def create_animation():
         ]
 
         for _, trip in new_trips.iterrows():
+            trip_id = trip['trip_id']
             shape_id = trip['shape_id']
             if shape_id in route_lookup:
                 route_info = route_lookup[shape_id]
-                route_length = route_info['geometry'].length
-                speed = VEHICLE_SPEEDS.get(route_info['vehicle'], DEFAULT_SPEED)
-                trip_duration = route_length / speed
+
+                if trip_id in trip_stop_schedule:
+                    sched = trip_stop_schedule[trip_id]
+                    end_abs = float(sched[0][-1])
+                else:
+                    speed = VEHICLE_SPEEDS.get(route_info['vehicle'], DEFAULT_SPEED)
+                    end_abs = current_seconds + route_info['geometry'].length / speed
+                    sched = None
 
                 vehicles.append({
-                    'id': trip['trip_id'],
+                    'id': trip_id,
                     'shape_id': shape_id,
                     'vehicle': route_info['vehicle'],
                     'route': route_info['geometry'],
                     'route_id': route_info['route_id'],
                     'start_time': current_seconds,
-                    'duration': trip_duration,
+                    'end_abs': end_abs,
+                    'sched': sched,
                     'current_segment': None
                 })
 
         # Update vehicles and track segment occupancy
         active_vehicles = []
         for vehicle in vehicles:
-            elapsed = current_seconds - vehicle['start_time']
-            if elapsed > vehicle['duration']:
+            if current_seconds > vehicle['end_abs']:
                 # Vehicle finished - mark exit time
-                if 'current_segment' in vehicle and vehicle['current_segment'] is not None:
+                if vehicle['current_segment'] is not None:
                     seg_idx = vehicle['current_segment']
                     visits = segment_vehicle_visits[seg_idx]
                     for visit in reversed(visits):
@@ -513,9 +557,17 @@ def create_animation():
                             break
                 continue
 
-            progress = elapsed / vehicle['duration']
+            if vehicle['sched'] is not None:
+                times, progresses = vehicle['sched']
+                progress = float(np.interp(current_seconds, times, progresses))
+            else:
+                elapsed = current_seconds - vehicle['start_time']
+                duration = vehicle['end_abs'] - vehicle['start_time']
+                progress = elapsed / duration if duration > 0 else 0
+
             position = vehicle['route'].interpolate(progress, normalized=True)
             vehicle['position'] = position
+            vehicle['progress'] = progress
 
             old_segment = vehicle.get('current_segment', None)
 
@@ -655,8 +707,7 @@ def create_animation():
                 vehicles_by_type[vtype].append(current_pos)
 
                 # Create streak
-                elapsed = current_seconds - vehicle['start_time']
-                progress = elapsed / vehicle['duration']
+                progress = vehicle['progress']
                 route = vehicle['route']
                 route_length = route.length
 
