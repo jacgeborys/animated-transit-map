@@ -74,7 +74,7 @@ ZOOM_START_SIZE  = 30000   # 1.5x base — zoomed out at animation start (~4:00)
 ZOOM_MIN_SIZE    = 14000   # 0.7x base — tightest zoom at noon (12:00)
 ZOOM_END_SIZE    = FRAME_SIZE  # back to base by 14:00, held for rest of day
 ZOOM_IN_START_H  = 4       # hour when zoom-in begins
-ZOOM_IN_END_H    = 12      # hour when tightest zoom is reached
+ZOOM_IN_END_H    = 7      # hour when tightest zoom is reached
 ZOOM_OUT_END_H   = 14      # hour when zoom settles back to base
 
 
@@ -102,6 +102,7 @@ def get_frame_size(current_seconds):
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4FC3F7'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
+VEHICLE_SIZES = 0.8 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.0}
 GLOW_WIDTH = 4.0
 GLOW_ALPHA = 0.7
@@ -140,7 +141,7 @@ LAYER_STYLES = {
     'roads':     {'fc': 'none',    'ec': '#161616', 'lw': 0.5, 'zorder': 4},
 }
 
-STREAK_LENGTH = 180
+STREAK_LENGTH = 150
 
 # Density calculation settings
 ROLLING_WINDOW_MINUTES = 15  # Count vehicles in past 10 minutes
@@ -682,34 +683,38 @@ def create_animation():
             logger.info(f"  Brightness range: {segment_brightness.min():.3f} - {segment_brightness.max():.3f}")
             logger.info(f"  Observed max density so far: {observed_max_density:.1f} vehicles/km")
 
-    # Create animation
-    logger.info(f"Generating {total_frames} frames (FPS={FPS}, Duration={DURATION}s)...")
-    anim = animation.FuncAnimation(fig, update_frame, frames=total_frames,
-                                  interval=1000/FPS, blit=False)
-
-    # Save
+    # Save — incremental frame-by-frame rendering (safe to interrupt)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     logger.info(f"Saving to {OUTPUT}...")
     plt.rcParams['animation.ffmpeg_path'] = FFMPEG_PATH
 
     if not Path(FFMPEG_PATH).exists():
-        logger.error(f"FFmpeg not found")
-        gif_output = OUTPUT.parent / OUTPUT.name.replace('.mp4', '.gif')
-        writer = animation.PillowWriter(fps=FPS)
-        anim.save(gif_output, writer=writer, dpi=100)
-        logger.info(f"Saved as GIF: {gif_output}")
+        logger.error(f"FFmpeg not found at {FFMPEG_PATH}")
+        logger.error("Install FFmpeg or update FFMPEG_PATH")
         plt.close()
         return 1
 
     writer = animation.FFMpegWriter(fps=FPS, codec='libx264', bitrate=5000,
                                    metadata={'artist': 'Jacek Gęborys'},
-                                   extra_args=['-pix_fmt', 'yuv420p'])
+                                   extra_args=['-pix_fmt', 'yuv420p',
+                                               '-movflags', '+frag_keyframe+empty_moov'])
+
+    logger.info(f"Rendering {total_frames} frames (FPS={FPS}, Duration={DURATION}s)...")
+    logger.info("Frames are written to disk incrementally — safe to interrupt at any time.")
     try:
-        anim.save(OUTPUT, writer=writer, dpi=100)
-        logger.info(f"✅ Animation saved successfully!")
+        with writer.saving(fig, OUTPUT, dpi=100):
+            for frame_num in range(total_frames):
+                update_frame(frame_num)
+                writer.grab_frame()
+        logger.info(f"Animation saved successfully!")
+    except KeyboardInterrupt:
+        logger.info("Interrupted — partial video saved to disk.")
+        plt.close()
+        return 0
     except Exception as e:
-        logger.error(f"❌ Error saving animation: {e}")
+        logger.error(f"Error saving animation: {e}")
         logger.error("Try reducing DURATION, FPS, or figure size")
+        plt.close()
         return 1
     plt.close()
 

@@ -78,3 +78,12 @@ Old/unused scripts are in `archive/`. Ignore them.
 - Route start/end segments not generated (only junction-to-junction)
 - Bus/Train color scales not yet defined (transparency only)
 - Full city buses: processing time is hours
+
+## Claude Workflow
+
+After every code change, always:
+1. `git add` the changed files
+2. `git commit` with a short descriptive message
+3. `git push` to remote
+
+Do this without asking for confirmation — the user expects it to happen automatically after each task.
