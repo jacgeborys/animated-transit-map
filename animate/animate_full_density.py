@@ -115,19 +115,20 @@ COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4F
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
-GLOW_WIDTH = 8.0
-GLOW_ALPHA = 0.8
+GLOW_WIDTH = 3.75
+GLOW_ALPHA = 0.9
 BASE_BRIGHTNESS = 0.2
 MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Color gradients for density visualization
+# 'dark' matches static base network color; 'bright' is near-white/pastel for luminous glow at max density
 COLOR_GRADIENTS = {
-    'Tram':  {'dark': '#3d0005', 'bright': '#ff4444'},
-    'Bus':   {'dark': '#2d0040', 'bright': '#cc33ff'},
-    'Train': {'dark': '#0f3d38', 'bright': '#52c5b8'},
-    'Metro': {'dark': '#001e30', 'bright': '#6dd5fa'},
+    'Tram':  {'dark': '#3d0005', 'bright': '#ffcccc'},
+    'Bus':   {'dark': '#2d0040', 'bright': '#e8b3ff'},
+    'Train': {'dark': '#0f3d38', 'bright': '#c2f0eb'},
+    'Metro': {'dark': '#001e30', 'bright': '#c4eaff'},
 }
 
 # Z-order layering (background → trains → buses → trams → metro on top)
@@ -142,11 +143,25 @@ Z_ORDERS = {
 OSM_DIR = Path(r"D:\QGIS\mapy_warszawy_misc\data\osm")
 BACKGROUND_LAYERS = {
     'forests':   OSM_DIR / 'forests.gpkg',
+    'parks':     OSM_DIR / 'parks.gpkg',
+    'meadow':     OSM_DIR / 'meadow.gpkg',
+    'leisure':     OSM_DIR / 'leisure.gpkg',
+    'leisure_relations':     OSM_DIR / 'leisure_relations.gpkg',
+    'grass':     OSM_DIR / 'grass.gpkg',
+    'cemeteries': OSM_DIR / 'cemeteries.gpkg',
+    'allotments': OSM_DIR / 'allotments.gpkg',
     'water':     OSM_DIR / 'water.gpkg',
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#162e16', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'forests':   {'fc': '#162e16', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'parks':     {'fc': '#1a3d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'meadow':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'leisure':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'leisure_relations':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'grass':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'cemeteries': {'fc': '#1a2e2e', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'allotments': {'fc': '#1a2e2e', 'ec': 'none',    'lw': 0,   'zorder': 5},
     'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
     'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 4},  # default (lowest tier)
 }
@@ -168,7 +183,7 @@ SEGMENT_TRACKING_STEP = 10  # real seconds between segment position checks (inde
 # Segments above this value are clamped to full brightness.
 # Tune based on "Observed max density" printed at end of each run.
 # Rule of thumb: set to ~70-80% of observed max so peak segments glow fully.
-DENSITY_FOR_MAX_BRIGHTNESS = 40.0  # vehicles/km
+DENSITY_FOR_MAX_BRIGHTNESS = 200.0  # vehicles/km
 
 
 def create_animation():
@@ -672,7 +687,8 @@ def create_animation():
             gradient = COLOR_GRADIENTS.get(vtype, COLOR_GRADIENTS['Tram'])
             # Normalize so BASE_BRIGHTNESS → dark_color (matching static base), MAX → bright_color
             gp = (nb - BASE_BRIGHTNESS) / (MAX_BRIGHTNESS - BASE_BRIGHTNESS)
-            main_color = interpolate_color(gradient['dark'], gradient['bright'], max(0.0, gp))
+            gp = max(0.0, gp) ** 0.5  # sqrt curve: line brightens faster (25% density → 50% color)
+            main_color = interpolate_color(gradient['dark'], gradient['bright'], gp)
             bh = gradient['bright']
             r, g, b = int(bh[1:3],16)/255, int(bh[3:5],16)/255, int(bh[5:7],16)/255
             bright_data[vtype]['segs'].append(segment_arrays[idx])
