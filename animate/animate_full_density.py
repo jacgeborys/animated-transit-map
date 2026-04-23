@@ -54,8 +54,8 @@ GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 # Animation settings
 # FPS = 20
 # DURATION = 90  # seconds
-FPS = 25
-DURATION = 180  # seconds
+FPS = 20
+DURATION = 60  # seconds
 HOURS = 21  # hours of transit to show
 FFMPEG_PATH = r"C:\ffmpeg\bin\ffmpeg.exe"
 VEHICLE_FILTER = None  # 'Tram', 'Bus', 'Train', or None for all
@@ -115,8 +115,8 @@ COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4F
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
-GLOW_WIDTH = 4.0
-GLOW_ALPHA = 0.7
+GLOW_WIDTH = 8.0
+GLOW_ALPHA = 0.8
 BASE_BRIGHTNESS = 0.2
 MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
@@ -148,15 +148,15 @@ BACKGROUND_LAYERS = {
 LAYER_STYLES = {
     'forests':   {'fc': '#162e16', 'ec': 'none',    'lw': 0,   'zorder': 1},
     'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
+    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 4},  # default (lowest tier)
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
 ROAD_HIGHWAY_FIELD = 'fclass'
 ROAD_TIERS = [
-    ({'motorway', 'motorway_link', 'expressway'},        1.4),
-    ({'trunk', 'trunk_link', 'primary', 'primary_link'}, 0.85),
-    ({'secondary', 'secondary_link'},                    0.5),
+    ({'motorway', 'motorway_link', 'expressway'},        1.8),
+    ({'trunk', 'trunk_link', 'primary', 'primary_link'}, 1.0),
+    ({'secondary', 'secondary_link'},                    0.7),
 ]
 
 STREAK_LENGTH = 150
@@ -492,6 +492,19 @@ def create_animation():
            bbox=dict(boxstyle='round', facecolor='black', alpha=0.7), zorder=100)
     ax.text(0.98, 0.02, "© Jacek Gęborys", transform=ax.transAxes, fontsize=12, color='white',
            verticalalignment='bottom', horizontalalignment='right', alpha=0.6, zorder=100)
+
+    # Static legend — bottom right, no frame
+    legend_items = [
+        ('Train', '▲', COLORS['Train']),
+        ('Metro', '■', COLORS['Metro']),
+        ('Tram',  '◆', COLORS['Tram']),
+        ('Bus',   '●', COLORS['Bus']),
+    ]
+    for i, (label, marker, color) in enumerate(legend_items):
+        y = 0.22 - i * 0.04
+        ax.text(0.98, y, f"{marker}  {label}", transform=ax.transAxes,
+                fontsize=11, color=color, verticalalignment='center',
+                horizontalalignment='right', alpha=0.85, zorder=100)
 
     # Animation state
     segment_vehicle_visits = [[] for _ in range(len(segments))]
