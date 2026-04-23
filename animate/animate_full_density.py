@@ -52,8 +52,10 @@ _gtfs_dirs = sorted((PROJECT_ROOT / "data" / "raw").glob("warsaw_gtfs_*"))
 GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 
 # Animation settings
-FPS = 25
-DURATION = 180  # seconds
+FPS = 20
+DURATION = 90  # seconds
+# FPS = 25
+# DURATION = 180  # seconds
 HOURS = 21  # hours of transit to show
 FFMPEG_PATH = r"C:\ffmpeg\bin\ffmpeg.exe"
 VEHICLE_FILTER = None  # 'Tram', 'Bus', 'Train', or None for all
@@ -75,7 +77,7 @@ FRAME_SIZE = 20000  # Base frame size (metres)
 # Dynamic zoom settings
 # Zoom timeline follows the day: wide at dawn, tight at noon, back out by 14:00
 ZOOM_START_SIZE  = 30000   # 1.5x base — zoomed out at animation start (~4:00)
-ZOOM_MIN_SIZE    = 14000   # 0.7x base — tightest zoom at noon (12:00)
+ZOOM_MIN_SIZE    = 10000   # 0.7x base — tightest zoom at noon (12:00)
 ZOOM_END_SIZE    = FRAME_SIZE  # back to base by 14:00, held for rest of day
 ZOOM_IN_START_H  = 4       # hour when zoom-in begins
 ZOOM_IN_END_H    = 7      # hour when tightest zoom is reached
@@ -112,12 +114,13 @@ DEFAULT_SPEED = 4.7  # fallback
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4FC3F7'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
 VEHICLE_SIZES = 0.8 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
-LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.0}
+LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
 GLOW_WIDTH = 4.0
 GLOW_ALPHA = 0.7
 BASE_BRIGHTNESS = 0.15
 MAX_BRIGHTNESS = 1.0
-OUTLINE_COLORS = {'Tram': '#E63946', 'Bus': '#7209B7', 'Train': '#2A9D8F', 'Metro': '#0288D1'}
+OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
+VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Color gradients for density visualization
 COLOR_GRADIENTS = {
@@ -143,9 +146,9 @@ BACKGROUND_LAYERS = {
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#060d06', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'water':     {'fc': '#05101a', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'roads':     {'fc': 'none',    'ec': '#1f1f1f', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
+    'forests':   {'fc': '#0d1a0d', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'water':     {'fc': '#0a1e2e', 'ec': 'none',    'lw': 0,   'zorder': 2},
+    'roads':     {'fc': 'none',    'ec': '#2a2a2a', 'lw': 0.3, 'zorder': 4},  # default (lowest tier)
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
@@ -160,7 +163,7 @@ STREAK_LENGTH = 150
 
 # Density calculation settings
 ROLLING_WINDOW_MINUTES = 15  # Count vehicles in past 10 minutes
-MAX_BRIGHTNESS_AT_PERCENTILE = 0.15  # 3% of estimated peak = max brightness (estimation is inflated)
+MAX_BRIGHTNESS_AT_PERCENTILE = 0.30  # 30% of estimated peak = max brightness (estimation is inflated)
 
 
 def create_animation():
@@ -265,13 +268,26 @@ def create_animation():
         logger.info(f"Loading stop times from {GTFS_STOP_TIMES.parent.name}...")
         trip_ids_needed = set(schedule['trip_id'].unique())
         st_raw = pd.read_csv(GTFS_STOP_TIMES, low_memory=False)
-        st_raw = st_raw[st_raw['trip_id'].isin(trip_ids_needed)]
 
         def _parse_time(t):
             h, m, s = t.split(':')
             return int(h) * 3600 + int(m) * 60 + int(s)
 
+        # Build template lookup for frequency-based trips (e.g. metro: M1:PcM:KAB__25200)
+        # Template trips have times starting at 00:00:00 — we add the departure offset
+        freq_templates = {}
         for trip_id, grp in st_raw.groupby('trip_id'):
+            grp = grp.sort_values('stop_sequence')
+            max_dist = grp['shape_dist_traveled'].max()
+            if max_dist <= 0 or len(grp) < 2:
+                continue
+            offsets = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
+            progresses = (grp['shape_dist_traveled'] / max_dist).values.astype(np.float64)
+            freq_templates[trip_id] = (offsets, progresses)
+
+        # Match schedule trips: direct match first, then frequency-based (template__offset)
+        st_filtered = st_raw[st_raw['trip_id'].isin(trip_ids_needed)]
+        for trip_id, grp in st_filtered.groupby('trip_id'):
             grp = grp.sort_values('stop_sequence')
             max_dist = grp['shape_dist_traveled'].max()
             if max_dist <= 0 or len(grp) < 2:
@@ -280,8 +296,23 @@ def create_animation():
             progresses = (grp['shape_dist_traveled'] / max_dist).values.astype(np.float64)
             trip_stop_schedule[trip_id] = (times, progresses)
 
-        logger.info(f"  Stop schedules loaded for {len(trip_stop_schedule):,} / {len(trip_ids_needed):,} trips")
-        logger.info(f"  Remaining trips will use speed-based fallback (e.g. Metro)")
+        # Frequency-based trips: resolve template__offset pattern
+        freq_resolved = 0
+        for trip_id in trip_ids_needed:
+            if trip_id in trip_stop_schedule:
+                continue
+            if '__' in trip_id:
+                parts = trip_id.rsplit('__', 1)
+                template_id, offset_str = parts[0], parts[1]
+                if template_id in freq_templates and offset_str.lstrip('-').isdigit():
+                    offsets, progresses = freq_templates[template_id]
+                    departure_sec = float(offset_str)
+                    trip_stop_schedule[trip_id] = (offsets + departure_sec, progresses)
+                    freq_resolved += 1
+
+        logger.info(f"  Direct stop schedules: {len(trip_stop_schedule) - freq_resolved:,} trips")
+        logger.info(f"  Frequency-based (metro etc.): {freq_resolved:,} trips")
+        logger.info(f"  Speed-based fallback: {len(trip_ids_needed) - len(trip_stop_schedule):,} trips")
     else:
         logger.warning("stop_times.txt not found — using speed-based interpolation for all vehicles")
 
@@ -742,6 +773,7 @@ def create_animation():
                 # Dots
                 xs, ys = [p.x for p in positions], [p.y for p in positions]
                 dots = ax.scatter(xs, ys, s=size, color=color, alpha=0.8,
+                          marker=VEHICLE_MARKERS[vtype],
                           edgecolors=outline_color, linewidths=0.6, zorder=80)
                 dynamic_artists.append(dots)
 
