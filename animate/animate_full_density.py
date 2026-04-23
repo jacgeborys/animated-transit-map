@@ -115,8 +115,8 @@ COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4F
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 22}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
-GLOW_WIDTH = 3.75
-GLOW_ALPHA = 0.9
+GLOW_WIDTH = 4.00
+GLOW_ALPHA = 0.7
 BASE_BRIGHTNESS = 0.2
 MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
@@ -133,10 +133,11 @@ COLOR_GRADIENTS = {
 
 # Z-order layering (background → trains → buses → trams → metro on top)
 Z_ORDERS = {
-    'Train': {'glow': 10, 'line': 20},
-    'Bus':   {'glow': 30, 'line': 40},
-    'Tram':  {'glow': 50, 'line': 60},
-    'Metro': {'glow': 70, 'line': 80},  # metro always on top — only 2 lines, very distinct
+    'Metro': {'glow': 10, 'line': 20},
+    'Train': {'glow': 30, 'line': 40},
+    'Bus':   {'glow': 50, 'line': 60},
+    'Tram':  {'glow': 70, 'line': 80},
+
 }
 
 # Background map layers (OSM data)
@@ -154,16 +155,16 @@ BACKGROUND_LAYERS = {
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#162e16', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'parks':     {'fc': '#1a3d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'meadow':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'leisure':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'leisure_relations':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'grass':     {'fc': '#2e4d1a', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'cemeteries': {'fc': '#1a2e2e', 'ec': 'none',    'lw': 0,   'zorder': 5},
-    'allotments': {'fc': '#1a2e2e', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'forests':   {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'parks':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'meadow':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'leisure':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'leisure_relations':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'grass':     {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'cemeteries': {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
+    'allotments': {'fc': '#152b15', 'ec': 'none',    'lw': 0,   'zorder': 5},
     'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 4},  # default (lowest tier)
+    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 1},  # default (lowest tier)
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
@@ -183,7 +184,7 @@ SEGMENT_TRACKING_STEP = 10  # real seconds between segment position checks (inde
 # Segments above this value are clamped to full brightness.
 # Tune based on "Observed max density" printed at end of each run.
 # Rule of thumb: set to ~70-80% of observed max so peak segments glow fully.
-DENSITY_FOR_MAX_BRIGHTNESS = 200.0  # vehicles/km
+DENSITY_FOR_MAX_BRIGHTNESS = 1000.0  # vehicles/km
 
 
 def create_animation():
@@ -487,7 +488,7 @@ def create_animation():
     for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
         z = Z_ORDERS[vtype]
         glow = LineCollection([], linewidths=GLOW_WIDTH, capstyle='round', joinstyle='round', zorder=z['glow'])
-        main = LineCollection([], linewidths=LINE_WIDTHS.get(vtype, 1.5), capstyle='round', joinstyle='round', zorder=z['line'])
+        main = LineCollection([], linewidths=LINE_WIDTHS.get(vtype, 1.5), capstyle='round', joinstyle='round', zorder=z['line'] + 0.5)
         streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.2, capstyle='round', zorder=70)
         ax.add_collection(glow)
         ax.add_collection(main)
@@ -689,10 +690,11 @@ def create_animation():
             gp = (nb - BASE_BRIGHTNESS) / (MAX_BRIGHTNESS - BASE_BRIGHTNESS)
             gp = max(0.0, gp) ** 0.5  # sqrt curve: line brightens faster (25% density → 50% color)
             main_color = interpolate_color(gradient['dark'], gradient['bright'], gp)
+            mr, mg, mb = int(main_color[1:3],16)/255, int(main_color[3:5],16)/255, int(main_color[5:7],16)/255
             bh = gradient['bright']
             r, g, b = int(bh[1:3],16)/255, int(bh[3:5],16)/255, int(bh[5:7],16)/255
             bright_data[vtype]['segs'].append(segment_arrays[idx])
-            bright_data[vtype]['main_c'].append(main_color)
+            bright_data[vtype]['main_c'].append([mr, mg, mb, 1.0])
             bright_data[vtype]['glow_c'].append([r, g, b, max(0.0, gp * GLOW_ALPHA)])
 
         # Update segment collections
