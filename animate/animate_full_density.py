@@ -98,7 +98,7 @@ VEHICLE_SPEEDS = {'Tram': 4.5, 'Bus': 5.5, 'Train': 15.0, 'Metro': 10.0}
 DEFAULT_SPEED = 4.7  # fallback
 
 # Visual settings
-COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4FC3F7'}
+COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#2eafe6'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 24}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
@@ -138,14 +138,14 @@ BACKGROUND_LAYERS = {
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#071207', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'parks':     {'fc': '#071207', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'meadow':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'leisure':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'leisure_relations':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'grass':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'cemeteries': {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'allotments': {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'forests':   {'fc': '#0a1a0a', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'parks':     {'fc': '#0a1a0a', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'meadow':     {'fc': '#091709', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'leisure':     {'fc': '#091709', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'leisure_relations':     {'fc': '#091709', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'grass':     {'fc': '#091709', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'cemeteries': {'fc': '#091709', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'allotments': {'fc': '#091709', 'ec': 'none',    'lw': 0,   'zorder': 1},
     'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
     'roads':     {'fc': 'none',    'ec': '#4a4a4a', 'lw': 0.3, 'zorder': 3},
 }
@@ -153,9 +153,9 @@ LAYER_STYLES = {
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
 ROAD_HIGHWAY_FIELD = 'fclass'
 ROAD_TIERS = [
-    ({'motorway', 'motorway_link', 'expressway'},        2.0),
-    ({'trunk', 'trunk_link', 'primary', 'primary_link'}, 1.5),
-    ({'secondary', 'secondary_link'},                    0.6),
+    ({'motorway', 'motorway_link', 'expressway'},        2.5),
+    ({'trunk', 'trunk_link', 'primary', 'primary_link'}, 2.0),
+    ({'secondary', 'secondary_link'},                    1.5),
 ]
 
 STREAK_LENGTH = 250
@@ -410,7 +410,7 @@ def create_animation():
         z_order = Z_ORDERS.get(vtype, Z_ORDERS['Tram'])
 
         lc = LineCollection(segments_by_type[vtype], colors=line_color,
-                           linewidths=line_width, zorder=z_order['line'],
+                           linewidths=line_width, alpha=0.8, zorder=z_order['line'],
                            capstyle='round', joinstyle='round')
         ax.add_collection(lc)
 
@@ -423,11 +423,11 @@ def create_animation():
     vehicle_sc = {}
     for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
         z = Z_ORDERS[vtype]
-        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.2, capstyle='round', zorder=z['streak'])
+        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.4, capstyle='round', zorder=z['streak'])
         ax.add_collection(streak)
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
-                        color=COLORS[vtype], alpha=0.8, marker=VEHICLE_MARKERS[vtype],
+                        color=COLORS[vtype], alpha=0.9, marker=VEHICLE_MARKERS[vtype],
                         edgecolors=OUTLINE_COLORS[vtype], linewidths=0.8, zorder=z['vehicle'])
         vehicle_sc[vtype] = sc
 
@@ -437,7 +437,7 @@ def create_animation():
     count_text = ax.text(0.02, 0.92, "", transform=ax.transAxes, fontsize=16, color='white',
            verticalalignment='top',
            bbox=dict(boxstyle='round', facecolor='black', alpha=0.7), zorder=100)
-    ax.text(0.98, 0.02, "© Jacek Gęborys", transform=ax.transAxes, fontsize=12, color='white',
+    ax.text(0.98, 0.02, "© 2026 Jacek Gęborys", transform=ax.transAxes, fontsize=12, color='white',
            verticalalignment='bottom', horizontalalignment='right', alpha=0.6, zorder=100)
 
     # Static legend — bottom right, no frame
@@ -562,7 +562,8 @@ def create_animation():
     writer = animation.FFMpegWriter(fps=FPS, codec='libx264', bitrate=5000,
                                    metadata={'artist': 'Jacek Gęborys'},
                                    extra_args=['-pix_fmt', 'yuv420p',
-                                               '-movflags', '+frag_keyframe+empty_moov'])
+                                               '-g', str(FPS),  # keyframe every 1s → small playable fragments
+                                               '-movflags', '+frag_keyframe+empty_moov+default_base_moof'])
 
     logger.info(f"Rendering {total_frames} frames (FPS={FPS}, Duration={DURATION}s)...")
     logger.info("Frames are written to disk incrementally — safe to interrupt at any time.")
