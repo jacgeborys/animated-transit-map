@@ -56,7 +56,8 @@ GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 # DURATION = 90  # seconds
 FPS = 30
 DURATION = 210  # seconds
-HOURS = 21  # hours of transit to show
+HOURS = 20  # hours of transit to show
+# HOURS = 21  # hours of transit to show
 FFMPEG_PATH = r"C:\ffmpeg\bin\ffmpeg.exe"
 VEHICLE_FILTER = None  # 'Tram', 'Bus', 'Train', or None for all
 
@@ -115,9 +116,10 @@ COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#4F
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 24}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
+LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
 GLOW_WIDTH = 4.50
 GLOW_ALPHA = 0.7
-BASE_BRIGHTNESS = 0.2
+BASE_BRIGHTNESS = 0.3
 MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
@@ -155,26 +157,24 @@ BACKGROUND_LAYERS = {
     'roads':     OSM_DIR / 'roads.shp',
 }
 LAYER_STYLES = {
-    'forests':   {'fc': '#070f07', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'parks':     {'fc': '#070f07', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'meadow':     {'fc': '#050a05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'leisure':     {'fc': '#050a05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'leisure_relations':     {'fc': '#050a05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'grass':     {'fc': '#050a05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'cemeteries': {'fc': '#050a05', 'ec': 'none',    'lw': 0,   'zorder': 1},
-    'allotments': {'fc': '#050a05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'forests':   {'fc': '#071207', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'parks':     {'fc': '#071207', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'meadow':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'leisure':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'leisure_relations':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'grass':     {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'cemeteries': {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
+    'allotments': {'fc': '#050d05', 'ec': 'none',    'lw': 0,   'zorder': 1},
     'water':     {'fc': '#0f2e45', 'ec': 'none',    'lw': 0,   'zorder': 2},
-    'roads':     {'fc': 'none',    'ec': '#383838', 'lw': 0.5, 'zorder': 3},
+    'roads':     {'fc': 'none',    'ec': '#4a4a4a', 'lw': 0.3, 'zorder': 3},
 }
 
 # Road width tiers by highway class — field name is 'fclass' in Geofabrik OSM exports
 ROAD_HIGHWAY_FIELD = 'fclass'
-ROAD_OUTLINE_COLOR = '#505050'   # outline drawn behind road lines — slightly brighter than road color (#383838)
-ROAD_OUTLINE_WIDTH_FACTOR = 1.1  # outline width relative to base road line width
 ROAD_TIERS = [
     ({'motorway', 'motorway_link', 'expressway'},        2.0),
     ({'trunk', 'trunk_link', 'primary', 'primary_link'}, 1.5),
-    ({'secondary', 'secondary_link'},                    1.0),
+    ({'secondary', 'secondary_link'},                    0.6),
 ]
 
 STREAK_LENGTH = 250
@@ -421,14 +421,11 @@ def create_animation():
             style = LAYER_STYLES[name]
             if name == 'roads' and ROAD_HIGHWAY_FIELD in bg.columns:
                 # Draw road tiers with varying widths (thicker = higher class)
-                # Each tier: outline pass first (slightly wider, slightly brighter), then road on top
                 drawn = 0
                 classified = set()
                 for classes, lw in ROAD_TIERS:
                     tier_roads = bg[bg[ROAD_HIGHWAY_FIELD].isin(classes)]
                     if not tier_roads.empty:
-                        tier_roads.plot(ax=ax, facecolor='none', edgecolor=ROAD_OUTLINE_COLOR,
-                                        linewidth=lw * ROAD_OUTLINE_WIDTH_FACTOR, zorder=style['zorder'])
                         tier_roads.plot(ax=ax, facecolor='none', edgecolor=style['ec'],
                                         linewidth=lw, zorder=style['zorder'])
                         drawn += len(tier_roads)
@@ -436,12 +433,10 @@ def create_animation():
                 # Draw remaining roads at default (lowest tier) width
                 rest = bg[~bg[ROAD_HIGHWAY_FIELD].isin(classified)]
                 if not rest.empty:
-                    rest.plot(ax=ax, facecolor='none', edgecolor=ROAD_OUTLINE_COLOR,
-                              linewidth=style['lw'] * ROAD_OUTLINE_WIDTH_FACTOR, zorder=style['zorder'])
                     rest.plot(ax=ax, facecolor='none', edgecolor=style['ec'],
                               linewidth=style['lw'], zorder=style['zorder'])
                     drawn += len(rest)
-                logger.info(f"  {name}: {drawn} features drawn (tiered widths + outlines)")
+                logger.info(f"  {name}: {drawn} features drawn (tiered widths)")
             else:
                 bg.plot(ax=ax, facecolor=style['fc'], edgecolor=style['ec'],
                         linewidth=style['lw'], zorder=style['zorder'])
