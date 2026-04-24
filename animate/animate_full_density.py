@@ -67,8 +67,8 @@ ZOOM_START_SIZE  = 30000   # 1.5x base — zoomed out at animation start (~4:00)
 ZOOM_MIN_SIZE    = 8000   # 0.7x base — tightest zoom at noon (12:00)
 ZOOM_END_SIZE    = FRAME_SIZE  # back to base by 14:00, held for rest of day
 ZOOM_IN_START_H  = 4       # hour when zoom-in begins
-ZOOM_IN_END_H    = 7      # hour when tightest zoom is reached
-ZOOM_OUT_END_H   = 10     # hour when zoom settles back to base
+ZOOM_IN_END_H    = 6.5      # hour when tightest zoom is reached
+ZOOM_OUT_END_H   = 8     # hour when zoom settles back to base
 
 
 def get_frame_size(current_seconds):
@@ -99,11 +99,11 @@ DEFAULT_SPEED = 4.7  # fallback
 
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#2eafe6'}
-VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 26}
+VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 19, 'Metro': 26}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
-LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
+LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.8}
 LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
-OUTLINE_COLORS = {'Tram': '#330006', 'Bus': '#1f0033', 'Train': '#003320', 'Metro': '#001f38'}
+OUTLINE_COLORS = {'Tram': '#59000c', 'Bus': '#350059', 'Train': '#005937', 'Metro': '#003761'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Static base colors for transit lines
@@ -423,7 +423,7 @@ def create_animation():
     vehicle_sc = {}
     for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
         z = Z_ORDERS[vtype]
-        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.12, capstyle='round', zorder=z['streak'])
+        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.25, capstyle='round', zorder=z['streak'])
         ax.add_collection(streak)
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
