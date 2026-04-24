@@ -99,11 +99,11 @@ DEFAULT_SPEED = 4.7  # fallback
 
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#2eafe6'}
-VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 24}
+VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 26}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
 LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
-OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
+OUTLINE_COLORS = {'Tram': '#330006', 'Bus': '#1f0033', 'Train': '#003320', 'Metro': '#001f38'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Static base colors for transit lines
@@ -158,7 +158,7 @@ ROAD_TIERS = [
     ({'secondary', 'secondary_link'},                    1.5),
 ]
 
-STREAK_LENGTH = 250
+STREAK_LENGTH = 200
 
 
 def create_animation():
@@ -423,7 +423,7 @@ def create_animation():
     vehicle_sc = {}
     for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
         z = Z_ORDERS[vtype]
-        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.4, capstyle='round', zorder=z['streak'])
+        streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.12, capstyle='round', zorder=z['streak'])
         ax.add_collection(streak)
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
@@ -442,7 +442,7 @@ def create_animation():
 
     # Static legend — bottom right, no frame
     legend_items = [
-        ('Train', '▲', COLORS['Train']),
+        ('SKM Train', '▲', COLORS['Train']),
         ('Metro', '■', COLORS['Metro']),
         ('Tram',  '◆', COLORS['Tram']),
         ('Bus',   '●', COLORS['Bus']),
