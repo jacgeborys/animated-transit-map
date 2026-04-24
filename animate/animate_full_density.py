@@ -260,22 +260,26 @@ def create_animation():
         freq_templates = {}
         for trip_id, grp in st_raw.groupby('trip_id'):
             grp = grp.sort_values('stop_sequence')
-            max_dist = grp['shape_dist_traveled'].max()
+            dist = grp['shape_dist_traveled'].values.astype(np.float64)
+            dist = dist - dist[0]  # shift so first stop is always at position 0
+            max_dist = dist.max()
             if max_dist <= 0 or len(grp) < 2:
                 continue
             offsets = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
-            progresses = (grp['shape_dist_traveled'] / max_dist).values.astype(np.float64)
+            progresses = dist / max_dist
             freq_templates[trip_id] = (offsets, progresses)
 
         # Match schedule trips: direct match first, then frequency-based (template__offset)
         st_filtered = st_raw[st_raw['trip_id'].isin(trip_ids_needed)]
         for trip_id, grp in st_filtered.groupby('trip_id'):
             grp = grp.sort_values('stop_sequence')
-            max_dist = grp['shape_dist_traveled'].max()
+            dist = grp['shape_dist_traveled'].values.astype(np.float64)
+            dist = dist - dist[0]  # shift so first stop is always at position 0
+            max_dist = dist.max()
             if max_dist <= 0 or len(grp) < 2:
                 continue
             times = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
-            progresses = (grp['shape_dist_traveled'] / max_dist).values.astype(np.float64)
+            progresses = dist / max_dist
             trip_stop_schedule[trip_id] = (times, progresses)
 
         # Frequency-based trips: resolve template__offset pattern
