@@ -41,7 +41,7 @@ GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 # FPS = 20
 # DURATION = 90  # seconds
 FPS = 30
-DURATION = 210  # seconds
+DURATION = 180  # seconds
 HOURS = 20  # hours of transit to show
 # HOURS = 21  # hours of transit to show
 FFMPEG_PATH = r"C:\ffmpeg\bin\ffmpeg.exe"
@@ -98,7 +98,7 @@ VEHICLE_SPEEDS = {'Tram': 4.5, 'Bus': 5.5, 'Train': 15.0, 'Metro': 10.0}
 DEFAULT_SPEED = 4.7  # fallback
 
 # Visual settings
-COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#2eafe6'}
+COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#13c2fc'}
 VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 19, 'Metro': 26}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.8}
@@ -234,6 +234,10 @@ def create_animation():
 
     vehicle_desc = f"{VEHICLE_FILTER} " if VEHICLE_FILTER else ""
     logger.info(f"Schedule: {len(schedule)} {vehicle_desc}entries, {schedule['trip_id'].nunique()} trips")
+
+    # Mark the first stop of each trip — works regardless of whether GTFS uses 0- or 1-indexed sequences
+    min_seq = schedule.groupby('trip_id')['stop_sequence'].transform('min')
+    schedule['is_first_stop'] = schedule['stop_sequence'] == min_seq
 
     # Build route lookup
     route_lookup = {}
@@ -478,7 +482,7 @@ def create_animation():
         new_trips = schedule[
             (schedule['departure_seconds'] >= current_seconds - frame_duration/2) &
             (schedule['departure_seconds'] <= current_seconds + frame_duration/2) &
-            (schedule['stop_sequence'] == 1)
+            schedule['is_first_stop']
         ]
         for _, trip in new_trips.iterrows():
             trip_id = trip['trip_id']
