@@ -108,10 +108,10 @@ VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Static base colors for transit lines
 LINE_COLORS = {
-    'Tram':  '#3d0005',
-    'Bus':   '#2d0040',
-    'Train': '#0f3d38',
-    'Metro': '#001e30',
+    'Tram':  '#7a000a',
+    'Bus':   '#580080',
+    'Train': '#1e6b60',
+    'Metro': '#004a78',
 }
 
 # Z-order layering: Metro (bottom) → Train → Bus → Tram (top)
