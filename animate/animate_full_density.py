@@ -28,20 +28,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
-def interpolate_color(color1_hex, color2_hex, t):
-    """Interpolate between two hex colors based on t (0.0 to 1.0)"""
-    # Convert hex to RGB
-    c1 = tuple(int(color1_hex.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
-    c2 = tuple(int(color2_hex.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
-
-    # Interpolate
-    r = int(c1[0] + (c2[0] - c1[0]) * t)
-    g = int(c1[1] + (c2[1] - c1[1]) * t)
-    b = int(c1[2] + (c2[2] - c1[2]) * t)
-
-    # Convert back to hex
-    return f'#{r:02x}{g:02x}{b:02x}'
-
 # Configuration
 PROJECT_ROOT = Path(__file__).parent.parent
 ROUTE_LINES = PROJECT_ROOT / "data" / "processed" / "route_lines_continuous.shp"
@@ -117,20 +103,15 @@ VEHICLE_SIZES = {'Tram': 16, 'Bus': 12, 'Train': 19, 'Metro': 24}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.2}
 LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
-GLOW_WIDTH = 4.50
-GLOW_ALPHA = 0.7
-BASE_BRIGHTNESS = 0.3
-MAX_BRIGHTNESS = 1.0
 OUTLINE_COLORS = {'Tram': '#1a0003', 'Bus': '#0f0018', 'Train': '#001410', 'Metro': '#000e1a'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
-# Color gradients for density visualization
-# 'dark' matches static base network color; 'bright' is near-white/pastel for luminous glow at max density
-COLOR_GRADIENTS = {
-    'Tram':  {'dark': '#3d0005', 'bright': '#ffcccc'},
-    'Bus':   {'dark': '#2d0040', 'bright': '#e8b3ff'},
-    'Train': {'dark': '#0f3d38', 'bright': '#c2f0eb'},
-    'Metro': {'dark': '#001e30', 'bright': '#c4eaff'},
+# Static base colors for transit lines
+LINE_COLORS = {
+    'Tram':  '#3d0005',
+    'Bus':   '#2d0040',
+    'Train': '#0f3d38',
+    'Metro': '#001e30',
 }
 
 # Z-order layering: Metro (bottom) → Train → Bus → Tram (top)
@@ -178,15 +159,6 @@ ROAD_TIERS = [
 ]
 
 STREAK_LENGTH = 250
-
-# Density calculation settings
-ROLLING_WINDOW_MINUTES = 10
-SEGMENT_TRACKING_STEP = 10  # real seconds between segment position checks (independent of FPS/DURATION)
-# Direct brightness calibration — set to the vehicles/km value that should hit max brightness.
-# Segments above this value are clamped to full brightness.
-# Tune based on "Observed max density" printed at end of each run.
-# Rule of thumb: set to ~70-80% of observed max so peak segments glow fully.
-DENSITY_FOR_MAX_BRIGHTNESS = 1000.0  # vehicles/km
 
 
 def create_animation():
@@ -263,19 +235,6 @@ def create_animation():
     vehicle_desc = f"{VEHICLE_FILTER} " if VEHICLE_FILTER else ""
     logger.info(f"Schedule: {len(schedule)} {vehicle_desc}entries, {schedule['trip_id'].nunique()} trips")
 
-    # Map shape_ids to segment indices
-    route_to_segments = {}
-    for idx, segment in segments.iterrows():
-        # A merged segment serves multiple routes
-        for route_id in segment['route_ids_list']:
-            # Find all shape_ids for this route_id
-            matching_shapes = routes[routes['route_id'] == route_id]['shape_id'].tolist()
-            for shape_id in matching_shapes:
-                if shape_id not in route_to_segments:
-                    route_to_segments[shape_id] = []
-                if idx not in route_to_segments[shape_id]:
-                    route_to_segments[shape_id].append(idx)
-
     # Build route lookup
     route_lookup = {}
     for idx, row in routes.iterrows():
@@ -342,43 +301,21 @@ def create_animation():
     start_seconds = 4 * 3600
     duration_seconds = HOURS * 3600
 
-    density_for_max_brightness = DENSITY_FOR_MAX_BRIGHTNESS
-    logger.info(f"Brightness calibration: max brightness at {density_for_max_brightness:.1f} vehicles/km")
-
-    # Build spatial index for fast segment lookups
-    logger.info("Building spatial index for segments...")
-    from shapely.strtree import STRtree
-    segment_geometries = [seg.geometry.buffer(30) for _, seg in segments.iterrows()]
-    segment_spatial_index = STRtree(segment_geometries)
-
     # Pre-extract segment data to avoid repeated DataFrame lookups (major speedup!)
     logger.info("Pre-extracting segment data for faster rendering...")
     segment_coords = []
     segment_vtypes = []
-    segment_lengths = []
 
     for idx, segment in segments.iterrows():
         if hasattr(segment.geometry, 'coords'):
             x, y = segment.geometry.xy
             segment_coords.append((x, y))
             segment_vtypes.append(segment.get('vehicle_ty', 'Tram'))
-            segment_lengths.append(segment['length_km'])
         else:
             segment_coords.append(None)
             segment_vtypes.append('Tram')
-            segment_lengths.append(0)
 
     logger.info(f"Pre-extracted {len(segment_coords)} segment geometries")
-
-    # Pre-convert to Nx2 arrays for LineCollection (avoids per-frame conversion)
-    segment_arrays = []
-    for idx in range(len(segment_coords)):
-        coords = segment_coords[idx]
-        if coords is not None:
-            x, y = coords
-            segment_arrays.append(np.column_stack([x, y]))
-        else:
-            segment_arrays.append(None)
 
     # Setup figure (high quality)
     fig, ax = plt.subplots(figsize=(16, 12), facecolor='#000000')
@@ -468,12 +405,11 @@ def create_animation():
         if not segments_by_type[vtype]:
             continue
 
-        gradient = COLOR_GRADIENTS.get(vtype, COLOR_GRADIENTS['Tram'])
-        dark_color = gradient['dark']
+        line_color = LINE_COLORS.get(vtype, '#3d0005')
         line_width = LINE_WIDTHS.get(vtype, 1.5)
         z_order = Z_ORDERS.get(vtype, Z_ORDERS['Tram'])
 
-        lc = LineCollection(segments_by_type[vtype], colors=dark_color,
+        lc = LineCollection(segments_by_type[vtype], colors=line_color,
                            linewidths=line_width, zorder=z_order['line'],
                            capstyle='round', joinstyle='round')
         ax.add_collection(lc)
@@ -483,20 +419,12 @@ def create_animation():
     logger.info("Static base network added! Will only draw bright segments each frame.")
 
     # Pre-create all dynamic artists — updated each frame, never created/destroyed
-    seg_glow_lc = {}
-    seg_main_lc = {}
     streak_lc = {}
     vehicle_sc = {}
     for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
         z = Z_ORDERS[vtype]
-        glow = LineCollection([], linewidths=GLOW_WIDTH, capstyle='round', joinstyle='round', zorder=z['glow'])
-        main = LineCollection([], linewidths=LINE_WIDTHS.get(vtype, 1.5), capstyle='round', joinstyle='round', zorder=z['line'] + 0.5)
         streak = LineCollection([], colors=COLORS[vtype], linewidths=3, alpha=0.2, capstyle='round', zorder=z['streak'])
-        ax.add_collection(glow)
-        ax.add_collection(main)
         ax.add_collection(streak)
-        seg_glow_lc[vtype] = glow
-        seg_main_lc[vtype] = main
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
                         color=COLORS[vtype], alpha=0.8, marker=VEHICLE_MARKERS[vtype],
@@ -526,11 +454,8 @@ def create_animation():
                 horizontalalignment='right', alpha=0.85, zorder=100)
 
     # Animation state
-    segment_vehicle_visits = [[] for _ in range(len(segments))]
     vehicles = []
     total_frames = FPS * DURATION
-    rolling_window_seconds = ROLLING_WINDOW_MINUTES * 60
-    observed_max_density = 0.0
 
     def update_frame(frame_num):
         nonlocal vehicles
@@ -564,10 +489,10 @@ def create_animation():
                     end_abs = current_seconds + route_info['geometry'].length / speed
                     sched = None
                 vehicles.append({
-                    'id': trip_id, 'shape_id': shape_id,
+                    'shape_id': shape_id,
                     'vehicle': route_info['vehicle'], 'route': route_info['geometry'],
-                    'route_id': route_info['route_id'], 'start_time': current_seconds,
-                    'end_abs': end_abs, 'sched': sched, 'current_segment': None
+                    'start_time': current_seconds,
+                    'end_abs': end_abs, 'sched': sched,
                 })
 
         # Update vehicles — sub-stepped segment tracking + single draw position
@@ -576,54 +501,10 @@ def create_animation():
         streaks_by_type  = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
 
         for vehicle in vehicles:
-            expired = current_seconds > vehicle['end_abs']
-
-            # --- Segment tracking: sub-stepped at SEGMENT_TRACKING_STEP real seconds ---
-            track_from = vehicle.get('last_tracked', vehicle['start_time'])
-            track_to   = vehicle['end_abs'] if expired else current_seconds
-
-            if track_from < track_to:
-                t = track_from + SEGMENT_TRACKING_STEP
-                track_times = []
-                while t < track_to:
-                    track_times.append(t)
-                    t += SEGMENT_TRACKING_STEP
-                track_times.append(track_to)
-
-                for t in track_times:
-                    if vehicle['sched'] is not None:
-                        prog_t = float(np.interp(t, vehicle['sched'][0], vehicle['sched'][1]))
-                    else:
-                        elapsed = t - vehicle['start_time']
-                        dur = vehicle['end_abs'] - vehicle['start_time']
-                        prog_t = elapsed / dur if dur > 0 else 0
-
-                    pos_t = vehicle['route'].interpolate(prog_t, normalized=True)
-                    old_seg = vehicle['current_segment']
-                    new_seg = None
-                    shape_id = vehicle['shape_id']
-                    if shape_id in route_to_segments:
-                        nearby = segment_spatial_index.query(pos_t)
-                        for seg_idx in route_to_segments[shape_id]:
-                            if seg_idx in nearby:
-                                new_seg = seg_idx
-                                break
-                    if new_seg != old_seg:
-                        if old_seg is not None:
-                            for visit in reversed(segment_vehicle_visits[old_seg]):
-                                if visit[0] == vehicle['id'] and visit[2] is None:
-                                    visit[2] = t
-                                    break
-                        if new_seg is not None:
-                            segment_vehicle_visits[new_seg].append([vehicle['id'], t, None])
-                            vehicle['current_segment'] = new_seg
-
-                vehicle['last_tracked'] = track_to
-
-            if expired:
+            if current_seconds > vehicle['end_abs']:
                 continue
 
-            # --- Drawing: position at current_seconds only ---
+            # --- Drawing: position at current_seconds ---
             if vehicle['sched'] is not None:
                 progress = float(np.interp(current_seconds, vehicle['sched'][0], vehicle['sched'][1]))
             else:
@@ -651,66 +532,6 @@ def create_animation():
 
         vehicles = active_vehicles
 
-        # Brightness calculation
-        segment_brightness = np.full(len(segments), BASE_BRIGHTNESS, dtype=np.float32)
-        cutoff_time = current_seconds - rolling_window_seconds
-        active_segments = set()
-        for idx, visits in enumerate(segment_vehicle_visits):
-            if visits:
-                segment_vehicle_visits[idx] = [v for v in visits if v[2] is None or v[2] >= cutoff_time]
-                if segment_vehicle_visits[idx]:
-                    active_segments.add(idx)
-
-        for idx in active_segments:
-            total_vs = 0
-            for _, entry_time, exit_time in segment_vehicle_visits[idx]:
-                a = max(entry_time, cutoff_time)
-                b = min(exit_time if exit_time else current_seconds, current_seconds)
-                if b > a:
-                    total_vs += b - a
-            occupancy = total_vs / rolling_window_seconds
-            length_km = segment_lengths[idx]
-            density = occupancy / length_km if length_km > 0 else 0
-
-            nonlocal observed_max_density
-            if density > observed_max_density:
-                observed_max_density = density
-
-            ratio = density / density_for_max_brightness if density_for_max_brightness > 0 else 0
-            segment_brightness[idx] = min(BASE_BRIGHTNESS + (MAX_BRIGHTNESS - BASE_BRIGHTNESS) * ratio, MAX_BRIGHTNESS)
-
-        # Build per-type segment data for LineCollections
-        bright_data = {vt: {'segs': [], 'main_c': [], 'glow_c': []} for vt in ['Tram', 'Bus', 'Train', 'Metro']}
-        for idx in active_segments:
-            brightness = segment_brightness[idx]
-            if brightness <= BASE_BRIGHTNESS + 0.001 or segment_arrays[idx] is None:
-                continue
-            vtype = segment_vtypes[idx]
-            nb = min(max(brightness, 0.0), 1.0)
-            gradient = COLOR_GRADIENTS.get(vtype, COLOR_GRADIENTS['Tram'])
-            # Normalize so BASE_BRIGHTNESS → dark_color (matching static base), MAX → bright_color
-            gp = (nb - BASE_BRIGHTNESS) / (MAX_BRIGHTNESS - BASE_BRIGHTNESS)
-            gp = max(0.0, gp) ** 0.5  # sqrt curve: line brightens faster (25% density → 50% color)
-            main_color = interpolate_color(gradient['dark'], gradient['bright'], gp)
-            mr, mg, mb = int(main_color[1:3],16)/255, int(main_color[3:5],16)/255, int(main_color[5:7],16)/255
-            bh = gradient['bright']
-            r, g, b = int(bh[1:3],16)/255, int(bh[3:5],16)/255, int(bh[5:7],16)/255
-            bright_data[vtype]['segs'].append(segment_arrays[idx])
-            bright_data[vtype]['main_c'].append([mr, mg, mb, 1.0])
-            bright_data[vtype]['glow_c'].append([r, g, b, max(0.0, gp * GLOW_ALPHA)])
-
-        # Update segment collections
-        for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
-            d = bright_data[vtype]
-            if d['segs']:
-                seg_glow_lc[vtype].set_segments(d['segs'])
-                seg_glow_lc[vtype].set_color(d['glow_c'])
-                seg_main_lc[vtype].set_segments(d['segs'])
-                seg_main_lc[vtype].set_color(d['main_c'])
-            else:
-                seg_glow_lc[vtype].set_segments([])
-                seg_main_lc[vtype].set_segments([])
-
         # Update streaks and vehicle dots
         for vtype in ['Train', 'Bus', 'Tram', 'Metro']:
             streak_lc[vtype].set_segments(streaks_by_type[vtype] if streaks_by_type[vtype] else [])
@@ -726,8 +547,6 @@ def create_animation():
         if frame_num % 60 == 0:
             pct = frame_num / total_frames * 100
             logger.info(f"Frame {frame_num}/{total_frames} ({pct:.0f}%) - {len(vehicles)} active")
-            logger.info(f"  Brightness range: {segment_brightness.min():.3f} - {segment_brightness.max():.3f}")
-            logger.info(f"  Observed max density so far: {observed_max_density:.1f} vehicles/km")
 
     # Save — incremental frame-by-frame rendering (safe to interrupt)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
@@ -765,10 +584,6 @@ def create_animation():
     plt.close()
 
     logger.info(f"Done! {OUTPUT}")
-    logger.info(f"Density statistics:")
-    logger.info(f"  Observed max density:          {observed_max_density:.1f} vehicles/km")
-    logger.info(f"  DENSITY_FOR_MAX_BRIGHTNESS:    {density_for_max_brightness:.1f} vehicles/km")
-    logger.info(f"  Tip: set DENSITY_FOR_MAX_BRIGHTNESS = {observed_max_density * 0.75:.1f} to push peak segments to full brightness")
     return 0
 
 
