@@ -460,11 +460,11 @@ def create_animation():
            verticalalignment='top', fontweight='bold', fontfamily=FONT, zorder=100)
     count_text = ax.text(0.02, 0.92, "", transform=ax.transAxes, fontsize=16, color='white',
            verticalalignment='top', fontfamily=FONT, zorder=100)
-    ax.text(0.98, 0.035, "© 2026 Jacek Gęborys", transform=ax.transAxes, fontsize=10,
-           color='white', verticalalignment='bottom', horizontalalignment='right',
+    ax.text(0.98, 0.97, "© 2026 Jacek Gęborys", transform=ax.transAxes, fontsize=12,
+           color='white', verticalalignment='top', horizontalalignment='right',
            alpha=0.55, fontfamily=FONT, zorder=100)
-    ax.text(0.98, 0.02, "Data: ZTM Warsaw via mkuran.pl  ·  BDOT10k", transform=ax.transAxes,
-           fontsize=8, color='white', verticalalignment='bottom', horizontalalignment='right',
+    ax.text(0.98, 0.955, "Data: ZTM Warsaw via mkuran.pl  ·  BDOT10k", transform=ax.transAxes,
+           fontsize=10, color='white', verticalalignment='top', horizontalalignment='right',
            alpha=0.45, fontfamily=FONT, zorder=100)
 
     # Static legend — bottom right, no frame
@@ -480,9 +480,9 @@ def create_animation():
                 fontsize=11, color=color, verticalalignment='center',
                 horizontalalignment='right', alpha=0.85, fontfamily=FONT, zorder=100)
 
-    # Time-of-day progress bar — upper right, clear of title and credits
+    # Time-of-day progress bar — bottom of frame
     from matplotlib.patches import Rectangle
-    BAR_Y      = 0.938   # vertical centre of bar in axes coords
+    BAR_Y      = 0.038   # vertical centre of bar in axes coords
     BAR_H      = 0.012   # bar height
     BAR_X0     = 0.05    # left edge
     BAR_X1     = 0.95    # right edge
@@ -496,6 +496,11 @@ def create_animation():
     # Bar spans the full 24h day — animation fills it starting from 4am
     bar_day_s   = 24 * 3600   # full bar = 0:00 → 24:00
     bar_anim_x0 = BAR_X0 + (start_seconds / bar_day_s) * BAR_W  # x position of 4:00
+
+    # Pre-filled portion 0:00→4:00 (hours before animation start)
+    ax.add_patch(Rectangle((BAR_X0, BAR_Y - BAR_H / 2), bar_anim_x0 - BAR_X0, BAR_H,
+                            transform=ax.transAxes, color='#555555', alpha=0.85,
+                            zorder=99, clip_on=False))
 
     # Filled progress portion — left edge fixed at 4am, width updated each frame
     bar_fill = Rectangle((bar_anim_x0, BAR_Y - BAR_H / 2), 0, BAR_H,
@@ -513,9 +518,9 @@ def create_animation():
                 transform=ax.transAxes, color='white', lw=0.6, alpha=0.5,
                 zorder=100, clip_on=False)
         label = f"{h % 24:02d}:00"
-        ax.text(x, BAR_Y - BAR_H / 2 - 0.008, label,
-                transform=ax.transAxes, fontsize=10, color='white', alpha=0.5,
-                ha='center', va='top', fontfamily=FONT, zorder=100, clip_on=False)
+        ax.text(x, BAR_Y + BAR_H / 2 + 0.008, label,
+                transform=ax.transAxes, fontsize=12, color='white', alpha=0.5,
+                ha='center', va='bottom', fontfamily=FONT, zorder=100, clip_on=False)
 
     # Current-time marker dot — position updated each frame
     (bar_marker,) = ax.plot([], [], 'o', color='white', ms=5, alpha=0.95,
