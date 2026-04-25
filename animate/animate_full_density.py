@@ -454,14 +454,18 @@ def create_animation():
                         edgecolors=OUTLINE_COLORS[vtype], linewidths=0.8, zorder=z['vehicle'])
         vehicle_sc[vtype] = sc
 
+    FONT = 'Segoe UI'
+
     title_text = ax.text(0.02, 0.98, "", transform=ax.transAxes, fontsize=24, color='white',
-           verticalalignment='top', fontweight='bold',
-           bbox=dict(boxstyle='round', facecolor='black', alpha=0.7), zorder=100)
+           verticalalignment='top', fontweight='bold', fontfamily=FONT, zorder=100)
     count_text = ax.text(0.02, 0.92, "", transform=ax.transAxes, fontsize=16, color='white',
-           verticalalignment='top',
-           bbox=dict(boxstyle='round', facecolor='black', alpha=0.7), zorder=100)
-    ax.text(0.98, 0.02, "© 2026 Jacek Gęborys", transform=ax.transAxes, fontsize=12, color='white',
-           verticalalignment='bottom', horizontalalignment='right', alpha=0.6, zorder=100)
+           verticalalignment='top', fontfamily=FONT, zorder=100)
+    ax.text(0.98, 0.035, "© 2026 Jacek Gęborys", transform=ax.transAxes, fontsize=10,
+           color='white', verticalalignment='bottom', horizontalalignment='right',
+           alpha=0.55, fontfamily=FONT, zorder=100)
+    ax.text(0.98, 0.02, "Data: ZTM Warsaw via mkuran.pl  ·  BDOT10k", transform=ax.transAxes,
+           fontsize=8, color='white', verticalalignment='bottom', horizontalalignment='right',
+           alpha=0.45, fontfamily=FONT, zorder=100)
 
     # Static legend — bottom right, no frame
     legend_items = [
@@ -474,14 +478,14 @@ def create_animation():
         y = 0.22 - i * 0.04
         ax.text(0.98, y, f"{marker}  {label}", transform=ax.transAxes,
                 fontsize=11, color=color, verticalalignment='center',
-                horizontalalignment='right', alpha=0.85, zorder=100)
+                horizontalalignment='right', alpha=0.85, fontfamily=FONT, zorder=100)
 
-    # Time-of-day progress bar (fixed to screen via transAxes)
+    # Time-of-day progress bar — upper right, clear of title and credits
     from matplotlib.patches import Rectangle
-    BAR_Y      = 0.030   # vertical centre of bar in axes coords
+    BAR_Y      = 0.938   # vertical centre of bar in axes coords
     BAR_H      = 0.012   # bar height
-    BAR_X0     = 0.05    # left edge
-    BAR_X1     = 0.95    # right edge
+    BAR_X0     = 0.52    # left edge
+    BAR_X1     = 0.98    # right edge
     BAR_W      = BAR_X1 - BAR_X0
 
     # Background strip
@@ -511,7 +515,7 @@ def create_animation():
         label = f"{h % 24:02d}:00"
         ax.text(x, BAR_Y - BAR_H / 2 - 0.008, label,
                 transform=ax.transAxes, fontsize=7, color='white', alpha=0.5,
-                ha='center', va='top', zorder=100, clip_on=False)
+                ha='center', va='top', fontfamily=FONT, zorder=100, clip_on=False)
 
     # Current-time marker dot — position updated each frame
     (bar_marker,) = ax.plot([], [], 'o', color='white', ms=5, alpha=0.95,
