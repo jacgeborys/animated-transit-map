@@ -489,19 +489,21 @@ def create_animation():
                             transform=ax.transAxes, color='#222222', alpha=0.75,
                             zorder=98, clip_on=False))
 
-    # Filled progress portion — width updated each frame
-    bar_fill = Rectangle((BAR_X0, BAR_Y - BAR_H / 2), 0, BAR_H,
+    # Bar spans the full 24h day — animation fills it starting from 4am
+    bar_day_s   = 24 * 3600   # full bar = 0:00 → 24:00
+    bar_anim_x0 = BAR_X0 + (start_seconds / bar_day_s) * BAR_W  # x position of 4:00
+
+    # Filled progress portion — left edge fixed at 4am, width updated each frame
+    bar_fill = Rectangle((bar_anim_x0, BAR_Y - BAR_H / 2), 0, BAR_H,
                           transform=ax.transAxes, color='#888888', alpha=0.85,
                           zorder=99, clip_on=False)
     ax.add_patch(bar_fill)
 
-    # Hour ticks and labels (static)
-    bar_start_s = start_seconds
-    bar_end_s   = start_seconds + HOURS * 3600
-    for h in range(int(bar_start_s // 3600), int(bar_end_s // 3600) + 1):
+    # Hour ticks and labels (static, full 24h)
+    for h in range(0, 25):
         if h % 2 != 0:
             continue
-        frac = (h * 3600 - bar_start_s) / (bar_end_s - bar_start_s)
+        frac = h / 24
         x = BAR_X0 + frac * BAR_W
         ax.plot([x, x], [BAR_Y - BAR_H / 2, BAR_Y + BAR_H / 2 + 0.006],
                 transform=ax.transAxes, color='white', lw=0.6, alpha=0.5,
@@ -602,11 +604,10 @@ def create_animation():
                 np.array([[p.x, p.y] for p in positions]) if positions else np.empty((0, 2))
             )
 
-        # Update progress bar
-        bar_frac = (current_seconds - bar_start_s) / (bar_end_s - bar_start_s)
-        bar_frac = max(0.0, min(1.0, bar_frac))
-        bar_fill.set_width(bar_frac * BAR_W)
-        bar_marker.set_data([BAR_X0 + bar_frac * BAR_W], [BAR_Y])
+        # Update progress bar — marker and fill track current time on the 24h bar
+        cur_x = BAR_X0 + min(current_seconds, bar_day_s) / bar_day_s * BAR_W
+        bar_fill.set_width(cur_x - bar_anim_x0)
+        bar_marker.set_data([cur_x], [BAR_Y])
 
         # Update text
         title_text.set_text(f"Warsaw Public Transit - 27.04.2026 {current_time}")
