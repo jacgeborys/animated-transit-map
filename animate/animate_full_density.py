@@ -68,7 +68,7 @@ ZOOM_MIN_SIZE    = 8000   # 0.7x base — tightest zoom at noon (12:00)
 ZOOM_END_SIZE    = FRAME_SIZE  # back to base by 14:00, held for rest of day
 ZOOM_IN_START_H  = 4       # hour when zoom-in begins
 ZOOM_IN_END_H    = 6.5      # hour when tightest zoom is reached
-ZOOM_OUT_END_H   = 8     # hour when zoom settles back to base
+ZOOM_OUT_END_H   = 9     # hour when zoom settles back to base
 
 
 def get_frame_size(current_seconds):
@@ -99,19 +99,19 @@ DEFAULT_SPEED = 4.7  # fallback
 
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#13c2fc'}
-VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 19, 'Metro': 26}
+VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 20, 'Metro': 26}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
-LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 1.5, 'Metro': 2.8}
+LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 2.0, 'Metro': 2.8}
 LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
-OUTLINE_COLORS = {'Tram': '#59000c', 'Bus': '#350059', 'Train': '#005937', 'Metro': '#003761'}
+OUTLINE_COLORS = {'Tram': '#730011', 'Bus': '#430073', 'Train': '#007045', 'Metro': '#004b80'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Static base colors for transit lines
 LINE_COLORS = {
-    'Tram':  '#7a000a',
-    'Bus':   '#580080',
-    'Train': '#1e6b60',
-    'Metro': '#004a78',
+    'Tram':  '#9e0f14',
+    'Bus':   '#72009e',
+    'Train': '#2a8a7a',
+    'Metro': '#006096',
 }
 
 # Z-order layering: Metro (bottom) → Train → Bus → Tram (top)
@@ -159,6 +159,19 @@ ROAD_TIERS = [
 ]
 
 STREAK_LENGTH = 200
+
+
+def smooth_stop_times(times, progresses, max_dist_m, max_speed_mps=22.0):
+    """Fix implausibly fast inter-stop segments (GTFS data errors) by interpolating times."""
+    times = times.copy()
+    n = len(times)
+    for i in range(1, n - 1):
+        seg_dist = (progresses[i] - progresses[i - 1]) * max_dist_m
+        seg_time = times[i] - times[i - 1]
+        if seg_time > 0 and seg_dist / seg_time > max_speed_mps:
+            frac = (progresses[i] - progresses[i - 1]) / (progresses[i + 1] - progresses[i - 1])
+            times[i] = times[i - 1] + frac * (times[i + 1] - times[i - 1])
+    return times
 
 
 def create_animation():
@@ -271,6 +284,7 @@ def create_animation():
                 continue
             offsets = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
             progresses = dist / max_dist
+            offsets = smooth_stop_times(offsets, progresses, max_dist * 1000)
             freq_templates[trip_id] = (offsets, progresses)
 
         # Match schedule trips: direct match first, then frequency-based (template__offset)
@@ -284,6 +298,7 @@ def create_animation():
                 continue
             times = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
             progresses = dist / max_dist
+            times = smooth_stop_times(times, progresses, max_dist * 1000)
             trip_stop_schedule[trip_id] = (times, progresses)
 
         # Frequency-based trips: resolve template__offset pattern
@@ -418,7 +433,7 @@ def create_animation():
         z_order = Z_ORDERS.get(vtype, Z_ORDERS['Tram'])
 
         lc = LineCollection(segments_by_type[vtype], colors=line_color,
-                           linewidths=line_width, alpha=0.8, zorder=z_order['line'],
+                           linewidths=line_width, alpha=0.75, zorder=z_order['line'],
                            capstyle='round', joinstyle='round')
         ax.add_collection(lc)
 
