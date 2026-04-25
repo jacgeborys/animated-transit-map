@@ -43,8 +43,8 @@ class RouteLineBuilder:
         self.parser.load_data()
 
         # Filter by date and time
-        service_id = self.parser.filter_by_date(target_date)
-        self.parser.prepare_trips(service_id)
+        service_ids = self.parser.filter_by_date(target_date)
+        self.parser.prepare_trips(service_ids)
         self.parser.expand_metro_frequencies(target_date)  # inject synthetic metro departures
         # self.parser.filter_by_time()  # COMMENTED OUT for full day animation
         
@@ -220,9 +220,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Get GTFS data
+    # Get GTFS data (ZTM + KM combined)
+    from km_gtfs_merger import merge_km_into_ztm
     downloader = GTFSDownloader()
-    data_dir = downloader.get_latest_data_dir()
+    ztm_dir = downloader.get_latest_data_dir()
+    data_dir = merge_km_into_ztm(ztm_dir)
 
     # Build route lines
     builder = RouteLineBuilder(data_dir)

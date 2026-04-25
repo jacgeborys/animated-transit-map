@@ -11,8 +11,9 @@ RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 OUTPUT_DIR = DATA_DIR / "output"
 
-# GTFS data source
+# GTFS data sources
 GTFS_URL = "https://mkuran.pl/gtfs/warsaw.zip"
+POLISH_TRAINS_URL = "https://mkuran.pl/gtfs/polish_trains.zip"  # includes Koleje Mazowieckie
 
 # Processing parameters
 ANALYSIS_DATE = "20260427"  # Format: YYYYMMDD - will be updated to latest available

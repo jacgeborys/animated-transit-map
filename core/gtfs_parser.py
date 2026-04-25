@@ -112,47 +112,46 @@ class GTFSParser:
                     return True
         return False
 
-    def filter_by_date(self, target_date: str) -> str:
+    def filter_by_date(self, target_date: str) -> List[str]:
         """
-        Find service_id for target date
+        Find all service_ids active on target date.
 
         Args:
             target_date: Date in format YYYYMMDD
 
         Returns:
-            Service pattern string (e.g., '5_2' for weekday)
+            List of service_id strings active on that date.
+            Multiple IDs are normal when data from several feeds is merged
+            (e.g. ZTM 'PcS' + KM 'km_weekday').
         """
         target_date_int = int(target_date)
 
         # calendar_dates.txt has columns: service_id, date, exception_type
-        # We need to find which service_id is active on target_date
         matching_services = self.calendar[
             (self.calendar['date'] == target_date_int) &
             (self.calendar['exception_type'] == 1)  # 1 = service added
-        ]['service_id']
+        ]['service_id'].tolist()
 
-        if len(matching_services) == 0:
-            # If no exact match, try to infer from nearby dates
+        if not matching_services:
+            # If no exact match, fall back to the most common service_id
             logger.warning(f"No exact service found for {target_date}")
-            logger.info("Available dates in calendar:")
             available_dates = sorted(self.calendar['date'].unique())
             logger.info(f"Date range: {min(available_dates)} to {max(available_dates)}")
 
-            # Use the most common service_id as fallback
             most_common_service = self.calendar[
                 self.calendar['exception_type'] == 1
             ]['service_id'].mode()
 
             if len(most_common_service) > 0:
-                service_id = most_common_service.iloc[0]
-                logger.warning(f"Using most common service_id as fallback: {service_id}")
+                fallback = most_common_service.iloc[0]
+                logger.warning(f"Using most common service_id as fallback: {fallback}")
+                matching_services = [fallback]
             else:
                 raise ValueError(f"No service found for date {target_date} and no fallback available")
         else:
-            service_id = matching_services.iloc[0]
-            logger.info(f"Found service_id for {target_date}: {service_id}")
+            logger.info(f"Found {len(matching_services)} service_id(s) for {target_date}: {matching_services}")
 
-        return service_id
+        return matching_services
 
     def filter_by_time(self, time_ranges: List[Tuple[time, time]] = PEAK_HOURS):
         """
@@ -188,36 +187,32 @@ class GTFSParser:
             f"({len(self.stop_times)/initial_count*100:.1f}%)"
         )
 
-    def prepare_trips(self, service_id: str):
+    def prepare_trips(self, service_ids: List[str]):
         """
-        Prepare trips data with vehicle classification
+        Prepare trips data with vehicle classification.
 
         Args:
-            service_id: Service ID to filter by (direct from calendar_dates)
+            service_ids: List of service IDs active on the target date.
+                         ZTM trips embed the service_id as a substring of their
+                         trip service_id (e.g. 'PcS' inside '2026-04-22:PcS').
+                         KM (and other merged feeds) use the service_id directly.
+                         Both cases are handled by a substring search.
         """
         logger.info("Preparing trips data...")
 
-        # Warsaw GTFS: trips.service_id format is like "TP-NDZ:22_1"
-        # We need to match the part after the colon with the calendar service_id
-        # OR match directly if service_id format changed
+        # A trip matches if any active service_id appears as a substring of its service_id.
+        # This handles both ZTM format ('2026-04-22:PcS' contains 'PcS')
+        # and merged-feed format ('km_weekday' contains 'km_weekday').
+        mask = self.trips['service_id'].apply(
+            lambda sid: any(s in str(sid) for s in service_ids)
+        )
+        self.trips = self.trips[mask]
 
-        # Try direct match first
-        direct_match = self.trips[self.trips['service_id'].str.contains(service_id, na=False)]
-
-        if len(direct_match) > 0:
-            self.trips = direct_match
-            logger.info(f"Direct match: filtered to {len(self.trips)} trips")
+        if len(self.trips) == 0:
+            logger.warning(f"No trips found for service_ids {service_ids}")
+            logger.info(f"Sample service_ids in trips: {self.trips['service_id'].head().tolist()}")
         else:
-            # Try pattern matching (extract part after colon)
-            self.trips['service_pattern'] = self.trips['service_id'].str.split(':').str[-1]
-            pattern_match = self.trips[self.trips['service_pattern'] == service_id]
-
-            if len(pattern_match) > 0:
-                self.trips = pattern_match
-                logger.info(f"Pattern match: filtered to {len(self.trips)} trips")
-            else:
-                logger.warning(f"No trips found for service_id {service_id}")
-                logger.info(f"Sample service_ids in trips: {self.trips['service_id'].head().tolist()}")
+            logger.info(f"Filtered to {len(self.trips)} trips")
 
         # Add vehicle type
         self.trips['vehicle'] = self.trips['route_id'].apply(self.classify_vehicle)
@@ -397,8 +392,8 @@ class GTFSParser:
             DataFrame with processed shapes and trip counts
         """
         self.load_data()
-        service_id = self.filter_by_date(target_date)
-        self.prepare_trips(service_id)
+        service_ids = self.filter_by_date(target_date)
+        self.prepare_trips(service_ids)
         self.expand_metro_frequencies(target_date)
         self.filter_by_time()
 
