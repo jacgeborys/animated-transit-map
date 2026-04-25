@@ -44,6 +44,9 @@ POLAND_CRS = "EPSG:2180"  # ETRS89 / Poland CS92
 VEHICLE_TYPE_RULES = {
     'tram':  lambda route_id: route_id.isdigit() and len(route_id) <= 2,
     'bus':   lambda route_id: route_id.isdigit() and len(route_id) == 3,
-    'train': lambda route_id: route_id.startswith(('S', 'R')),
+    'train': lambda route_id: (
+        route_id.startswith(('S', 'R'))                               # SKM: S1, S2, ...
+        or (route_id.startswith('KM_R') and '_BUS' not in route_id)  # KM: KM_R1, KM_RE2, ... (not replacement buses)
+    ),
     'metro': lambda route_id: route_id.startswith('M') and route_id[1:].isdigit(),
 }
