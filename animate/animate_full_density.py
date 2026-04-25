@@ -103,7 +103,7 @@ VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 20, 'Metro': 26}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
 LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 2.0, 'Metro': 2.8}
 LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
-OUTLINE_COLORS = {'Tram': '#730011', 'Bus': '#430073', 'Train': '#007045', 'Metro': '#004b80'}
+OUTLINE_COLORS = {'Tram': '#730011', 'Bus': '#430073', 'Train': '#007345', 'Metro': '#004b80'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
 
 # Static base colors for transit lines
@@ -476,6 +476,45 @@ def create_animation():
                 fontsize=11, color=color, verticalalignment='center',
                 horizontalalignment='right', alpha=0.85, zorder=100)
 
+    # Time-of-day progress bar (fixed to screen via transAxes)
+    from matplotlib.patches import Rectangle
+    BAR_Y      = 0.030   # vertical centre of bar in axes coords
+    BAR_H      = 0.012   # bar height
+    BAR_X0     = 0.05    # left edge
+    BAR_X1     = 0.95    # right edge
+    BAR_W      = BAR_X1 - BAR_X0
+
+    # Background strip
+    ax.add_patch(Rectangle((BAR_X0, BAR_Y - BAR_H / 2), BAR_W, BAR_H,
+                            transform=ax.transAxes, color='#222222', alpha=0.75,
+                            zorder=98, clip_on=False))
+
+    # Filled progress portion — width updated each frame
+    bar_fill = Rectangle((BAR_X0, BAR_Y - BAR_H / 2), 0, BAR_H,
+                          transform=ax.transAxes, color='#888888', alpha=0.85,
+                          zorder=99, clip_on=False)
+    ax.add_patch(bar_fill)
+
+    # Hour ticks and labels (static)
+    bar_start_s = start_seconds
+    bar_end_s   = start_seconds + HOURS * 3600
+    for h in range(int(bar_start_s // 3600), int(bar_end_s // 3600) + 1):
+        if h % 2 != 0:
+            continue
+        frac = (h * 3600 - bar_start_s) / (bar_end_s - bar_start_s)
+        x = BAR_X0 + frac * BAR_W
+        ax.plot([x, x], [BAR_Y - BAR_H / 2, BAR_Y + BAR_H / 2 + 0.006],
+                transform=ax.transAxes, color='white', lw=0.6, alpha=0.5,
+                zorder=100, clip_on=False)
+        label = f"{h % 24:02d}:00"
+        ax.text(x, BAR_Y - BAR_H / 2 - 0.008, label,
+                transform=ax.transAxes, fontsize=7, color='white', alpha=0.5,
+                ha='center', va='top', zorder=100, clip_on=False)
+
+    # Current-time marker dot — position updated each frame
+    (bar_marker,) = ax.plot([], [], 'o', color='white', ms=5, alpha=0.95,
+                            transform=ax.transAxes, zorder=101, clip_on=False)
+
     # Animation state
     vehicles = []
     total_frames = FPS * DURATION
@@ -562,6 +601,12 @@ def create_animation():
             vehicle_sc[vtype].set_offsets(
                 np.array([[p.x, p.y] for p in positions]) if positions else np.empty((0, 2))
             )
+
+        # Update progress bar
+        bar_frac = (current_seconds - bar_start_s) / (bar_end_s - bar_start_s)
+        bar_frac = max(0.0, min(1.0, bar_frac))
+        bar_fill.set_width(bar_frac * BAR_W)
+        bar_marker.set_data([BAR_X0 + bar_frac * BAR_W], [BAR_Y])
 
         # Update text
         title_text.set_text(f"Warsaw Public Transit - 27.04.2026 {current_time}")
