@@ -471,7 +471,7 @@ def create_animation():
     legend_items = [
         ('SKM Train', '▲', COLORS['Train']),
         ('Metro', '■', COLORS['Metro']),
-        ('Tram',  '◆', COLORS['Tram']),
+        ('Tram',  '♦', COLORS['Tram']),
         ('Bus',   '●', COLORS['Bus']),
     ]
     for i, (label, marker, color) in enumerate(legend_items):
@@ -484,8 +484,8 @@ def create_animation():
     from matplotlib.patches import Rectangle
     BAR_Y      = 0.938   # vertical centre of bar in axes coords
     BAR_H      = 0.012   # bar height
-    BAR_X0     = 0.52    # left edge
-    BAR_X1     = 0.98    # right edge
+    BAR_X0     = 0.05    # left edge
+    BAR_X1     = 0.95    # right edge
     BAR_W      = BAR_X1 - BAR_X0
 
     # Background strip
@@ -514,7 +514,7 @@ def create_animation():
                 zorder=100, clip_on=False)
         label = f"{h % 24:02d}:00"
         ax.text(x, BAR_Y - BAR_H / 2 - 0.008, label,
-                transform=ax.transAxes, fontsize=7, color='white', alpha=0.5,
+                transform=ax.transAxes, fontsize=10, color='white', alpha=0.5,
                 ha='center', va='top', fontfamily=FONT, zorder=100, clip_on=False)
 
     # Current-time marker dot — position updated each frame
