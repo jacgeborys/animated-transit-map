@@ -33,8 +33,12 @@ PROJECT_ROOT = Path(__file__).parent.parent
 ROUTE_LINES = PROJECT_ROOT / "data" / "processed" / "route_lines_continuous.shp"
 SCHEDULE = PROJECT_ROOT / "data" / "processed" / "schedule_for_animation.csv"
 
-# Auto-detect latest GTFS download for stop-by-stop interpolation
-_gtfs_dirs = sorted((PROJECT_ROOT / "data" / "raw").glob("warsaw_gtfs_*"))
+# Auto-detect latest ZTM-only GTFS dir for stop-by-stop interpolation
+# (exclude combined dirs like _with_km_wkd — their stop_times lack shape_dist_traveled for extra feeds)
+_gtfs_dirs = sorted([
+    d for d in (PROJECT_ROOT / "data" / "raw").glob("warsaw_gtfs_*")
+    if "_with_" not in d.name
+])
 GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 
 # Animation settings
@@ -280,7 +284,7 @@ def create_animation():
             dist = grp['shape_dist_traveled'].values.astype(np.float64)
             dist = dist - dist[0]  # shift so first stop is always at position 0
             max_dist = dist.max()
-            if max_dist <= 0 or len(grp) < 2:
+            if max_dist <= 0 or len(grp) < 2 or np.isnan(max_dist):
                 continue
             offsets = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
             progresses = dist / max_dist
@@ -294,7 +298,7 @@ def create_animation():
             dist = grp['shape_dist_traveled'].values.astype(np.float64)
             dist = dist - dist[0]  # shift so first stop is always at position 0
             max_dist = dist.max()
-            if max_dist <= 0 or len(grp) < 2:
+            if max_dist <= 0 or len(grp) < 2 or np.isnan(max_dist):
                 continue
             times = grp['departure_time'].apply(_parse_time).values.astype(np.float64)
             progresses = dist / max_dist
