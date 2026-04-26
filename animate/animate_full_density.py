@@ -99,9 +99,9 @@ DEFAULT_SPEED = 4.7  # fallback
 
 # Visual settings
 COLORS = {'Tram': '#FF7075', 'Bus': '#B46EFC', 'Train': '#6BC9C6', 'Metro': '#13c2fc'}
-VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 20, 'Metro': 26}
+VEHICLE_SIZES = {'Tram': 16, 'Bus': 14, 'Train': 24, 'Metro': 26}
 # VEHICLE_SIZES = 0.9 * pd.Series(VEHICLE_SIZES)  # Scale down for better proportions
-LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 2.0, 'Metro': 2.8}
+LINE_WIDTHS = {'Tram': 1.5, 'Bus': 1.2, 'Train': 2.2, 'Metro': 2.8}
 LINE_WIDTHS = {k: v * 0.9 for k, v in LINE_WIDTHS.items()}  # Scale down for better proportions
 OUTLINE_COLORS = {'Tram': '#730011', 'Bus': '#430073', 'Train': '#007345', 'Metro': '#004b80'}
 VEHICLE_MARKERS = {'Tram': 'D', 'Bus': 'o', 'Train': '^', 'Metro': 's'}
@@ -404,9 +404,31 @@ def create_animation():
         except Exception as e:
             logger.warning(f"  {name}: failed to load ({e}), skipping")
 
+    # Draw full train/WKD route lines as a dim ghost layer.
+    # Trains run on dedicated tracks with few shared junctions, so junction segments
+    # alone leave most of the rail network invisible as background.
+    logger.info("Drawing ghost train route lines...")
+    from matplotlib.collections import LineCollection
+    train_routes = routes[routes['vehicle'] == 'Train']
+    ghost_lines = []
+    for _, row in train_routes.iterrows():
+        if hasattr(row.geometry, 'xy'):
+            x, y = row.geometry.xy
+            ghost_lines.append(np.column_stack([x, y]))
+    if ghost_lines:
+        ghost_lc = LineCollection(
+            ghost_lines,
+            colors=LINE_COLORS['Train'],
+            linewidths=LINE_WIDTHS['Train'] * 0.8,
+            alpha=0.25,
+            zorder=Z_ORDERS['Train']['glow'] - 1,
+            capstyle='round', joinstyle='round',
+        )
+        ax.add_collection(ghost_lc)
+        logger.info(f"  Added {len(ghost_lines)} ghost train route lines")
+
     # Draw static base network using LineCollection for efficiency
     logger.info("Drawing static base network with LineCollections...")
-    from matplotlib.collections import LineCollection
 
     # Group segments by vehicle type
     segments_by_type = {'Tram': [], 'Bus': [], 'Train': [], 'Metro': []}
@@ -469,7 +491,7 @@ def create_animation():
 
     # Static legend — bottom right, no frame
     legend_items = [
-        ('SKM Train', '▲', COLORS['Train']),
+        ('Train', '▲', COLORS['Train']),
         ('Metro', '■', COLORS['Metro']),
         ('Tram',  '♦', COLORS['Tram']),
         ('Bus',   '●', COLORS['Bus']),

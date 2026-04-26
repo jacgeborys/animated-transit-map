@@ -12,8 +12,9 @@ PROCESSED_DIR = DATA_DIR / "processed"
 OUTPUT_DIR = DATA_DIR / "output"
 
 # GTFS data sources
-GTFS_URL = "https://mkuran.pl/gtfs/warsaw.zip"
+GTFS_URL          = "https://mkuran.pl/gtfs/warsaw.zip"
 POLISH_TRAINS_URL = "https://mkuran.pl/gtfs/polish_trains.zip"  # includes Koleje Mazowieckie
+WKD_URL           = "https://mkuran.pl/gtfs/wkd.zip"
 
 # Processing parameters
 ANALYSIS_DATE = "20260427"  # Format: YYYYMMDD - will be updated to latest available
@@ -47,6 +48,7 @@ VEHICLE_TYPE_RULES = {
     'train': lambda route_id: (
         route_id.startswith(('S', 'R'))                               # SKM: S1, S2, ...
         or (route_id.startswith('KM_R') and '_BUS' not in route_id)  # KM: KM_R1, KM_RE2, ... (not replacement buses)
+        or route_id.startswith('wkd_')                                # WKD: all WKD routes
     ),
     'metro': lambda route_id: route_id.startswith('M') and route_id[1:].isdigit(),
 }
