@@ -418,9 +418,9 @@ def create_animation():
     if ghost_lines:
         ghost_lc = LineCollection(
             ghost_lines,
-            colors=LINE_COLORS['Train'],
-            linewidths=LINE_WIDTHS['Train'] * 0.8,
-            alpha=0.25,
+            colors='#163d38',
+            linewidths=LINE_WIDTHS['Train'],
+            alpha=1.0,
             zorder=Z_ORDERS['Train']['glow'] - 1,
             capstyle='round', joinstyle='round',
         )

@@ -210,18 +210,23 @@ def extract_km_data(trains_dir: Path) -> dict:
 
 def extract_wkd_data(wkd_dir: Path) -> dict:
     """
-    Extract all WKD data and apply wkd_ prefix to all IDs including route_ids
-    (WKD route IDs may be simple short strings that could collide with ZTM).
+    Extract all WKD data and apply wkd_ prefix to all IDs including route_ids.
+    Rail routes (GTFS route_type 0/1/2) get prefix 'wkd_' -> classified as Train.
+    Bus replacement routes (route_type 3) get prefix 'wkd_bus_' -> classified as Bus.
     """
     wkd_dir = Path(wkd_dir)
     logger.info('Extracting WKD data...')
+
+    routes         = pd.read_csv(wkd_dir / 'routes.txt', dtype=str)
+    rail_ids       = set(routes.loc[routes['route_type'].isin(['0', '1', '2']), 'route_id'])
+    bus_ids        = set(routes['route_id']) - rail_ids
+    logger.info(f'  WKD rail routes: {sorted(rail_ids)}, bus replacement routes: {sorted(bus_ids)}')
 
     trips          = pd.read_csv(wkd_dir / 'trips.txt', dtype=str)
     wkd_trip_ids   = set(trips['trip_id'])
     wkd_shape_ids  = set(trips['shape_id'].dropna())
     wkd_service_ids= set(trips['service_id'])
-    wkd_route_ids  = set(trips['route_id'])
-    logger.info(f'  WKD trips: {len(trips)}, routes: {sorted(wkd_route_ids)}')
+    logger.info(f'  WKD trips: {len(trips)}')
 
     shapes         = pd.read_csv(wkd_dir / 'shapes.txt', dtype=str)
     wkd_shapes     = shapes[shapes['shape_id'].isin(wkd_shape_ids)].copy()
@@ -235,11 +240,14 @@ def extract_wkd_data(wkd_dir: Path) -> dict:
 
     wkd_cal_dates  = _load_calendar_dates(wkd_dir, wkd_service_ids)
 
-    # Apply wkd_ prefix to everything including route_id
-    trips['trip_id']          = WKD_PREFIX + trips['trip_id']
-    trips['shape_id']         = WKD_PREFIX + trips['shape_id']
-    trips['service_id']       = WKD_PREFIX + trips['service_id']
-    trips['route_id']         = WKD_PREFIX + trips['route_id']
+    # Rail routes -> wkd_ prefix (-> Train), bus replacements -> wkd_bus_ prefix (-> Bus default)
+    def _route_prefix(route_id):
+        return WKD_PREFIX if route_id in rail_ids else WKD_PREFIX + 'bus_'
+
+    trips['route_id']        = trips['route_id'].apply(_route_prefix) + trips['route_id']
+    trips['trip_id']         = WKD_PREFIX + trips['trip_id']
+    trips['shape_id']        = WKD_PREFIX + trips['shape_id']
+    trips['service_id']      = WKD_PREFIX + trips['service_id']
     wkd_shapes['shape_id']   = WKD_PREFIX + wkd_shapes['shape_id']
     wkd_stop_times['trip_id']= WKD_PREFIX + wkd_stop_times['trip_id']
     wkd_stop_times['stop_id']= WKD_PREFIX + wkd_stop_times['stop_id']

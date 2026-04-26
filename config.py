@@ -48,7 +48,7 @@ VEHICLE_TYPE_RULES = {
     'train': lambda route_id: (
         route_id.startswith(('S', 'R'))                               # SKM: S1, S2, ...
         or (route_id.startswith('KM_R') and '_BUS' not in route_id)  # KM: KM_R1, KM_RE2, ... (not replacement buses)
-        or route_id.startswith('wkd_')                                # WKD: all WKD routes
+        or (route_id.startswith('wkd_') and 'bus' not in route_id)   # WKD: rail only (wkd_bus_ are replacement buses)
     ),
     'metro': lambda route_id: route_id.startswith('M') and route_id[1:].isdigit(),
 }
