@@ -7,6 +7,10 @@ Identical pipeline to animate_full_density.py with three key differences:
   - Departure-seconds parsing handles GTFS 24+ hour times (night buses)
 """
 
+import sys
+sys.path.insert(0, str(__import__('pathlib').Path(__file__).parent.parent))
+
+from datetime import datetime, timedelta
 import geopandas as gpd
 import pandas as pd
 import numpy as np
@@ -14,6 +18,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from pathlib import Path
 import logging
+
+from config import ANALYSIS_DATE
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -35,8 +41,8 @@ GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 FPS           = 30
 DURATION      = 180   # seconds of video
 START_HOUR    = 20    # 20:00
-END_HOUR      = 30    # 06:00 next day  (24 + 6)
-HOURS         = END_HOUR - START_HOUR   # 10
+END_HOUR      = 6     # 06:00 next day
+HOURS         = (24 - START_HOUR) + END_HOUR  # 10
 
 FFMPEG_PATH   = r"C:\ffmpeg\bin\ffmpeg.exe"
 VEHICLE_FILTER = None   # 'Tram', 'Bus', 'Train', or None for all
@@ -133,6 +139,9 @@ def smooth_stop_times(times, progresses, max_dist_m, max_speed_mps=22.0):
     return times
 
 
+_base_date = datetime.strptime(ANALYSIS_DATE, "%Y%m%d")
+
+
 def fmt_clock(seconds: float) -> str:
     """Convert absolute seconds to HH:MM string, wrapping past midnight."""
     h = int(seconds // 3600) % 24
@@ -140,13 +149,19 @@ def fmt_clock(seconds: float) -> str:
     return f"{h:02d}:{m:02d}"
 
 
+def fmt_title(seconds: float) -> str:
+    """Return 'DD.MM.YYYY  HH:MM', advancing the date past midnight."""
+    date = _base_date + timedelta(days=1) if seconds >= 86400 else _base_date
+    return f"{date.strftime('%d.%m.%Y')}  {fmt_clock(seconds)}"
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 def create_animation():
-    start_seconds    = START_HOUR * 3600          # 72000
-    duration_seconds = HOURS      * 3600          # 36000
+    start_seconds    = START_HOUR * 3600
+    duration_seconds = HOURS * 3600
     night_span       = duration_seconds           # alias for bar math
 
     # --- Load segments ---
@@ -427,13 +442,14 @@ def create_animation():
     ax.add_patch(bar_fill)
 
     # Hour ticks: 20:00, 22:00, 00:00, 02:00, 04:00, 06:00
-    for h in range(START_HOUR, END_HOUR + 1, 2):
-        frac = (h - START_HOUR) / HOURS
-        x = BAR_X0 + frac * BAR_W
+    for step in range(0, HOURS + 1, 2):
+        frac = step / HOURS
+        x    = BAR_X0 + frac * BAR_W
+        label = f"{(START_HOUR + step) % 24:02d}:00"
         ax.plot([x, x], [BAR_Y - BAR_H / 2, BAR_Y + BAR_H / 2 + 0.006],
                 transform=ax.transAxes, color='white', lw=0.6, alpha=0.5,
                 zorder=100, clip_on=False)
-        ax.text(x, BAR_Y + BAR_H / 2 + 0.008, f"{h % 24:02d}:00",
+        ax.text(x, BAR_Y + BAR_H / 2 + 0.008, label,
                 transform=ax.transAxes, fontsize=12, color='white', alpha=0.5,
                 ha='center', va='bottom', fontfamily=FONT, zorder=100, clip_on=False)
 
@@ -530,7 +546,7 @@ def create_animation():
         bar_marker.set_data([cur_x], [BAR_Y])
 
         # Title — wrap clock past midnight
-        title_text.set_text(f"Warsaw Night Transit · 27/28.04.2026  {fmt_clock(current_seconds)}")
+        title_text.set_text(f"Warsaw Night Transit · {fmt_title(current_seconds)}")
 
         if frame_num % 60 == 0:
             logger.info(
