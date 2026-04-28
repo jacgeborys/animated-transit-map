@@ -17,6 +17,12 @@ python core/gtfs_downloader.py
 ```
 Output: `data/raw/warsaw_gtfs_YYYYMMDD_HHMMSS/`
 
+### Step 1b — Merge KM and WKD train data (optional, for full train coverage)
+```bash
+python core/km_gtfs_merger.py
+```
+Downloads Koleje Mazowieckie and WKD feeds and merges them into a combined directory (`warsaw_gtfs_*_with_km_wkd/`). Use this merged directory as input for subsequent steps if you want all train lines.
+
 ### Step 2 — Build route lines
 ```bash
 python core/route_line_builder.py
@@ -104,7 +110,7 @@ gtfs_schedules_city/
 
 ## Troubleshooting
 
-**April 27 not found in GTFS data** → Re-run Step 1 to download fresh data.
+**Target date not found in GTFS data** → Re-run Step 1 to download fresh data.
 
 **Animation too slow / out of memory** → Reduce `HOURS`, `DURATION`, or `FPS` in `animate_full_density.py`.
 

@@ -36,6 +36,10 @@ animate/_output/
 
 # Claude Code
 .claude/
+claude.md
+
+# Project internals
+archive/
 
 # OS
 .DS_Store
