@@ -83,11 +83,12 @@ class GTFSParser:
             parts = time_str.split(':')
             hour = int(parts[0])
 
-            # Filter out times beyond 24 hours (next day)
+            # GTFS allows hours >= 24 for trips running past midnight (e.g. 25:30:00 = 01:30 next day).
+            # Wrap to a valid clock time so midnight-crossing time ranges work correctly.
             if hour >= 24:
-                return None
+                hour = hour % 24
 
-            return datetime.strptime(time_str, '%H:%M:%S').time()
+            return time(hour, int(parts[1]), int(parts[2]))
         except (ValueError, AttributeError):
             return None
 
