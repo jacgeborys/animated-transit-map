@@ -39,8 +39,8 @@ _gtfs_dirs = sorted([
 GTFS_STOP_TIMES = _gtfs_dirs[-1] / "stop_times.txt" if _gtfs_dirs else None
 
 FPS           = 30
-DURATION      = 180   # seconds of video
-START_HOUR    = 20    # 20:00
+DURATION      = 90   # seconds of video
+START_HOUR    = 21    # 20:00
 END_HOUR      = 6     # 06:00 next day
 HOURS         = (24 - START_HOUR) + END_HOUR  # 10
 
@@ -156,6 +156,57 @@ def fmt_title(seconds: float) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Helpers — next-day schedule supplement
+# ---------------------------------------------------------------------------
+
+def _load_next_day_trips(gtfs_dir: Path, next_date_str: str):
+    """
+    Load trips on next_date_str that depart between 00:00 and END_HOUR,
+    offset their departure_seconds by +24h so they slot into the continuous
+    night timeline (e.g. 05:00 April 28 → 29:00 = 104400 s).
+
+    Returns (DataFrame with schedule columns, set of next-day trip_ids).
+    """
+    try:
+        from core.gtfs_parser import GTFSParser
+        parser = GTFSParser(Path(gtfs_dir))
+        parser.load_data()
+        svc_ids = parser.filter_by_date(next_date_str)
+        if not svc_ids:
+            logger.info("  No service IDs for next day — skipping supplement")
+            return pd.DataFrame(), set()
+        parser.prepare_trips(svc_ids)
+
+        trips = parser.trips[['trip_id', 'route_id', 'shape_id', 'vehicle']].copy()
+        st = parser.stop_times.copy()
+        st = st[st['trip_id'].isin(trips['trip_id'])]
+
+        st['departure_seconds'] = st['departure_time'].apply(parse_gtfs_secs)
+        st = st.dropna(subset=['departure_seconds'])
+        st['departure_seconds'] = st['departure_seconds'].astype(float)
+
+        # Keep only trips departing before END_HOUR (early morning window)
+        morning_ids = st[st['departure_seconds'] < END_HOUR * 3600]['trip_id'].unique()
+        st    = st[st['trip_id'].isin(morning_ids)].copy()
+        trips = trips[trips['trip_id'].isin(morning_ids)]
+
+        # Offset all times by 24h so they read as "next day" in the timeline
+        st['departure_seconds'] += 86400
+        st['departure_time_str'] = st['departure_time']
+
+        merged = st.merge(trips, on='trip_id', how='left').dropna(subset=['shape_id'])
+        trip_ids = set(merged['trip_id'].unique())
+        logger.info(f"  Next-day supplement: {len(merged)} rows, {len(trip_ids)} trips")
+        return merged[['trip_id', 'route_id', 'shape_id', 'vehicle',
+                        'stop_id', 'departure_time_str', 'stop_sequence',
+                        'departure_seconds']], trip_ids
+
+    except Exception as e:
+        logger.warning(f"Next-day supplement failed: {e}")
+        return pd.DataFrame(), set()
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -209,6 +260,17 @@ def create_animation():
     schedule['departure_seconds'] = schedule['departure_time_str'].apply(parse_gtfs_secs)
     schedule = schedule.dropna(subset=['departure_seconds'])
     schedule['departure_seconds'] = schedule['departure_seconds'].astype(float)
+
+    # Supplement with next-day service (early morning trips on April 28+).
+    # These exist on a separate service calendar with regular 04:xx–06:xx times;
+    # _load_next_day_trips offsets them by +24h so they fit the continuous timeline.
+    next_date_str = (_base_date + timedelta(days=1)).strftime("%Y%m%d")
+    if _gtfs_dirs:
+        next_day_df, next_day_trip_ids = _load_next_day_trips(_gtfs_dirs[-1], next_date_str)
+        if not next_day_df.empty:
+            schedule = pd.concat([schedule, next_day_df], ignore_index=True)
+    else:
+        next_day_trip_ids = set()
 
     # Keep only trips that depart within the night window
     schedule = schedule[
@@ -285,6 +347,15 @@ def create_animation():
         logger.info(f"  Direct: {len(trip_stop_schedule) - freq_resolved:,}  "
                     f"Freq-based: {freq_resolved:,}  "
                     f"Speed fallback: {len(trip_ids_needed) - len(trip_stop_schedule):,}")
+
+        # Next-day trips have raw GTFS times (e.g. 05:00 = 18000 s).
+        # Offset by +24h so interpolation matches the shifted departure_seconds.
+        for tid in next_day_trip_ids:
+            if tid in trip_stop_schedule:
+                times, progs = trip_stop_schedule[tid]
+                trip_stop_schedule[tid] = (times + 86400.0, progs)
+        if next_day_trip_ids:
+            logger.info(f"  Offset {len(next_day_trip_ids)} next-day trip schedules by +24h")
     else:
         logger.warning("stop_times.txt not found — using speed-based interpolation")
 
@@ -422,7 +493,8 @@ def create_animation():
     ]):
         ax.text(0.98, 0.22 - i * 0.04, f"{marker}  {label}", transform=ax.transAxes,
                 fontsize=11, color=color, verticalalignment='center',
-                horizontalalignment='right', alpha=0.85, fontfamily=FONT, zorder=100)
+                horizontalalignment='right', alpha=0.85, fontfamily=FONT,
+                fontweight='semibold', zorder=100)
 
     # --- Night progress bar (20:00 → 06:00) ---
     from matplotlib.patches import Rectangle
@@ -451,7 +523,8 @@ def create_animation():
                 zorder=100, clip_on=False)
         ax.text(x, BAR_Y + BAR_H / 2 + 0.008, label,
                 transform=ax.transAxes, fontsize=12, color='white', alpha=0.5,
-                ha='center', va='bottom', fontfamily=FONT, zorder=100, clip_on=False)
+                ha='center', va='bottom', fontfamily=FONT, fontweight='semibold',
+                zorder=100, clip_on=False)
 
     (bar_marker,) = ax.plot([], [], 'o', color='white', ms=5, alpha=0.95,
                             transform=ax.transAxes, zorder=101, clip_on=False)
