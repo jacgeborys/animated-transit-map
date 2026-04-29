@@ -477,7 +477,7 @@ def create_animation():
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
                         color=COLORS[vtype], alpha=0.9, marker=VEHICLE_MARKERS[vtype],
-                        edgecolors=OUTLINE_COLORS[vtype], linewidths=1.0, zorder=z['vehicle'])
+                        edgecolors=OUTLINE_COLORS[vtype], linewidths=1.8, zorder=z['vehicle'])
         vehicle_sc[vtype] = sc
 
     FONT = 'Segoe UI'
@@ -504,7 +504,7 @@ def create_animation():
         y = 0.22 - i * 0.04
         ax.text(0.98, y, f"{marker}  {label}", transform=ax.transAxes,
                 fontsize=11, color=color, verticalalignment='center',
-                horizontalalignment='right', alpha=0.85, fontfamily=FONT, zorder=100)
+                horizontalalignment='right', alpha=0.85, fontfamily=FONT, fontweight='semibold', zorder=100)
 
     # Time-of-day progress bar — bottom of frame
     from matplotlib.patches import Rectangle
@@ -546,7 +546,7 @@ def create_animation():
         label = f"{h % 24:02d}:00"
         ax.text(x, BAR_Y + BAR_H / 2 + 0.008, label,
                 transform=ax.transAxes, fontsize=12, color='white', alpha=0.5,
-                ha='center', va='bottom', fontfamily=FONT, zorder=100, clip_on=False)
+                ha='center', va='bottom', fontfamily=FONT, fontweight='semibold', zorder=100, clip_on=False)
 
     # Current-time marker dot — position updated each frame
     (bar_marker,) = ax.plot([], [], 'o', color='white', ms=5, alpha=0.95,
