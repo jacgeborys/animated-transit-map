@@ -55,10 +55,10 @@ VEHICLE_FILTER = None  # 'Tram', 'Bus', 'Train', or None for all
 if VEHICLE_FILTER:
     vehicle_lower = VEHICLE_FILTER.lower()
     JUNCTION_SEGMENTS = PROJECT_ROOT / "data" / "processed" / f"{vehicle_lower}_junction_segments.shp"
-    OUTPUT = PROJECT_ROOT / "animate" / "_output" / f"warsaw_{vehicle_lower}_transit.mp4"
+    OUTPUT = PROJECT_ROOT / "animate" / "_output" / f"warsaw_{vehicle_lower}_transit_20260505.mp4"
 else:
     JUNCTION_SEGMENTS = PROJECT_ROOT / "data" / "processed" / "junction_segments.shp"
-    OUTPUT = PROJECT_ROOT / "animate" / "_output" / "warsaw_transit_full.mp4"
+    OUTPUT = PROJECT_ROOT / "animate" / "_output" / "warsaw_transit_full_20260505.mp4"
 
 # Map extent - Central Warsaw
 CENTRAL_WARSAW_X = 638000
