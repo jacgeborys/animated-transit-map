@@ -477,7 +477,7 @@ def create_animation():
         streak_lc[vtype] = streak
         sc = ax.scatter(np.empty(0), np.empty(0), s=VEHICLE_SIZES[vtype],
                         color=COLORS[vtype], alpha=0.9, marker=VEHICLE_MARKERS[vtype],
-                        edgecolors=OUTLINE_COLORS[vtype], linewidths=0.8, zorder=z['vehicle'])
+                        edgecolors=OUTLINE_COLORS[vtype], linewidths=1.0, zorder=z['vehicle'])
         vehicle_sc[vtype] = sc
 
     FONT = 'Segoe UI'
@@ -645,7 +645,7 @@ def create_animation():
         bar_marker.set_data([cur_x], [BAR_Y])
 
         # Update text
-        title_text.set_text(f"Warsaw Public Transit - 27.04.2026 {current_time}")
+        title_text.set_text(f"Warsaw Public Transit - 05.05.2026 {current_time}")
         # count_text.set_text(f"Active vehicles: {len(vehicles)}")
 
         if frame_num % 60 == 0:

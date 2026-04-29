@@ -17,7 +17,7 @@ POLISH_TRAINS_URL = "https://mkuran.pl/gtfs/polish_trains.zip"  # includes Kolej
 WKD_URL           = "https://mkuran.pl/gtfs/wkd.zip"
 
 # Processing parameters
-ANALYSIS_DATE = "20260427"  # Format: YYYYMMDD - will be updated to latest available
+ANALYSIS_DATE = "20260505"  # Format: YYYYMMDD - will be updated to latest available
 
 # Peak hours for analysis (two time ranges)
 PEAK_HOURS = [
