@@ -13,6 +13,7 @@ dist/
 
 # Data files
 data/
+live/data/
 out/
 animate/_output/
 *.shp
