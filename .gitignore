@@ -14,6 +14,7 @@ dist/
 # Data files
 data/
 live/data/
+live/secrets.py
 out/
 animate/_output/
 *.shp

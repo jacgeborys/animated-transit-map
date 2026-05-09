@@ -16,7 +16,10 @@ import requests
 from datetime import datetime
 from pprint import pprint
 
-API_KEY = "YOUR_API_KEY_HERE"  # paste your key from api.um.warszawa.pl
+try:
+    from live.secrets import API_KEY
+except ImportError:
+    from secrets import API_KEY
 
 # Resource IDs
 TRAMS_RESOURCE = "c7238cfe-8b1f-4c38-bb4a-de386db7e776"
@@ -53,11 +56,6 @@ def fetch_positions(vehicle_type: int) -> list[dict]:
 
 
 def main():
-    if API_KEY == "YOUR_API_KEY_HERE":
-        print("ERROR: Set your API_KEY in this script first.")
-        print("Register for free at https://api.um.warszawa.pl")
-        return
-
     print(f"Fetching live tram positions at {datetime.now().strftime('%H:%M:%S')}...\n")
 
     trams = fetch_positions(vehicle_type=2)
