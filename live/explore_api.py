@@ -14,9 +14,9 @@ import requests
 from datetime import datetime
 
 try:
-    from live.secrets import API_KEY
+    from live.api_keys import API_KEY
 except ImportError:
-    from secrets import API_KEY
+    from api_keys import API_KEY
 
 URL = "https://dane.um.warszawa.pl/api/action/get_ztm_lokalizacja_pojazdow"
 

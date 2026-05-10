@@ -19,12 +19,12 @@ from pathlib import Path
 import requests
 
 try:
-    from live.secrets import API_KEY
+    from live.api_keys import API_KEY
 except ImportError:
-    from secrets import API_KEY
+    from api_keys import API_KEY
 
 URL      = "https://dane.um.warszawa.pl/api/action/get_ztm_lokalizacja_pojazdow"
-INTERVAL = 30   # seconds between polls
+INTERVAL = 10   # seconds between polls
 STALE    = 60   # seconds — discard positions older than this
 DATA_DIR = Path(__file__).parent / "data"
 FIELDNAMES = ["poll_time", "vehicle_type", "Lines", "Brigade", "VehicleNumber", "Lat", "Lon", "gps_time"]
