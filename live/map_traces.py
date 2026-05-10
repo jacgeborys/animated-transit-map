@@ -73,15 +73,19 @@ def main():
     from shapely.geometry import box as shapely_box
     clip_box = gpd.GeoDataFrame(geometry=[shapely_box(xmin, ymin, xmax, ymax)], crs='EPSG:2180')
 
+    def load_layer(path, target_crs='EPSG:2180'):
+        lyr = gpd.read_file(path).to_crs(target_crs)
+        lyr['geometry'] = lyr.geometry.make_valid()
+        lyr = lyr[lyr.geometry.is_valid & ~lyr.geometry.is_empty]
+        return gpd.clip(lyr, clip_box)
+
     if BACKGROUND_LAYERS['water'].exists():
-        water = gpd.read_file(BACKGROUND_LAYERS['water']).to_crs('EPSG:2180')
-        water = gpd.clip(water, clip_box)
+        water = load_layer(BACKGROUND_LAYERS['water'])
         if not water.empty:
             water.plot(ax=ax, fc='#0f2e45', ec='none', zorder=1)
 
     if BACKGROUND_LAYERS['roads'].exists():
-        roads = gpd.read_file(BACKGROUND_LAYERS['roads']).to_crs('EPSG:2180')
-        roads = gpd.clip(roads, clip_box)
+        roads = load_layer(BACKGROUND_LAYERS['roads'])
         if not roads.empty:
             roads.plot(ax=ax, fc='none', ec='#333333', lw=0.3, zorder=2)
 
