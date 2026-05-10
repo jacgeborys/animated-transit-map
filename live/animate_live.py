@@ -121,6 +121,8 @@ def main():
     ]:
         if layer_path.exists():
             lyr = gpd.read_file(layer_path).to_crs('EPSG:2180')
+            lyr['geometry'] = lyr.geometry.make_valid()
+            lyr = lyr[lyr.geometry.is_valid & ~lyr.geometry.is_empty]
             lyr = gpd.clip(lyr, clip_box)
             if not lyr.empty:
                 lyr.plot(ax=ax, fc=fc, ec=ec, lw=lw, zorder=zo)
