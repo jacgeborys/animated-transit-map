@@ -99,7 +99,7 @@ def main():
     cx, cy = gdf['x'].mean(), gdf['y'].mean()
     spread_x = (gdf['x'].max() - gdf['x'].min()) * 0.55
     spread_y = (gdf['y'].max() - gdf['y'].min()) * 0.55
-    r = max(spread_x, spread_y, 5000)
+    r = max(spread_x, spread_y, 5000) / 2
     xmin, xmax = cx - r, cx + r
     ymin, ymax = cy - r, cy + r
 
