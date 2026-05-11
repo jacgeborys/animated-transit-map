@@ -160,12 +160,18 @@ def main():
             else:
                 bus_pts.append((x, y))
 
-            # Trail: collect recent positions
+            # Trail: collect recent positions, but only within a continuous segment (no gap > 120s)
             mask = (tl['times'] >= np.datetime64(t_trail)) & (tl['times'] <= np.datetime64(t_cur))
             if mask.sum() > 1:
-                trail_x = tl['xs'][mask]
-                trail_y = tl['ys'][mask]
-                trails.append(np.column_stack([trail_x, trail_y]))
+                trail_times = tl['times'][mask]
+                trail_x     = tl['xs'][mask]
+                trail_y     = tl['ys'][mask]
+                # Find last gap > 120s within the trail window and truncate before it
+                gaps = np.diff(trail_times.astype(np.int64)) / 1e9  # seconds
+                bad = np.where(gaps > 120)[0]
+                start = bad[-1] + 1 if len(bad) else 0
+                if len(trail_x) - start > 1:
+                    trails.append(np.column_stack([trail_x[start:], trail_y[start:]]))
 
         tram_sc.set_offsets(np.array(tram_pts) if tram_pts else np.empty((0, 2)))
         bus_sc.set_offsets(np.array(bus_pts)   if bus_pts  else np.empty((0, 2)))
