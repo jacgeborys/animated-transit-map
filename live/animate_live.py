@@ -43,15 +43,16 @@ def load_data(csv_path: Path) -> gpd.GeoDataFrame:
 
 
 def build_vehicle_timelines(gdf: gpd.GeoDataFrame) -> dict:
-    """For each vehicle: sorted list of (timestamp, x, y)."""
+    """For each (VehicleNumber, vehicle_type) pair: sorted list of (timestamp, x, y).
+    Keyed by (VehicleNumber, vtype) to prevent mixing bus/tram timelines for the same ID."""
     timelines = {}
-    for vid, vdf in gdf.groupby('VehicleNumber'):
+    for (vid, vtype), vdf in gdf.groupby(['VehicleNumber', 'vehicle_type']):
         vdf = vdf.sort_values('poll_time').drop_duplicates('poll_time')
-        timelines[vid] = {
-            'times': vdf['poll_time'].values,  # numpy datetime64
+        timelines[(vid, vtype)] = {
+            'times': vdf['poll_time'].values,
             'xs':    vdf['x'].values,
             'ys':    vdf['y'].values,
-            'vtype': vdf['vehicle_type'].iloc[0],
+            'vtype': vtype,
             'line':  str(vdf['Lines'].iloc[0]),
         }
     return timelines
@@ -128,12 +129,14 @@ def main():
                 lyr.plot(ax=ax, fc=fc, ec=ec, lw=lw, zorder=zo)
 
     # Dynamic artists
-    tram_sc  = ax.scatter([], [], s=18, c=TRAM_COLOR,  marker='D', zorder=10,
-                          edgecolors='#730011', linewidths=1.2, alpha=0.9)
-    bus_sc   = ax.scatter([], [], s=14, c=BUS_COLOR,   marker='o', zorder=9,
-                          edgecolors='#430073', linewidths=1.2, alpha=0.9)
-    trail_lc = LineCollection([], colors=TRAM_COLOR, linewidths=0.8, alpha=0.3, zorder=8)
-    ax.add_collection(trail_lc)
+    tram_sc       = ax.scatter([], [], s=18, c=TRAM_COLOR, marker='D', zorder=10,
+                               edgecolors='#730011', linewidths=1.2, alpha=0.9)
+    bus_sc        = ax.scatter([], [], s=14, c=BUS_COLOR,  marker='o', zorder=9,
+                               edgecolors='#430073', linewidths=1.2, alpha=0.9)
+    tram_trail_lc = LineCollection([], colors=TRAM_COLOR, linewidths=0.8, alpha=0.3, zorder=8)
+    bus_trail_lc  = LineCollection([], colors=BUS_COLOR,  linewidths=0.8, alpha=0.2, zorder=7)
+    ax.add_collection(bus_trail_lc)
+    ax.add_collection(tram_trail_lc)
 
     time_text  = ax.text(0.02, 0.98, '', transform=ax.transAxes, fontsize=18,
                          color='white', va='top', fontweight='bold', fontfamily='Segoe UI')
@@ -148,34 +151,36 @@ def main():
         t_cur = t_start + timedelta(seconds=frac * real_duration)
         t_trail = t_cur - timedelta(seconds=TRAIL_SECS)
 
-        tram_pts, bus_pts, trails = [], [], []
+        tram_pts, bus_pts, tram_trails, bus_trails = [], [], [], []
 
-        for vid, tl in timelines.items():
+        for tl in timelines.values():
             pos = interpolate_position(tl, t_cur)
             if pos is None:
                 continue
             x, y = pos
-            if tl['vtype'] == 'Tram':
+            is_tram = tl['vtype'] == 'Tram'
+            if is_tram:
                 tram_pts.append((x, y))
             else:
                 bus_pts.append((x, y))
 
-            # Trail: collect recent positions, but only within a continuous segment (no gap > 120s)
+            # Trail: recent continuous positions only (no gap > 120s)
             mask = (tl['times'] >= np.datetime64(t_trail)) & (tl['times'] <= np.datetime64(t_cur))
             if mask.sum() > 1:
                 trail_times = tl['times'][mask]
                 trail_x     = tl['xs'][mask]
                 trail_y     = tl['ys'][mask]
-                # Find last gap > 120s within the trail window and truncate before it
-                gaps = np.diff(trail_times.astype(np.int64)) / 1e9  # seconds
-                bad = np.where(gaps > 120)[0]
+                gaps = np.diff(trail_times.astype(np.int64)) / 1e9
+                bad  = np.where(gaps > 120)[0]
                 start = bad[-1] + 1 if len(bad) else 0
                 if len(trail_x) - start > 1:
-                    trails.append(np.column_stack([trail_x[start:], trail_y[start:]]))
+                    seg = np.column_stack([trail_x[start:], trail_y[start:]])
+                    (tram_trails if is_tram else bus_trails).append(seg)
 
         tram_sc.set_offsets(np.array(tram_pts) if tram_pts else np.empty((0, 2)))
         bus_sc.set_offsets(np.array(bus_pts)   if bus_pts  else np.empty((0, 2)))
-        trail_lc.set_segments(trails)
+        tram_trail_lc.set_segments(tram_trails)
+        bus_trail_lc.set_segments(bus_trails)
 
         time_text.set_text(t_cur.strftime('%H:%M:%S'))
         count_text.set_text(f"{len(tram_pts)} trams  ·  {len(bus_pts)} buses")
