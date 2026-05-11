@@ -24,6 +24,12 @@ FFMPEG     = r"C:\ffmpeg\bin\ffmpeg.exe"
 FPS        = 20
 DURATION   = 60      # seconds of output video
 TRAIL_SECS = 120     # how many seconds of trail to show behind each vehicle
+END_HOUR   = 23      # animation ends at this hour of the collection day
+
+# Map bounds — same as animate_full_density.py
+CENTRAL_WARSAW_X = 638000
+CENTRAL_WARSAW_Y = 487000
+FRAME_SIZE       = 22000
 
 TRAM_COLOR  = '#FF7075'
 BUS_COLOR   = '#B46EFC'
@@ -91,18 +97,16 @@ def main():
     timelines = build_vehicle_timelines(gdf)
 
     t_start = gdf['poll_time'].min()
-    t_end   = gdf['poll_time'].max()
+    t_end   = min(gdf['poll_time'].max(),
+                  t_start.replace(hour=END_HOUR, minute=0, second=0, microsecond=0))
     real_duration = (t_end - t_start).total_seconds()
     print(f"  Data: {t_start.strftime('%H:%M')} → {t_end.strftime('%H:%M')} "
           f"({real_duration/60:.0f} min), {len(timelines)} vehicles")
 
-    # Map bounds
-    cx, cy = gdf['x'].mean(), gdf['y'].mean()
-    spread_x = (gdf['x'].max() - gdf['x'].min()) * 0.55
-    spread_y = (gdf['y'].max() - gdf['y'].min()) * 0.55
-    r = max(spread_x, spread_y, 5000) / 2
-    xmin, xmax = cx - r, cx + r
-    ymin, ymax = cy - r, cy + r
+    # Map bounds — fixed to match animate_full_density.py
+    half = FRAME_SIZE / 2
+    xmin, xmax = CENTRAL_WARSAW_X - half, CENTRAL_WARSAW_X + half
+    ymin, ymax = CENTRAL_WARSAW_Y - half, CENTRAL_WARSAW_Y + half
 
     fig, ax = plt.subplots(figsize=(12, 12), facecolor='#0d0d0d')
     ax.set_facecolor('#0d0d0d')
