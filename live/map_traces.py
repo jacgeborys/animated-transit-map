@@ -71,20 +71,25 @@ def main():
         .to_crs('EPSG:4326').to_file(points_out, driver='GeoJSON')
     print(f"Saved: {points_out}")
 
-    # Lines: one LineString per vehicle
+    # Lines: one LineString per continuous segment per vehicle (split at gaps > 3 min)
+    MAX_GAP_SEC = 180
     trace_rows = []
     for vehicle_id, vdf in gdf.groupby('VehicleNumber'):
-        vdf = vdf.sort_values('poll_time')
-        if len(vdf) < 2:
-            continue
-        coords = list(zip(vdf.geometry.x, vdf.geometry.y))
-        trace_rows.append({
-            'VehicleNumber': vehicle_id,
-            'Lines':         vdf['Lines'].iloc[0],
-            'vehicle_type':  vdf['vehicle_type'].iloc[0],
-            'n_fixes':       len(vdf),
-            'geometry':      LineString(coords),
-        })
+        vdf = vdf.sort_values('poll_time').reset_index(drop=True)
+        dts = vdf['poll_time'].diff().dt.total_seconds().fillna(0)
+        split_at = [0] + list(vdf.index[dts > MAX_GAP_SEC]) + [len(vdf)]
+        for i in range(len(split_at) - 1):
+            seg = vdf.iloc[split_at[i]:split_at[i+1]]
+            if len(seg) < 2:
+                continue
+            coords = list(zip(seg.geometry.x, seg.geometry.y))
+            trace_rows.append({
+                'VehicleNumber': vehicle_id,
+                'Lines':         seg['Lines'].iloc[0],
+                'vehicle_type':  seg['vehicle_type'].iloc[0],
+                'n_fixes':       len(seg),
+                'geometry':      LineString(coords),
+            })
     traces_gdf = gpd.GeoDataFrame(trace_rows, crs='EPSG:2180').to_crs('EPSG:4326')
     traces_out = DATA_DIR / f"traces_lines_{date_str}.geojson"
     traces_gdf.to_file(traces_out, driver='GeoJSON')
@@ -120,13 +125,24 @@ def main():
     cmap = plt.colormaps.get_cmap('tab20')
     line_colors = {line: cmap(i % 20) for i, line in enumerate(lines)}
 
+    MAX_GAP_SEC = 180  # split trace if gap between fixes exceeds this
+
     for vehicle_id, vdf in gdf.groupby('VehicleNumber'):
-        vdf = vdf.sort_values('poll_time')
-        xs = vdf.geometry.x.values
-        ys = vdf.geometry.y.values
+        vdf = vdf.sort_values('poll_time').reset_index(drop=True)
         color = line_colors[vdf['Lines'].iloc[0]]
-        ax.plot(xs, ys, color=color, lw=0.6, alpha=0.5, zorder=3)
-        ax.scatter(xs, ys, color=color, s=3, alpha=0.6, zorder=4, linewidths=0)
+
+        # Split into continuous segments at gaps > MAX_GAP_SEC
+        dts = vdf['poll_time'].diff().dt.total_seconds().fillna(0)
+        split_at = [0] + list(vdf.index[dts > MAX_GAP_SEC]) + [len(vdf)]
+        for i in range(len(split_at) - 1):
+            seg = vdf.iloc[split_at[i]:split_at[i+1]]
+            if len(seg) < 2:
+                continue
+            xs = seg.geometry.x.values
+            ys = seg.geometry.y.values
+            ax.plot(xs, ys, color=color, lw=0.6, alpha=0.5, zorder=3)
+
+        ax.scatter(vdf.geometry.x, vdf.geometry.y, color=color, s=3, alpha=0.6, zorder=4, linewidths=0)
 
     top_lines = gdf.groupby('Lines')['VehicleNumber'].nunique().sort_values(ascending=False).head(15).index
     handles = [plt.Line2D([0], [0], color=line_colors[l], lw=2, label=f"Tram {l}") for l in top_lines]
