@@ -120,6 +120,8 @@ How it works:
   and roads closed to cars but open to bus/psv. Bus loops/depot `service` roads are excluded from stats and drawing.
 - Status: `lane` / `high` (≥30/h, no lane) / `medium` (15–30/h) / `low`. Thresholds in `bus_lanes/bl_config.py`.
 - Map draws each direction offset to the right of travel by half its drawn width, so one-sided lanes are visible.
+- Street labels are curved along a binned median centreline of the same-named OSM ways (sits between carriageways),
+  placed in ranking order with collision avoidance (slides along the street, else skipped).
 
 Outputs (`bus_lanes/_output/`): `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png`,
 `bus_lane_gaps_ranking.csv`, `bus_lane_need.gpkg` (layers `bus_dir`, `tram_dir`, `boundary` — for QGIS).

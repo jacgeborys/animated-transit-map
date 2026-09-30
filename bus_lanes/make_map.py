@@ -17,6 +17,9 @@ import pandas as pd
 import shapely
 from matplotlib.lines import Line2D
 from matplotlib import patheffects as pe
+from matplotlib.font_manager import FontProperties
+from matplotlib.textpath import TextToPath
+from shapely.geometry import LineString
 
 sys.path.insert(0, str(Path(__file__).parent))
 from bl_config import DATA_DIR, NEED_HIGH, NEED_MED, OUTPUT_DIR
@@ -90,10 +93,12 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
                     ax=ax, color=COL[st], linewidth=lw_all[sel], zorder=3 + ORDER.index(st),
                     capstyle=cap, joinstyle="round")
 
-    halo = [pe.withStroke(linewidth=3, foreground=BG)]
-    for name, (x, y) in labels.items():
-        ax.text(x, y, name, fontsize=8.5 if scale > 1 else 7.5, color=INK, fontfamily=FONT,
-                ha="center", va="center", zorder=10, path_effects=halo)
+    fs = 9.5 if scale > 1.5 else 8.5
+    gap_m = (width(60, scale) / 2 + fs * 0.75) * m_per_pt  # clear the thickest line
+    frame = shapely.box(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2).buffer(-4 * fs * m_per_pt)
+    placed = []  # glyph positions of labels already drawn (in ranking order)
+    for name, (ways, target) in labels.items():
+        curved_label(ax, name, ways, target, fs, m_per_pt, gap_m, frame, placed)
 
     # --- header ---
     fig.text(0.05, 0.955, title, fontsize=34, fontweight="bold", color=INK, fontfamily=FONT, va="top")
@@ -133,17 +138,132 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
     print(f"Saved {out}")
 
 
-def label_points(bus, names):
-    """One label per street, at the middle of its longest 'high/medium' piece."""
+def label_points(bus, streets, names):
+    """Per street: (all same-named OSM ways, point on its high/medium stretch to label)."""
     out = {}
-    gaps = bus[bus.status.isin(["high", "medium"]) & bus.name.isin(names)]
-    for name, g in gaps.groupby("name"):
-        merged = shapely.line_merge(shapely.union_all(g.geometry.values))
-        parts = list(getattr(merged, "geoms", [merged]))
-        longest = max(parts, key=lambda p: p.length)
-        p = longest.interpolate(0.5, normalized=True)
-        out[short(name)] = (p.x, p.y + 180)
+    for name in names:
+        gaps = bus[(bus.name == name) & bus.status.isin(["high", "medium"])]
+        ways = streets[streets.name == name]
+        if gaps.empty or ways.empty:
+            continue
+        longest = gaps.geometry.iloc[int(np.argmax(gaps.length.to_numpy()))]
+        out[short(name)] = (list(ways.geometry.values), longest.interpolate(0.5, normalized=True))
     return out
+
+
+
+
+def _point_along(coords, dist):
+    """Point `dist` metres along a coordinate array from its first vertex (or its end)."""
+    line = LineString(coords)
+    return np.asarray(line.interpolate(min(dist, line.length)).coords[0])
+
+
+def centerline_path(ways, target, radius, frame=None, nbins=14):
+    """Smooth street centreline around `target`: densified vertices of all same-named ways
+    within `radius`, binned along the local main axis, median per bin. On dual carriageways
+    this lands between the two roadways — where a street label belongs."""
+    pts = np.vstack([shapely.get_coordinates(shapely.segmentize(w, 10)) for w in ways])
+    t0 = np.asarray(target.coords[0])
+    pts = pts[np.hypot(*(pts - t0).T) <= radius]
+    if frame is not None and len(pts):
+        pts = pts[shapely.contains_xy(frame, pts[:, 0], pts[:, 1])]
+    if len(pts) < 10:
+        return None
+    ctr = pts.mean(axis=0)
+    _, _, vt = np.linalg.svd(pts - ctr, full_matrices=False)
+    t = (pts - ctr) @ vt[0]
+    edges = np.linspace(t.min(), t.max(), nbins + 1)
+    idx = np.clip(np.digitize(t, edges) - 1, 0, nbins - 1)
+    cl = np.array([np.median(pts[idx == k], axis=0) for k in range(nbins) if (idx == k).any()])
+    return LineString(cl) if len(cl) >= 3 else None
+
+
+def _smooth(line: LineString, tol: float, iters=4) -> LineString:
+    """Simplify, then Chaikin corner-cutting, so letters follow a calm curve."""
+    c = np.asarray(line.simplify(tol).coords)
+    for _ in range(iters):
+        if len(c) < 3:
+            break
+        q = 0.75 * c[:-1] + 0.25 * c[1:]
+        r = 0.25 * c[:-1] + 0.75 * c[1:]
+        c = np.vstack([c[:1], np.column_stack([q, r]).reshape(-1, 2), c[-1:]])
+    return LineString(c)
+
+
+_T2P = TextToPath()
+
+
+def _extend(line: LineString, d: float) -> LineString:
+    """Prolong both ends straight along their ~25 m end direction by d metres."""
+    c = np.asarray(line.coords)
+    def tip(pts):
+        a, b = _point_along(pts[::-1], 25), pts[-1]
+        v = (b - a) / max(np.hypot(*(b - a)), 1e-9)
+        return b + v * d
+    return LineString(np.vstack([tip(c[::-1]), c, tip(c)]))
+
+
+def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
+    """Street label set letter by letter along the street, parallel and offset to one side."""
+    prop = FontProperties(family=FONT, size=fs)
+    adv = lambda t: _T2P.get_text_width_height_descent(t, prop, ismath=False)[0]  # pt
+    total = adv(text) * m_per_pt
+    line = centerline_path(ways, target, total * 0.8, frame)
+    if line is None or line.length < total * 0.5:
+        print(f"  label skipped (street too short in view): {text}")
+        return
+    if line.length < total * 1.3:  # short street: let the label overhang both ends
+        line = _extend(line, (total * 1.3 - line.length) / 2)
+    path = _smooth(line, tol=total * 0.03)
+    # centre the label on the target stretch, kept fully on the path
+    mid = path.project(target)
+    mid = min(max(mid, total / 2 + 1), path.length - total / 2 - 1)
+    a, b = path.interpolate(mid - total / 4), path.interpolate(mid + total / 4)
+    if b.x < a.x:  # read left → right
+        path = path.reverse()
+        mid = path.length - mid
+    # shift to the left of travel (= above, after the flip) so the text clears the line
+    off = path.offset_curve(gap_m)
+    if off.geom_type == "MultiLineString":
+        off = max(off.geoms, key=lambda g: g.length)
+    if off.is_empty or off.length < total * 1.05:
+        off = path
+    mid = off.project(path.interpolate(mid))
+    L = off.length
+
+    def layout(start):
+        glyphs = []
+        for i, ch in enumerate(text):
+            if ch == " ":
+                continue
+            centre = start + (adv(text[:i]) + adv(ch) / 2) * m_per_pt
+            p0 = off.interpolate(max(centre - 0.6 * fs * m_per_pt, 0))
+            p1 = off.interpolate(min(centre + 0.6 * fs * m_per_pt, L))
+            p = off.interpolate(centre)
+            glyphs.append((ch, p.x, p.y, np.degrees(np.arctan2(p1.y - p0.y, p1.x - p0.x))))
+        return glyphs
+
+    # try the target position first, then slide along the street to dodge earlier labels
+    clear = 1.4 * fs * m_per_pt
+    base = min(max(mid - total / 2, 0), max(L - total, 0))
+    for shift in (0, 0.5, -0.5, 1.0, -1.0, 1.5, -1.5):
+        start = base + shift * total
+        if start < 0 or start > max(L - total, 0):
+            continue
+        glyphs = layout(start)
+        xy = np.array([(g[1], g[2]) for g in glyphs])
+        if all(np.min(np.hypot(*(xy[:, None, :] - q[None, :, :]).transpose(2, 0, 1))) > clear
+               for q in placed):
+            break
+    else:
+        print(f"  label skipped (collides): {text}")
+        return
+    placed.append(xy)
+    halo = [pe.withStroke(linewidth=3, foreground=BG)]
+    for ch, x, y, ang in glyphs:
+        ax.text(x, y, ch, fontsize=fs, color=INK, fontfamily=FONT, rotation=ang,
+                rotation_mode="anchor", ha="center", va="center", zorder=10, path_effects=halo)
 
 
 def short(name: str) -> str:
@@ -203,10 +323,13 @@ def main():
     river = gpd.read_file(osm, layer="river")
     rank = pd.read_csv(OUTPUT_DIR / "bus_lane_gaps_ranking.csv")
 
+    named = gpd.read_file(osm, layer="streets", columns=["name", "highway"])
+    named = named[named.name.notna() & ~named.highway.isin(["service", "living_street"])
+                  & ~named.highway.str.endswith("_link")]
     city = boundary.total_bounds
     top = rank.drop_duplicates("ulica").head(12).ulica.tolist()
     draw_map(bus, streets, river, boundary, date, city, OUTPUT_DIR / "buspasy_warszawa.png",
-             "Gdzie brakuje buspasów?", scale=1.3, labels=label_points(bus, top))
+             "Gdzie brakuje buspasów?", scale=1.3, labels=label_points(bus, named, top))
 
     # Central zoom: ~9 x 11 km around Śródmieście
     cx, cy = 638500, 486800   # EPSG:2180, near Rondo Dmowskiego
@@ -214,7 +337,7 @@ def main():
     in_ext = bus.cx[ext[0]:ext[2], ext[1]:ext[3]]
     top_c = (in_ext[in_ext.status == "high"].assign(L=lambda d: d.length)
              .groupby("name").L.sum().sort_values(ascending=False).head(12).index.tolist())
-    lab = {k: v for k, v in label_points(in_ext, top_c).items()}
+    lab = label_points(bus, named, top_c)
     draw_map(bus, streets, river, boundary, date, ext, OUTPUT_DIR / "buspasy_centrum.png",
              "Buspasy w centrum", scale=1.8, labels=lab)
 
