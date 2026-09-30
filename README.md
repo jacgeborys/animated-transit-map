@@ -85,6 +85,7 @@ gtfs_schedules_city/
 │   └── junction_segmenter.py        ← Step 3: create segments
 ├── animate/
 │   └── animate_full_density.py      ← Step 4: render animation
+├── bus_lanes/                       ← Bus lane need map (separate pipeline, see below)
 ├── visualization/
 │   ├── map_generator.py             ← Optional: generate static PNG maps
 │   └── config_viz.py
@@ -95,6 +96,35 @@ gtfs_schedules_city/
 │   └── processed/                   ← Intermediate shapefiles (gitignored)
 └── archive/                         ← Old/unused scripts (ignore)
 ```
+
+---
+
+## Bus Lane Need Map (`bus_lanes/`)
+
+Static maps for an activist post (Miasto Jest Nasze): where many buses run **without** a bus lane.
+Independent of the animation pipeline — only needs a fresh GTFS download (Step 1).
+
+```bash
+python core/gtfs_downloader.py        # fresh ZTM GTFS
+python bus_lanes/osm_fetch.py         # OSM streets + bus lane tags + Vistula (cached in bus_lanes/_data/)
+python bus_lanes/transit_counts.py    # random regular Wednesday → per-shape passing counts
+python bus_lanes/match_streets.py     # shapes → OSM ways per direction, classify, ranking CSV
+python bus_lanes/make_map.py          # PNGs in bus_lanes/_output/
+```
+
+How it works:
+- Counts use the time a bus **passes each stop**, not trip start. `per_h` = max(AM 7–9, PM 15–17) / 2, per direction.
+- Each shape is sampled every 10 m and snapped to the nearest parallel OSM way (≤15 m, ±35°) whose `oneway`
+  allows that direction → dual carriageways are separated correctly. Counts are summed per (way, direction).
+- Bus lanes parsed from `busway*`, `bus:lanes*`, `psv:lanes*`, `lanes:bus*`, `lanes:psv*`, `highway=busway`
+  and roads closed to cars but open to bus/psv. Bus loops/depot `service` roads are excluded from stats and drawing.
+- Status: `lane` / `high` (≥30/h, no lane) / `medium` (15–30/h) / `low`. Thresholds in `bus_lanes/bl_config.py`.
+- Map draws each direction offset to the right of travel by half its drawn width, so one-sided lanes are visible.
+
+Outputs (`bus_lanes/_output/`): `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png`,
+`bus_lane_gaps_ranking.csv`, `bus_lane_need.gpkg` (layers `bus_dir`, `tram_dir`, `boundary` — for QGIS).
+
+Pin the date with `ANALYSIS_DATE` in `bl_config.py`; delete `bus_lanes/_data/osm_*.json` to refresh OSM.
 
 ---
 

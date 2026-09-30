@@ -51,3 +51,7 @@ nul
 
 # Logs
 *.log
+
+# Bus lane map
+bus_lanes/_data/
+bus_lanes/_output/*.gpkg
