@@ -122,6 +122,8 @@ How it works:
 - Map draws each direction offset to the right of travel by half its drawn width, so one-sided lanes are visible.
 - Street labels are curved along a binned median centreline of the same-named OSM ways (sits between carriageways),
   placed in ranking order with collision avoidance (slides along the street, else skipped).
+  Font: Liberation Sans Narrow + letter spacing. Per-street tweaks (side, southern anchor, extra labels)
+  in `LABEL_SIDE`, `LABEL_AT`, `CITY_EXTRA_LABELS` at the top of `make_map.py`.
 
 Outputs (`bus_lanes/_output/`): `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png`,
 `bus_lane_gaps_ranking.csv`, `bus_lane_need.gpkg` (layers `bus_dir`, `tram_dir`, `boundary` — for QGIS).

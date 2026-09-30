@@ -35,6 +35,19 @@ INK3 = "#6b7280"
 COL = {"lane": "#3a82e0", "high": "#ff3d54", "medium": "#ffb020", "low": "#5a6170"}
 ORDER = ["low", "lane", "medium", "high"]  # draw order (last on top)
 FONT = "Segoe UI"
+# Street labels: condensed face (loaded from file — matplotlib's font cache may not list it)
+_NARROW = Path(r"C:\Windows\Fonts\LiberationSansNarrow-Regular.ttf")
+LABEL_TRACKING = 0.10          # extra space between letters, in em
+# Per-street label tweaks (keys = short names as printed on the map)
+LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1}   # -1 = right of / below the street
+LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
+CITY_EXTRA_LABELS = ["Łopuszańska"]
+
+
+def label_font(size):
+    if _NARROW.exists():
+        return FontProperties(fname=str(_NARROW), size=size)
+    return FontProperties(family=FONT, size=size)
 
 PL_MONTHS = ["stycznia", "lutego", "marca", "kwietnia", "maja", "czerwca", "lipca",
              "sierpnia", "września", "października", "listopada", "grudnia"]
@@ -93,12 +106,12 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
                     ax=ax, color=COL[st], linewidth=lw_all[sel], zorder=3 + ORDER.index(st),
                     capstyle=cap, joinstyle="round")
 
-    fs = 9.5 if scale > 1.5 else 8.5
+    fs = 11 if scale > 1.5 else 10
     gap_m = (width(60, scale) / 2 + fs * 0.75) * m_per_pt  # clear the thickest line
     frame = shapely.box(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2).buffer(-4 * fs * m_per_pt)
     placed = []  # glyph positions of labels already drawn (in ranking order)
-    for name, (ways, target) in labels.items():
-        curved_label(ax, name, ways, target, fs, m_per_pt, gap_m, frame, placed)
+    for name, (ways, target, side) in labels.items():
+        curved_label(ax, name, ways, target, fs, m_per_pt, gap_m * side, frame, placed)
 
     # --- header ---
     fig.text(0.05, 0.955, title, fontsize=34, fontweight="bold", color=INK, fontfamily=FONT, va="top")
@@ -146,8 +159,15 @@ def label_points(bus, streets, names):
         ways = streets[streets.name == name]
         if gaps.empty or ways.empty:
             continue
-        longest = gaps.geometry.iloc[int(np.argmax(gaps.length.to_numpy()))]
-        out[short(name)] = (list(ways.geometry.values), longest.interpolate(0.5, normalized=True))
+        label = short(name)
+        if LABEL_AT.get(label) == "south":
+            g = gaps[gaps.in_city]
+            xy = shapely.get_coordinates(g.geometry.values)
+            target = shapely.Point(xy[np.argmin(xy[:, 1])])
+        else:
+            longest = gaps.geometry.iloc[int(np.argmax(gaps.length.to_numpy()))]
+            target = longest.interpolate(0.5, normalized=True)
+        out[label] = (list(ways.geometry.values), target, LABEL_SIDE.get(label, 1))
     return out
 
 
@@ -206,16 +226,25 @@ def _extend(line: LineString, d: float) -> LineString:
 
 def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
     """Street label set letter by letter along the street, parallel and offset to one side."""
-    prop = FontProperties(family=FONT, size=fs)
+    prop = label_font(fs)
     adv = lambda t: _T2P.get_text_width_height_descent(t, prop, ismath=False)[0]  # pt
-    total = adv(text) * m_per_pt
+    track = LABEL_TRACKING * fs  # pt
+    total = (adv(text) + track * (len(text) - 1)) * m_per_pt
+    if frame is not None and not frame.contains(target):
+        # anchor fell in the edge margin: move it onto the street, ~half a label inside the frame
+        pts = np.vstack([shapely.get_coordinates(shapely.segmentize(w, 20)) for w in ways])
+        inner = frame.buffer(-total * 0.6)
+        pts = pts[shapely.contains_xy(inner, pts[:, 0], pts[:, 1])]
+        if len(pts):
+            t0 = np.asarray(target.coords[0])
+            target = shapely.Point(pts[np.argmin(np.hypot(*(pts - t0).T))])
     line = centerline_path(ways, target, total * 0.8, frame)
     if line is None or line.length < total * 0.5:
         print(f"  label skipped (street too short in view): {text}")
         return
     if line.length < total * 1.3:  # short street: let the label overhang both ends
         line = _extend(line, (total * 1.3 - line.length) / 2)
-    path = _smooth(line, tol=total * 0.03)
+    path = _smooth(line, tol=total * 0.06, iters=5)
     # centre the label on the target stretch, kept fully on the path
     mid = path.project(target)
     mid = min(max(mid, total / 2 + 1), path.length - total / 2 - 1)
@@ -237,7 +266,7 @@ def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
         for i, ch in enumerate(text):
             if ch == " ":
                 continue
-            centre = start + (adv(text[:i]) + adv(ch) / 2) * m_per_pt
+            centre = start + (adv(text[:i]) + adv(ch) / 2 + track * i) * m_per_pt
             p0 = off.interpolate(max(centre - 0.6 * fs * m_per_pt, 0))
             p1 = off.interpolate(min(centre + 0.6 * fs * m_per_pt, L))
             p = off.interpolate(centre)
@@ -262,7 +291,7 @@ def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
     placed.append(xy)
     halo = [pe.withStroke(linewidth=3, foreground=BG)]
     for ch, x, y, ang in glyphs:
-        ax.text(x, y, ch, fontsize=fs, color=INK, fontfamily=FONT, rotation=ang,
+        ax.text(x, y, ch, fontproperties=prop, color=INK, rotation=ang,
                 rotation_mode="anchor", ha="center", va="center", zorder=10, path_effects=halo)
 
 
@@ -327,7 +356,7 @@ def main():
     named = named[named.name.notna() & ~named.highway.isin(["service", "living_street"])
                   & ~named.highway.str.endswith("_link")]
     city = boundary.total_bounds
-    top = rank.drop_duplicates("ulica").head(12).ulica.tolist()
+    top = rank.drop_duplicates("ulica").head(12).ulica.tolist() + CITY_EXTRA_LABELS
     draw_map(bus, streets, river, boundary, date, city, OUTPUT_DIR / "buspasy_warszawa.png",
              "Gdzie brakuje buspasów?", scale=1.3, labels=label_points(bus, named, top))
 
