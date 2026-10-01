@@ -35,6 +35,7 @@ MANUAL_CSV = BL_DIR / "manual_bus_lanes.csv"
 # City-layer records to drop (street name contains any of these) — temporary lanes from the
 # metro construction that no longer exist
 CITY_EXCLUDE = ["Chodecka", "Wyszogrodzka"]
+CITY_EXCLUDE_STATUS = ["metro"]   # all temporary metro-construction lanes are out of date
 ENDPOINT_RADIUS_M = {"ulica": 30, "przystanek": 60, "granica": 80}
 CONNECT_GAP_M = 25          # bridge small gaps between OSM pieces (junction areas)
 CONTINUE_GAP_M = 100        # longer gaps bridged only when straight ahead (±30°)
@@ -61,7 +62,7 @@ def fetch_city_layer(cache: Path) -> gpd.GeoDataFrame:
         if f["geometry"]["type"] != "LineString":
             continue
         p = f["properties"]
-        if any(x in (p.get("NAZWA_SERWIS") or "") for x in CITY_EXCLUDE):
+        if any(x in (p.get("NAZWA_SERWIS") or "") for x in CITY_EXCLUDE)                 or p.get("STATUS") in CITY_EXCLUDE_STATUS:
             continue
         # Oracle returns a flat [x1, y1, x2, y2, ...] list
         geom = LineString(np.asarray(f["geometry"]["coordinates"], float).reshape(-1, 2))
