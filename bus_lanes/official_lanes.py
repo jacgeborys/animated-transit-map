@@ -32,6 +32,9 @@ from bl_config import BL_DIR, DATA_DIR, POLAND_CRS, RAW_DIR
 
 CITY_URL = "https://mapa.um.warszawa.pl/mapviewer/dataserver/DANE_WAWA?t=K_BUSPASY_0_4"
 MANUAL_CSV = BL_DIR / "manual_bus_lanes.csv"
+# City-layer records to drop (street name contains any of these) — temporary lanes from the
+# metro construction that no longer exist
+CITY_EXCLUDE = ["Chodecka", "Wyszogrodzka"]
 ENDPOINT_RADIUS_M = {"ulica": 30, "przystanek": 60, "granica": 80}
 CONNECT_GAP_M = 25          # bridge small gaps between OSM pieces (junction areas)
 CONTINUE_GAP_M = 100        # longer gaps bridged only when straight ahead (±30°)
@@ -58,6 +61,8 @@ def fetch_city_layer(cache: Path) -> gpd.GeoDataFrame:
         if f["geometry"]["type"] != "LineString":
             continue
         p = f["properties"]
+        if any(x in (p.get("NAZWA_SERWIS") or "") for x in CITY_EXCLUDE):
+            continue
         # Oracle returns a flat [x1, y1, x2, y2, ...] list
         geom = LineString(np.asarray(f["geometry"]["coordinates"], float).reshape(-1, 2))
         rows.append({"zrodlo": "miasto", "ulica": p.get("NAZWA_SERWIS"), "odcinek": p.get("Odcinek"),

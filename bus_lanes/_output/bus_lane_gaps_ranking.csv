@@ -58,8 +58,8 @@ Targowa,płd.-wsch.,1.04,37.9,48.0,735.0,39.4
 Wałbrzyska,wschód,1.15,34.0,38.5,537.0,39.1
 Jana Pawła II,wschód,1.87,20.5,21.0,331.0,38.3
 Aleja Lotników,płn.-zach.,1.13,33.8,37.5,513.0,38.2
-Marsa,płd.-zach.,1.04,36.6,37.5,607.0,38.1
 Wałbrzyska,zachód,1.15,33.1,37.5,524.0,38.1
+Marsa,płd.-zach.,1.04,36.6,37.5,607.0,38.1
 Szaserów,wschód,1.5,25.1,25.5,344.0,37.7
 Marsa,płn.-wsch.,1.01,36.7,37.5,611.0,37.1
 Aleja Armii Krajowej,płn.-wsch.,0.89,41.5,41.5,579.0,36.9
@@ -67,6 +67,7 @@ Szaserów,zachód,1.5,24.3,24.5,349.0,36.4
 Aleje Ujazdowskie,południe,1.39,26.0,29.0,434.0,36.1
 Aleja „Solidarności”,płn.-wsch.,1.79,20.0,22.0,385.0,35.8
 Chodecka,północ,1.3,25.8,29.0,455.0,33.5
+Chodecka,południe,1.31,25.4,42.0,671.0,33.3
 Ryżowa,płn.-wsch.,0.93,35.6,37.0,488.0,33.1
 Ludwika Kondratowicza,zachód,0.91,36.1,59.5,923.0,32.9
 Stefana Żeromskiego,wschód,1.68,19.3,24.0,387.0,32.4
@@ -99,20 +100,20 @@ Leona Berensona,zachód,0.8,29.4,44.75,583.0,23.5
 Jana Rosoła,płd.-wsch.,1.37,17.1,18.0,296.0,23.4
 Podpułkownika Mieczysława Sokołowskiego „Grzymały”,płn.-zach.,0.53,44.0,44.0,637.0,23.3
 Świętego Wincentego,północ,1.29,18.0,30.5,499.0,23.2
-Aleja Józefa Becka,płn.-wsch.,1.38,16.7,17.0,264.0,23.0
 Karola Dickensa,płn.-zach.,0.95,24.2,30.75,389.0,23.0
+Aleja Józefa Becka,płn.-wsch.,1.38,16.7,17.0,264.0,23.0
 Adama Branickiego,płn.-wsch.,1.46,15.7,16.0,268.0,22.9
 Aleja Stanów Zjednoczonych,płd.-zach.,0.82,27.4,28.0,387.0,22.5
-Wrocławska,południe,1.3,17.2,17.5,276.0,22.4
 Ludwika Waryńskiego,południe,0.68,32.9,38.5,543.0,22.4
+Wrocławska,południe,1.3,17.2,17.5,276.0,22.4
 Kleszczowa,płn.-zach.,0.72,31.0,31.0,456.0,22.3
-Adama Branickiego,płd.-zach.,1.38,16.0,16.0,259.0,22.1
 Aleja Stanów Zjednoczonych,płn.-wsch.,0.7,31.6,63.5,900.0,22.1
+Adama Branickiego,płd.-zach.,1.38,16.0,16.0,259.0,22.1
 Wrocławska,północ,1.3,16.8,17.0,276.0,21.8
 Leona Berensona,wschód,0.75,28.5,32.5,436.0,21.4
 Radiowa,płn.-zach.,1.31,15.7,23.0,346.0,20.6
-Dźwigowa,północ,1.23,16.5,16.5,279.0,20.3
 Dźwigowa,południe,1.22,16.6,17.0,267.0,20.3
+Dźwigowa,północ,1.23,16.5,16.5,279.0,20.3
 Generała Augusta Emila Fieldorfa „Nila”,południe,1.13,17.9,24.0,401.0,20.2
 Trocka,płn.-zach.,0.79,25.4,35.0,460.0,20.1
 Malborska,płn.-wsch.,0.84,23.8,24.0,323.0,20.0
@@ -131,90 +132,91 @@ Powązkowska,płn.-zach.,1.09,16.8,17.0,261.0,18.3
 Adama Mickiewicza,płn.-zach.,1.09,16.7,17.5,295.0,18.2
 Zamieniecka,północ,0.9,20.1,23.5,372.0,18.1
 Jurija Gagarina,wschód,1.2,15.0,15.0,244.0,18.0
-Karola Dickensa,płd.-wsch.,0.56,31.4,32.0,432.0,17.6
 Bronisława Czecha,wschód,0.95,18.5,19.0,309.0,17.6
 Świętego Wincentego,południe,0.98,18.0,18.0,321.0,17.6
+Karola Dickensa,płd.-wsch.,0.56,31.4,32.0,432.0,17.6
 Zamieniecka,południe,0.88,19.8,24.0,374.0,17.4
 Łukowska,wschód,0.99,17.4,21.0,296.0,17.2
 Aleja Księcia Józefa Poniatowskiego,wschód,0.49,34.9,37.0,577.0,17.1
 Ostródzka,południe,0.96,17.8,22.0,284.0,17.1
 Jana Ciszewskiego,płn.-wsch.,1.03,16.5,25.5,389.0,17.0
 Władysława Umińskiego,płn.-zach.,0.88,19.2,19.5,329.0,16.9
-Władysława Umińskiego,płd.-wsch.,0.88,19.1,25.0,409.0,16.8
 Popularna,wschód,0.91,18.5,18.5,278.0,16.8
-Sokratesa,płn.-wsch.,1.09,15.2,20.0,303.0,16.6
+Władysława Umińskiego,płd.-wsch.,0.88,19.1,25.0,409.0,16.8
+Most Księcia Józefa Poniatowskiego,zachód,0.57,29.1,29.5,466.0,16.6
 Most Księcia Józefa Poniatowskiego,wschód,0.58,28.7,29.0,462.0,16.6
 Żegańska,zachód,0.81,20.5,20.75,312.0,16.6
-Most Księcia Józefa Poniatowskiego,zachód,0.57,29.1,29.5,466.0,16.6
+Sokratesa,płn.-wsch.,1.09,15.2,20.0,303.0,16.6
 Jana Rosoła,płn.-zach.,0.93,17.7,28.5,469.0,16.5
 Aleja Księcia Józefa Poniatowskiego,zachód,0.48,34.2,38.5,583.0,16.4
-Sasanki,zachód,0.49,33.5,33.5,430.0,16.4
 Popularna,zachód,0.91,18.0,18.0,284.0,16.4
+Sasanki,zachód,0.49,33.5,33.5,430.0,16.4
 Żegańska,wschód,0.81,20.0,20.0,306.0,16.2
+Strażacka,zachód,0.72,22.3,22.5,321.0,16.1
 Raszyńska,południe,0.91,17.7,18.0,260.0,16.1
 Strażacka,wschód,0.74,21.7,22.5,323.0,16.1
-Strażacka,zachód,0.72,22.3,22.5,321.0,16.1
 Mariana Keniga,północ,0.56,28.6,31.5,471.0,16.0
-Jana Ciszewskiego,płd.-zach.,0.89,17.9,22.0,356.0,15.9
 Aleja Dzieci Polskich,wschód,0.77,20.7,21.0,306.0,15.9
-Aleja Generała Antoniego Chruściela „Montera”,płd.-zach.,0.88,18.0,22.5,321.0,15.8
+Jana Ciszewskiego,płd.-zach.,0.89,17.9,22.0,356.0,15.9
 Aleja Generała Antoniego Chruściela „Montera”,płn.-wsch.,0.88,17.9,22.0,327.0,15.8
+Aleja Generała Antoniego Chruściela „Montera”,płd.-zach.,0.88,18.0,22.5,321.0,15.8
 Piotra Wysockiego,płd.-wsch.,0.76,20.5,31.0,462.0,15.6
 Walerego Sławka,północ,0.46,33.5,33.5,438.0,15.4
 Mariana Keniga,południe,0.58,26.4,29.0,458.0,15.3
 Aleja Władysława Reymonta,płd.-zach.,0.88,17.4,19.5,309.0,15.3
 Łukowska,zachód,0.92,16.5,17.0,259.0,15.2
 Ostródzka,północ,0.95,15.9,16.0,228.0,15.1
-Juliusza Słowackiego,płd.-wsch.,0.52,28.8,41.0,612.0,15.0
-Bolesława Chrobrego,północ,0.64,23.5,23.75,372.0,15.0
-Piotra Wysockiego,płn.-zach.,0.76,19.7,30.0,464.0,15.0
 Grójecka,płd.-zach.,0.9,16.7,25.0,406.0,15.0
-Wincentego Rzymowskiego,północ,0.74,20.0,26.0,391.0,14.8
+Bolesława Chrobrego,północ,0.64,23.5,23.75,372.0,15.0
+Juliusza Słowackiego,płd.-wsch.,0.52,28.8,41.0,612.0,15.0
+Piotra Wysockiego,płn.-zach.,0.76,19.7,30.0,464.0,15.0
 Bolesława Chrobrego,południe,0.63,23.5,23.5,365.0,14.8
+Wincentego Rzymowskiego,północ,0.74,20.0,26.0,391.0,14.8
 Aleja 4 Czerwca 1989 r.,południe,0.98,15.0,15.5,263.0,14.7
-Jana Pawła Woronicza,zachód,0.8,18.0,20.0,333.0,14.4
 Aleja 4 Czerwca 1989 r.,północ,0.93,15.5,15.5,237.0,14.4
+Jana Pawła Woronicza,zachód,0.8,18.0,20.0,333.0,14.4
 Aleja Władysława Reymonta,płn.-wsch.,0.84,17.1,19.0,319.0,14.4
 Walerego Sławka,południe,0.46,31.0,31.0,432.0,14.3
 Wincentego Rzymowskiego,południe,0.76,18.5,23.0,388.0,14.1
 Łabiszyńska,północ,0.7,20.0,24.0,359.0,14.0
+Mińska,płd.-zach.,0.82,17.0,17.0,266.0,13.9
 Aleja Komisji Edukacji Narodowej,płd.-wsch.,0.61,22.8,28.5,441.0,13.9
 Aleja Dzieci Polskich,zachód,0.68,20.5,20.5,312.0,13.9
-Michała Ossowskiego,płd.-wsch.,0.86,16.2,16.5,232.0,13.9
 Wiatraczna,południe,0.55,25.2,25.5,346.0,13.9
-Mińska,płd.-zach.,0.82,17.0,17.0,266.0,13.9
+Michała Ossowskiego,płd.-wsch.,0.86,16.2,16.5,232.0,13.9
 Michała Ossowskiego,płn.-zach.,0.86,16.0,16.0,235.0,13.8
 Aleja Komisji Edukacji Narodowej,płn.-zach.,0.71,19.4,23.0,375.0,13.8
 Francuska,płn.-zach.,0.76,18.0,18.0,250.0,13.7
-Bohaterów Warszawy,płd.-wsch.,0.68,20.0,20.5,248.0,13.6
 Książęca,zachód,0.58,23.4,23.5,388.0,13.6
-Most Siekierkowski,płd.-zach.,0.78,17.0,17.0,267.0,13.3
+Bohaterów Warszawy,płd.-wsch.,0.68,20.0,20.5,248.0,13.6
 Most Siekierkowski,płn.-wsch.,0.78,17.0,17.0,264.0,13.3
 Płocka,północ,0.77,17.3,17.5,265.0,13.3
+Most Siekierkowski,płd.-zach.,0.78,17.0,17.0,267.0,13.3
 Bohaterów Warszawy,płn.-zach.,0.68,19.4,19.5,249.0,13.2
 Orląt Lwowskich,wschód,0.48,27.5,31.0,479.0,13.2
 Książęca,wschód,0.57,23.0,23.0,385.0,13.1
 Płocka,południe,0.76,17.0,17.0,274.0,12.9
-Wyszogrodzka,wschód,0.69,18.6,19.0,288.0,12.8
 Żołnierzy Wyklętych,południe,0.75,17.0,17.0,213.0,12.8
+Wyszogrodzka,wschód,0.69,18.6,19.0,288.0,12.8
 Erazma Ciołka,północ,0.8,16.0,16.0,247.0,12.8
 Sokola,północ,0.53,24.0,25.5,343.0,12.7
+Wyszogrodzka,zachód,0.68,18.5,18.5,291.0,12.6
 Bartnicza,płn.-wsch.,0.66,19.0,19.0,288.0,12.5
 Adama Mickiewicza,płd.-wsch.,0.71,17.4,17.5,297.0,12.4
 Żołnierzy Wyklętych,północ,0.75,16.5,16.5,212.0,12.4
-Stefana Batorego,wschód,0.77,16.0,16.0,255.0,12.3
 Jana Zamoyskiego,zachód,0.49,25.2,28.5,397.0,12.3
+Stefana Batorego,wschód,0.77,16.0,16.0,255.0,12.3
 Żupnicza,płn.-wsch.,0.72,17.0,17.0,266.0,12.2
 Miodowa,płn.-zach.,0.49,24.6,28.5,398.0,12.1
 Francuska,płd.-wsch.,0.76,15.8,16.0,241.0,12.0
-Egipska,wschód,0.26,45.5,45.5,612.0,11.8
-Wąwozowa,zachód,0.7,16.8,29.0,448.0,11.8
 Kijowska,płn.-wsch.,0.76,15.5,17.0,334.0,11.8
-Egipska,zachód,0.25,47.4,48.0,623.0,11.8
+Wąwozowa,zachód,0.7,16.8,29.0,448.0,11.8
 Szczęśliwicka,płd.-zach.,0.67,17.6,21.0,308.0,11.8
-Kopińska,płn.-zach.,0.29,39.2,39.5,582.0,11.4
-Młodzieńcza,płd.-wsch.,0.67,17.0,17.0,267.0,11.4
+Egipska,zachód,0.25,47.4,48.0,623.0,11.8
+Egipska,wschód,0.26,45.5,45.5,612.0,11.8
 Stanisława Herbsta,płd.-zach.,0.72,15.8,17.0,294.0,11.4
+Młodzieńcza,płd.-wsch.,0.67,17.0,17.0,267.0,11.4
+Kopińska,płn.-zach.,0.29,39.2,39.5,582.0,11.4
 Eugeniusza Romera,wschód,0.72,15.5,15.5,261.0,11.2
 Jurija Gagarina,zachód,0.73,15.0,15.0,237.0,11.0
 Miodowa,płd.-wsch.,0.49,22.5,22.5,384.0,11.0
@@ -223,154 +225,154 @@ Szczęśliwicka,płn.-wsch.,0.68,16.0,16.0,194.0,10.9
 Generała Stanisława Maczka,płd.-wsch.,0.64,17.0,17.0,253.0,10.9
 Jana Ostroroga,północ,0.6,17.5,17.5,265.0,10.5
 Emilii Plater,południe,0.45,23.1,39.5,719.0,10.4
-Sokola,południe,0.4,25.7,26.0,343.0,10.3
 Lubelska,północ,0.4,25.7,33.0,519.0,10.3
+Sokola,południe,0.4,25.7,26.0,343.0,10.3
 Wąwozowa,wschód,0.6,17.0,17.0,251.0,10.2
 Wiatraczna,północ,0.41,25.0,25.0,340.0,10.2
 Jagiellońska,płd.-wsch.,0.61,16.5,16.5,233.0,10.1
 Powązkowska,płd.-wsch.,0.62,16.1,17.0,265.0,10.0
 Orląt Lwowskich,zachód,0.4,25.0,25.0,391.0,10.0
 Adolfa Pawińskiego,płd.-zach.,0.67,15.0,15.0,201.0,10.0
-Rondo Wiatraczna,południe,0.19,52.1,63.0,985.0,9.9
 Bysławska,zachód,0.51,19.4,23.0,374.0,9.9
 Dereniowa,płn.-zach.,0.62,16.0,16.0,245.0,9.9
 Człuchowska,wschód,0.33,30.0,31.0,464.0,9.9
-Graniczna,płn.-wsch.,0.65,15.0,15.0,228.0,9.8
+Rondo Wiatraczna,południe,0.19,52.1,63.0,985.0,9.9
 Białobrzeska,płn.-wsch.,0.65,15.0,15.0,223.0,9.8
-Młodzieńcza,płn.-zach.,0.58,16.5,16.5,271.0,9.6
+Graniczna,płn.-wsch.,0.65,15.0,15.0,228.0,9.8
 Rotmistrza Witolda Pileckiego,płd.-wsch.,0.42,22.8,23.0,349.0,9.6
 Aleja Krakowska,płn.-wsch.,0.52,18.4,18.5,293.0,9.6
 Nowy Świat,płn.-zach.,0.23,41.8,42.0,600.0,9.6
+Młodzieńcza,płn.-zach.,0.58,16.5,16.5,271.0,9.6
 Rondo Ignacego Mościckiego,wschód,0.17,55.7,76.0,1184.0,9.5
 Aleja Krakowska,płd.-zach.,0.51,18.4,18.5,292.0,9.4
 Rondo Zesłańców Syberyjskich,zachód,0.29,32.2,41.5,596.0,9.3
 Plac Trzech Krzyży,północ,0.25,37.2,40.5,580.0,9.3
+Podpułkownika Mieczysława Sokołowskiego „Grzymały”,płd.-wsch.,0.2,46.0,46.0,644.0,9.2
 Piastów Śląskich,zachód,0.54,17.0,17.0,213.0,9.2
 Władysława Jagiełły,wschód,0.54,17.0,17.0,234.0,9.2
-Brazylijska,wschód,0.41,22.5,22.5,224.0,9.2
-Podpułkownika Mieczysława Sokołowskiego „Grzymały”,płd.-wsch.,0.2,46.0,46.0,644.0,9.2
 Rotmistrza Witolda Pileckiego,płn.-zach.,0.41,22.5,22.5,350.0,9.2
-Jana Olbrachta,płd.-zach.,0.47,19.4,19.5,302.0,9.1
+Brazylijska,wschód,0.41,22.5,22.5,224.0,9.2
 Jana Olbrachta,płn.-wsch.,0.48,19.0,19.0,300.0,9.1
+Jana Olbrachta,płd.-zach.,0.47,19.4,19.5,302.0,9.1
 Bonifraterska,płn.-zach.,0.52,17.5,18.0,306.0,9.1
 Josepha Conrada,południe,0.48,18.5,18.5,303.0,8.9
 Jana Ostroroga,południe,0.51,17.0,17.0,262.0,8.7
 Łazienkowska,wschód,0.53,16.1,16.5,273.0,8.5
-Jamesa Gordona Bennetta,północ,0.44,19.0,19.0,266.0,8.4
+Plac Trzech Krzyży,południe,0.26,32.2,37.0,571.0,8.4
 Wybrzeże Szczecińskie,płn.-zach.,0.33,25.5,25.5,343.0,8.4
 Gwiaździsta,płn.-zach.,0.38,22.0,22.0,336.0,8.4
-Plac Trzech Krzyży,południe,0.26,32.2,37.0,571.0,8.4
-Piastów Śląskich,wschód,0.5,16.5,16.5,212.0,8.2
+Jamesa Gordona Bennetta,północ,0.44,19.0,19.0,266.0,8.4
 Podleśna,płn.-wsch.,0.5,16.5,16.5,245.0,8.2
-Cierlicka,płd.-wsch.,0.38,21.5,21.5,318.0,8.2
+Piastów Śląskich,wschód,0.5,16.5,16.5,212.0,8.2
 Aleja Jerzego Waszyngtona,zachód,0.24,34.0,34.0,540.0,8.2
-Graniczna,płd.-zach.,0.54,15.0,15.0,226.0,8.1
+Cierlicka,płd.-wsch.,0.38,21.5,21.5,318.0,8.2
 Łazienkowska,zachód,0.49,16.5,16.5,274.0,8.1
 Bonifraterska,płd.-wsch.,0.49,16.5,17.0,299.0,8.1
+Graniczna,płd.-zach.,0.54,15.0,15.0,226.0,8.1
 Generała Władysława Andersa,południe,0.53,15.0,15.0,253.0,8.0
-Podleśna,płd.-zach.,0.48,16.0,16.0,246.0,7.7
-Gotarda,płn.-wsch.,0.48,16.0,16.0,240.0,7.7
 Plac Konstytucji,południe,0.21,36.7,38.5,543.0,7.7
-Generała Klemensa Stanisława Rudnickiego,płd.-zach.,0.33,23.0,23.0,342.0,7.6
+Gotarda,płn.-wsch.,0.48,16.0,16.0,240.0,7.7
+Podleśna,płd.-zach.,0.48,16.0,16.0,246.0,7.7
 Zamoście,wschód,0.3,25.5,25.5,343.0,7.6
-Aleja Jerzego Waszyngtona,wschód,0.24,31.4,36.5,551.0,7.5
-79,płd.-wsch.,0.22,34.0,34.0,431.0,7.5
+Generała Klemensa Stanisława Rudnickiego,płd.-zach.,0.33,23.0,23.0,342.0,7.6
 Plac generała Józefa Hallera,płn.-wsch.,0.32,23.5,24.0,377.0,7.5
-Cierlicka,płn.-zach.,0.39,19.0,19.0,311.0,7.4
+79,płd.-wsch.,0.22,34.0,34.0,431.0,7.5
+Aleja Jerzego Waszyngtona,wschód,0.24,31.4,36.5,551.0,7.5
 Plac generała Józefa Hallera,płd.-zach.,0.32,23.1,23.5,378.0,7.4
+Cierlicka,płn.-zach.,0.39,19.0,19.0,311.0,7.4
 Józefa Chłopickiego,płn.-wsch.,0.39,19.0,19.5,271.0,7.4
+Jana Kasprowicza,płn.-zach.,0.3,24.0,24.0,413.0,7.2
 Emilii Plater,północ,0.43,16.8,17.5,419.0,7.2
 Prosta,zachód,0.4,18.0,18.5,275.0,7.2
-Jana Kasprowicza,płn.-zach.,0.3,24.0,24.0,413.0,7.2
 Obozowa,wschód,0.36,19.7,20.5,326.0,7.1
 Generała Klemensa Stanisława Rudnickiego,płn.-wsch.,0.31,23.0,23.0,340.0,7.1
 Dąbrowszczaków,płn.-zach.,0.41,17.1,24.0,378.0,7.0
 Warszawska,płn.-wsch.,0.44,15.9,17.0,234.0,7.0
 Łabiszyńska,południe,0.38,18.0,18.0,282.0,6.8
-Mordechaja Anielewicza,płn.-wsch.,0.42,16.0,16.0,245.0,6.7
 Modlińska,płd.-wsch.,0.22,30.5,31.0,471.0,6.7
 Jana Zamoyskiego,wschód,0.29,23.0,23.0,387.0,6.7
+Mordechaja Anielewicza,płn.-wsch.,0.42,16.0,16.0,245.0,6.7
 Skośna,północ,0.17,38.6,42.0,537.0,6.6
-Bartnicza,płd.-zach.,0.36,18.1,18.5,291.0,6.5
-Marszałkowska,północ,0.17,38.0,38.0,547.0,6.5
-Obrzeżna,południe,0.35,18.5,18.5,313.0,6.5
 Rondo Ignacego Mościckiego,zachód,0.13,49.9,74.5,1190.0,6.5
+Marszałkowska,północ,0.17,38.0,38.0,547.0,6.5
+Bartnicza,płd.-zach.,0.36,18.1,18.5,291.0,6.5
+Obrzeżna,południe,0.35,18.5,18.5,313.0,6.5
 Jana Kochanowskiego,wschód,0.37,17.0,17.0,253.0,6.3
 Jana Kochanowskiego,zachód,0.37,17.0,17.0,251.0,6.3
 Józefa Chłopickiego,płd.-zach.,0.33,18.8,19.0,262.0,6.2
 Inżynierska,płd.-wsch.,0.32,19.0,19.0,311.0,6.1
 Porajów,płd.-zach.,0.39,15.5,15.5,233.0,6.0
-Stepowa,północ,0.34,17.0,17.0,278.0,5.8
 Wileńska,płd.-zach.,0.28,20.7,23.0,323.0,5.8
+Stepowa,północ,0.34,17.0,17.0,278.0,5.8
 Tadeusza Kościuszki,płd.-zach.,0.3,18.9,21.0,282.0,5.7
-Jana Kasprowicza,płd.-wsch.,0.25,22.3,23.0,386.0,5.6
 Stanisława Herbsta,płn.-wsch.,0.34,16.4,16.5,253.0,5.6
+Jana Kasprowicza,płd.-wsch.,0.25,22.3,23.0,386.0,5.6
 Stepowa,południe,0.34,16.5,16.5,282.0,5.6
 Gwiaździsta,płd.-wsch.,0.25,21.5,21.5,329.0,5.4
-Newelska,zachód,0.26,20.5,20.5,315.0,5.3
+Połczyńska,płd.-zach.,0.32,16.5,16.5,270.0,5.3
 Dąbrowszczaków,płd.-wsch.,0.33,16.0,16.0,257.0,5.3
 Plac Na Rozdrożu,północ,0.2,26.7,27.0,367.0,5.3
-Połczyńska,płd.-zach.,0.32,16.5,16.5,270.0,5.3
+Newelska,zachód,0.26,20.5,20.5,315.0,5.3
 Andrzeja Krzyckiego,północ,0.29,18.0,18.0,269.0,5.2
 Włościańska,płd.-zach.,0.23,22.6,26.0,347.0,5.2
-Fort Wola,południe,0.3,17.0,17.0,256.0,5.1
 Plac Na Rozdrożu,południe,0.21,24.5,24.5,364.0,5.1
+Fort Wola,południe,0.3,17.0,17.0,256.0,5.1
 Modlińska,płn.-zach.,0.18,27.5,27.5,453.0,5.0
 Plac Krasińskich,płd.-wsch.,0.22,22.3,22.5,384.0,4.9
+Plac Krasińskich,płn.-zach.,0.21,22.8,23.0,384.0,4.8
 Nowy Świat,płd.-wsch.,0.23,21.0,21.0,304.0,4.8
 Okularowa,płn.-zach.,0.28,17.0,17.0,278.0,4.8
-Plac Krasińskich,płn.-zach.,0.21,22.8,23.0,384.0,4.8
-Stefana Banacha,zachód,0.24,19.0,19.5,297.0,4.6
 Bracka,płd.-wsch.,0.26,17.5,17.5,283.0,4.6
+Stefana Banacha,zachód,0.24,19.0,19.5,297.0,4.6
 Plac Thomasa Woodrowa Wilsona,płd.-wsch.,0.18,25.0,33.5,560.0,4.5
 Okularowa,płd.-wsch.,0.26,17.0,17.0,282.0,4.4
-Myśliborska,płd.-wsch.,0.24,17.5,18.0,250.0,4.2
 Stefana Starzyńskiego,płn.-wsch.,0.28,15.0,15.0,248.0,4.2
-Zgrupowania AK „Kampinos”,płn.-zach.,0.14,29.5,29.5,454.0,4.1
+Myśliborska,płd.-wsch.,0.24,17.5,18.0,250.0,4.2
 Unicka,płd.-zach.,0.25,16.3,16.5,233.0,4.1
 Unicka,płn.-wsch.,0.26,15.6,16.0,236.0,4.1
+Zgrupowania AK „Kampinos”,płn.-zach.,0.14,29.5,29.5,454.0,4.1
 Zakole,północ,0.15,25.0,25.0,340.0,3.8
 Królewska,zachód,0.16,24.0,24.0,348.0,3.8
 Lewandów,wschód,0.11,33.6,39.0,503.0,3.7
-Wybrzeże Kościuszkowskie,płd.-wsch.,0.24,15.0,15.0,240.0,3.6
-Przyczółkowa,północ,0.2,18.2,23.0,341.0,3.6
 Chodakowska,południe,0.21,17.0,17.0,267.0,3.6
-Księcia Janusza,północ,0.18,19.9,20.5,315.0,3.6
 Moliera,płn.-zach.,0.2,18.0,18.0,253.0,3.6
-Tomasza Nocznickiego,płd.-zach.,0.14,25.3,25.5,407.0,3.5
+Przyczółkowa,północ,0.2,18.2,23.0,341.0,3.6
+Księcia Janusza,północ,0.18,19.9,20.5,315.0,3.6
+Wybrzeże Kościuszkowskie,płd.-wsch.,0.24,15.0,15.0,240.0,3.6
 Rondo Zesłańców Syberyjskich,wschód,0.15,23.6,33.5,474.0,3.5
+Tomasza Nocznickiego,płd.-zach.,0.14,25.3,25.5,407.0,3.5
 Myśliborska,płn.-zach.,0.22,16.1,16.5,248.0,3.5
 Plac Thomasa Woodrowa Wilsona,płn.-zach.,0.15,22.4,25.5,394.0,3.4
-Bokserska,wschód,0.21,16.0,16.0,240.0,3.4
 Tamka,płn.-wsch.,0.21,16.0,16.0,249.0,3.4
 Sasanki,wschód,0.1,34.0,34.0,431.0,3.4
+Bokserska,wschód,0.21,16.0,16.0,240.0,3.4
 Zajęcza,płd.-zach.,0.2,16.5,16.5,252.0,3.3
 Zwoleńska,wschód,0.17,19.7,22.5,342.0,3.3
-Lalki,wschód,0.15,21.0,21.0,299.0,3.2
 Plac Artura Zawiszy,południe,0.12,26.6,41.0,681.0,3.2
+Lalki,wschód,0.15,21.0,21.0,299.0,3.2
 Zwoleńska,zachód,0.17,18.8,21.5,342.0,3.2
 Plac marszałka Józefa Piłsudskiego,północ,0.18,18.0,18.0,259.0,3.2
 Senatorska,płn.-wsch.,0.18,18.0,18.0,230.0,3.2
 Bliska,płd.-wsch.,0.19,17.0,17.0,266.0,3.2
 Rondo Jerzego Waszyngtona,płd.-wsch.,0.11,28.6,40.5,610.0,3.1
-Ratuszowa,płn.-wsch.,0.19,16.0,16.0,243.0,3.0
-Wspólna,wschód,0.19,16.0,16.0,288.0,3.0
 Widoczna,wschód,0.2,15.0,15.0,235.0,3.0
+Wspólna,wschód,0.19,16.0,16.0,288.0,3.0
 Rondo Jerzego Waszyngtona,płn.-zach.,0.11,27.3,34.5,523.0,3.0
-Wspólna,zachód,0.19,15.5,15.5,288.0,2.9
-Pętla autobusowa Winnica,płd.-zach.,0.14,20.4,33.5,439.0,2.9
+Ratuszowa,płn.-wsch.,0.19,16.0,16.0,243.0,3.0
 Żelazowska,płn.-zach.,0.14,21.0,21.0,272.0,2.9
-Myszkowska,płn.-wsch.,0.17,16.5,16.5,232.0,2.8
+Pętla autobusowa Winnica,płd.-zach.,0.14,20.4,33.5,439.0,2.9
+Wspólna,zachód,0.19,15.5,15.5,288.0,2.9
 Rondo Ronalda Reagana,wschód,0.11,25.8,35.0,462.0,2.8
+Myszkowska,płn.-wsch.,0.17,16.5,16.5,232.0,2.8
 Myszkowska,płd.-zach.,0.17,16.0,16.0,235.0,2.7
-Stefana Banacha,wschód,0.13,20.5,20.5,295.0,2.7
 Wawelska,zachód,0.1,27.0,27.0,398.0,2.7
 Kijowska,płd.-zach.,0.18,15.0,15.0,298.0,2.7
 Marcina Kasprzaka,zachód,0.17,15.7,16.0,250.0,2.7
-Generała Sylwestra Kaliskiego,południe,0.13,20.0,20.0,286.0,2.6
+Stefana Banacha,wschód,0.13,20.5,20.5,295.0,2.7
 Tadeusza Kościuszki,płn.-wsch.,0.12,21.5,21.5,280.0,2.6
-Aluzyjna,płd.-zach.,0.14,17.8,18.0,264.0,2.5
+Generała Sylwestra Kaliskiego,południe,0.13,20.0,20.0,286.0,2.6
 Aluzyjna,płn.-wsch.,0.14,18.2,18.5,263.0,2.5
+Aluzyjna,płd.-zach.,0.14,17.8,18.0,264.0,2.5
 Pętla autobusowa Winnica,płn.-wsch.,0.14,18.0,18.0,234.0,2.5
 Globusowa,płd.-wsch.,0.12,20.0,20.0,308.0,2.4
 Fort Wola,północ,0.14,16.5,16.5,257.0,2.3
