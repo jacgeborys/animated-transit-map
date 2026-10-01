@@ -42,7 +42,7 @@ _NARROW = Path(r"C:\Windows\Fonts\LiberationSansNarrow-Regular.ttf")
 LABEL_TRACKING = 0.13          # extra space between letters, in em
 LABEL_SQUEEZE = 0.82           # horizontal glyph scale (< 1 = narrower than the font itself)
 # Per-street label tweaks (keys = short names as printed on the map)
-LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "Bora-Komorowskiego": -1}   # -1 = right of / below the street
+LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "Bora-Komorowskiego": -1, "Światowida": -1}   # -1 = right of / below the street
 LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
 LABEL_NUDGE = {"Modlińska": (-600, 1000), "Czerniakowska": (0, -2500)}  # city map only: move anchor (dx, dy) m
 CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska", "Aleja Armii Krajowej"]  # always labelled (if not in top 12)
