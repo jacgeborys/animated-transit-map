@@ -46,6 +46,7 @@ LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "Bora-Komorowskiego": -1,
 LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
 LABEL_NUDGE = {"Modlińska": (-600, 1000), "Czerniakowska": (0, -2500)}  # city map only: move anchor (dx, dy) m
 CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska", "Aleja Armii Krajowej"]  # always labelled (if not in top 12)
+CENTRUM_EXTRA_LABELS = ["Radzymińska"]
 LABEL_PRIORITY = ["Bora-Komorowskiego"]   # placed first, others dodge them
 
 
@@ -131,7 +132,7 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
     hi_km, hi_lane = km[hi].sum(), km[hi & (c.bus_lane == 1)].sum()
     fig.text(0.05, 0.862,
              f"Na {hi_km:.0f} km ulic jeździ ≥{NEED_HIGH} autobusów/h w jedną stronę. "
-             f"Buspas ma tylko {hi_lane:.0f} km ({100 * hi_lane / hi_km:.0f}%).",
+             f"Buspas jest tylko na {hi_lane:.0f} km z nich ({100 * hi_lane / hi_km:.0f}%).",
              fontsize=14, color=INK, fontfamily=FONT, va="top", fontweight="semibold")
 
     # --- legend ---
@@ -148,7 +149,7 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
                      columnspacing=1.5, prop={"family": FONT, "size": 11.5})
     fig.text(0.05, 0.047,
              f"Grubość linii = liczba autobusów/h (maks. ze szczytu 7–9 i 15–17). "
-             f"Rozkład ZTM na {date_pl(date)}.",
+             f"Km liczone osobno dla każdego kierunku. Rozkład ZTM na {date_pl(date)}.",
              fontsize=10, color=INK3, fontfamily=FONT)
     fig.text(0.05, 0.027,
              "Dane: ZTM (GTFS via mkuran.pl) · ulice i buspasy © OpenStreetMap (ODbL) · buspasy: mapa.um.warszawa.pl, komunikaty ZDM",
@@ -392,7 +393,7 @@ def main():
     in_ext = bus.cx[ext[0]:ext[2], ext[1]:ext[3]]
     top_c = (in_ext[in_ext.status == "high"].assign(L=lambda d: d.length)
              .groupby("name").L.sum().sort_values(ascending=False).head(12).index.tolist())
-    lab = label_points(bus, named, top_c)
+    lab = label_points(bus, named, top_c + CENTRUM_EXTRA_LABELS)
     draw_map(bus, streets, river, boundary, date, ext, OUTPUT_DIR / "buspasy_centrum.png",
              "Buspasy w centrum", scale=1.8, labels=lab)
 
