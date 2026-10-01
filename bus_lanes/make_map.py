@@ -32,15 +32,16 @@ RIVER = "#1b2a3d"
 INK = "#e8eaef"
 INK2 = "#a3a9b6"
 INK3 = "#6b7280"
-COL = {"lane": "#3a82e0", "high": "#ff3d54", "medium": "#ffb020", "low": "#5a6170"}
+COL = {"lane": "#4c9bff", "high": "#ff3d54", "medium": "#ffb020", "low": "#5a6170"}
 ORDER = ["low", "lane", "medium", "high"]  # draw order (last on top)
 FONT = "Segoe UI"
 # Street labels: condensed face (loaded from file — matplotlib's font cache may not list it)
 _NARROW = Path(r"C:\Windows\Fonts\LiberationSansNarrow-Regular.ttf")
 LABEL_TRACKING = 0.10          # extra space between letters, in em
 # Per-street label tweaks (keys = short names as printed on the map)
-LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1}   # -1 = right of / below the street
+LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "gen. Bora-Komorowskiego": -1}   # -1 = right of / below the street
 LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
+LABEL_NUDGE = {"Modlińska": (-600, 1000)}            # move label anchor by (dx, dy) metres
 CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska"]  # always labelled (if not in top 12)
 
 
@@ -171,6 +172,9 @@ def label_points(bus, streets, names):
         else:
             longest = gaps.geometry.iloc[int(np.argmax(gaps.length.to_numpy()))]
             target = longest.interpolate(0.5, normalized=True)
+        if label in LABEL_NUDGE:
+            dx, dy = LABEL_NUDGE[label]
+            target = shapely.Point(target.x + dx, target.y + dy)
         out[label] = (list(ways.geometry.values), target, LABEL_SIDE.get(label, 1))
     return out
 
