@@ -1,0 +1,683 @@
+<title>Weryfikacja buspasów Warszawy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600&display=swap">
+<style>
+/* Layout: one-screen tool — header strip, map on the left, review panel on the right (stacks under the map on phones). */
+:root {
+  --bg: #f3f4f1;          /* paper-grey ground, slight green bias like a city plan */
+  --surface: #ffffff;
+  --ink: #1d2226;
+  --ink-2: #565f66;
+  --ink-3: #8a9399;
+  --line: #d9ddd8;
+  --map-bg: #eef0ec;
+  --map-street: #c4c9c3;
+  --map-minor: #dadfd9;
+  --map-water: #b9d3e6;
+  --map-boundary: #9aa39a;
+  --lane: #1f63d1;        /* niezweryfikowany */
+  --ok: #148a5b;          /* potwierdzony */
+  --issue: #d9481f;       /* zgłoszony problem */
+  --proposal: #7b45c9;    /* nowy, zaproponowany */
+  --select: #111518;
+  --focus: #1f63d1;
+  --font-ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --font-cond: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191c; --surface: #1d2226; --ink: #e9ece8; --ink-2: #aab3b8; --ink-3: #7b858b; --line: #30383d;
+    --map-bg: #171b1e; --map-street: #3d464c; --map-minor: #283035; --map-water: #1f3447; --map-boundary: #5c676d;
+    --lane: #5c9dff; --ok: #3fc48a; --issue: #ff7a52; --proposal: #b48cff; --select: #ffffff; --focus: #5c9dff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191c; --surface: #1d2226; --ink: #e9ece8; --ink-2: #aab3b8; --ink-3: #7b858b; --line: #30383d;
+  --map-bg: #171b1e; --map-street: #3d464c; --map-minor: #283035; --map-water: #1f3447; --map-boundary: #5c676d;
+  --lane: #5c9dff; --ok: #3fc48a; --issue: #ff7a52; --proposal: #b48cff; --select: #ffffff; --focus: #5c9dff;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.45; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .01em; text-wrap: balance; }
+.stats { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.stats b { color: var(--ink); font-weight: 600; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 390px; min-height: 0; }
+#map { min-height: 0; background: var(--map-bg); }
+aside.panel { min-height: 0; overflow-y: auto; border-left: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; }
+@media (max-width: 820px) {
+  .main { grid-template-columns: 1fr; grid-template-rows: 58vh auto; }
+  aside.panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
+  .app { height: auto; min-height: 100%; }
+}
+
+.tabs { display: flex; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 2; }
+.tabs button { flex: 1; padding: 11px 8px; background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; color: var(--ink-2); }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.pane { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.eyebrow { font-family: var(--font-cond); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+h2 { margin: 0; font-size: 22px; line-height: 1.15; font-weight: 700; text-wrap: balance; }
+p { margin: 0; }
+.muted { color: var(--ink-2); }
+.small { font-size: 13px; }
+
+.legend { display: grid; gap: 6px; }
+.legend div { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.swatch { width: 28px; height: 0; border-top: 4px solid; flex: none; border-radius: 2px; }
+.swatch.dash { border-top-style: dashed; }
+
+dl.facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 14px; }
+dl.facts dt { color: var(--ink-3); }
+dl.facts dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid currentColor; white-space: nowrap; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.st-new { color: var(--lane); } .st-ok { color: var(--ok); } .st-issue { color: var(--issue); } .st-prop { color: var(--proposal); }
+
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+legend { font-weight: 600; margin-bottom: 6px; padding: 0; }
+.choice { display: flex; gap: 10px; align-items: flex-start; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+.choice:has(input:checked) { border-color: var(--ink); background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.choice input { margin-top: 3px; accent-color: var(--ink); }
+label.field { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
+input[type="text"], textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-weight: 400; }
+textarea { min-height: 72px; resize: vertical; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--surface); font-weight: 600; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.danger { background: transparent; color: var(--issue); border-color: currentColor; }
+.btn:disabled { opacity: .45; cursor: default; }
+.note { padding: 10px 12px; border-radius: 8px; background: color-mix(in srgb, var(--lane) 10%, transparent); font-size: 14px; }
+.note.warn { background: color-mix(in srgb, var(--issue) 12%, transparent); }
+.toast { font-size: 14px; color: var(--ok); font-weight: 600; min-height: 1.2em; }
+
+.reviews { display: grid; gap: 10px; }
+.review { display: grid; gap: 3px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.review:last-child { border-bottom: 0; }
+.review .who { display: flex; gap: 8px; align-items: center; font-size: 14px; font-weight: 600; flex-wrap: wrap; }
+.review .who img { width: 20px; height: 20px; border-radius: 50%; }
+.review .when { color: var(--ink-3); font-weight: 400; font-size: 13px; }
+.review p { font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.chooser { display: grid; gap: 6px; }
+.chooser button { text-align: left; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+
+.filters { display: grid; gap: 8px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.seg button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.list { display: grid; gap: 2px; }
+.list .street { font-family: var(--font-cond); font-weight: 600; font-size: 16px; margin-top: 10px; letter-spacing: .02em; }
+.list button.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; text-align: left; background: none; border: 0; border-radius: 6px; padding: 6px 8px; cursor: pointer; }
+.list button.item:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.list .meta { color: var(--ink-3); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* Leaflet core (stylesheet inlined: the CSP only admits scripts from cdnjs) */
+.leaflet-pane, .leaflet-marker-icon, .leaflet-pane > svg, .leaflet-pane > canvas, .leaflet-zoom-box, .leaflet-layer { position: absolute; left: 0; top: 0; }
+.leaflet-container { overflow: hidden; -webkit-tap-highlight-color: transparent; font-family: var(--font-ui); }
+.leaflet-container.leaflet-touch-drag, .leaflet-container.leaflet-touch-zoom { touch-action: none; }
+.leaflet-pane { z-index: 400; } .leaflet-overlay-pane { z-index: 400; } .leaflet-marker-pane { z-index: 600; } .leaflet-tooltip-pane { z-index: 650; }
+.leaflet-map-pane canvas { z-index: 100; } .leaflet-map-pane svg { z-index: 200; }
+.leaflet-zoom-animated { transform-origin: 0 0; }
+.leaflet-zoom-anim .leaflet-zoom-animated { transition: transform .25s cubic-bezier(0,0,.25,1); }
+@media (prefers-reduced-motion: reduce) { .leaflet-zoom-anim .leaflet-zoom-animated { transition: none; } }
+.leaflet-interactive { cursor: pointer; }
+.leaflet-grab { cursor: grab; } .leaflet-dragging .leaflet-grab { cursor: grabbing; }
+.drawing .leaflet-container, .drawing #map { cursor: crosshair; }
+.leaflet-control { position: relative; z-index: 800; pointer-events: auto; float: left; clear: both; }
+.leaflet-top, .leaflet-bottom { position: absolute; z-index: 1000; pointer-events: none; }
+.leaflet-top { top: 0; } .leaflet-right { right: 0; } .leaflet-bottom { bottom: 0; } .leaflet-left { left: 0; }
+.leaflet-right .leaflet-control { float: right; margin-right: 10px; } .leaflet-top .leaflet-control { margin-top: 10px; }
+.leaflet-bottom .leaflet-control { margin-bottom: 6px; } .leaflet-left .leaflet-control { margin-left: 10px; }
+.leaflet-bar { border-radius: 8px; border: 1px solid var(--line); background: var(--surface); overflow: hidden; }
+.leaflet-bar a { display: block; width: 34px; height: 34px; line-height: 32px; text-align: center; text-decoration: none; color: var(--ink); font-size: 20px; font-weight: 600; }
+.leaflet-bar a + a { border-top: 1px solid var(--line); }
+.leaflet-control-attribution { font-size: 11px; color: var(--ink-3); background: color-mix(in srgb, var(--surface) 80%, transparent); padding: 1px 6px; border-radius: 4px; }
+.leaflet-control-attribution a { color: inherit; }
+.map-label { font-family: var(--font-cond); font-size: 13px; font-weight: 500; color: var(--ink-2); white-space: nowrap; text-shadow: 0 0 3px var(--map-bg), 0 0 3px var(--map-bg), 0 0 2px var(--map-bg); pointer-events: none; transform: translate(-50%, -50%); }
+.drawbar { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); z-index: 1000; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; max-width: calc(100% - 24px); font-size: 14px; }
+.mapwrap { position: relative; min-height: 0; }
+.mapwrap #map { position: absolute; inset: 0; }
+</style>
+
+<div class="app">
+  <header class="top">
+    <h1>Weryfikacja buspasów Warszawy</h1>
+    <div class="stats" id="stats"></div>
+  </header>
+  <div class="main">
+    <div class="mapwrap">
+      <div id="map" role="application" aria-label="Mapa buspasów"></div>
+      <div class="drawbar" id="drawbar" hidden>
+        <span id="drawhint">Klikaj punkty wzdłuż ulicy, w kierunku jazdy autobusu.</span>
+        <button class="btn ghost" id="draw-undo" type="button">Cofnij punkt</button>
+        <button class="btn ghost" id="draw-cancel" type="button">Anuluj</button>
+        <button class="btn" id="draw-done" type="button" disabled>Gotowe</button>
+      </div>
+    </div>
+    <aside class="panel">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-details" aria-selected="true" type="button">Odcinek</button>
+        <button role="tab" id="tab-list" aria-selected="false" type="button">Lista</button>
+      </div>
+      <section class="pane" id="pane-details"></section>
+      <section class="pane" id="pane-list" hidden>
+        <div class="filters">
+          <label class="field">Szukaj ulicy
+            <input type="text" id="filter-q" placeholder="np. Puławska" autocomplete="off">
+          </label>
+          <div class="seg" id="filter-status" role="group" aria-label="Status">
+            <button type="button" data-v="all" aria-pressed="true">Wszystkie</button>
+            <button type="button" data-v="new" aria-pressed="false">Niesprawdzone</button>
+            <button type="button" data-v="issue" aria-pressed="false">Z uwagami</button>
+            <button type="button" data-v="ok" aria-pressed="false">Potwierdzone</button>
+            <button type="button" data-v="prop" aria-pressed="false">Nowe</button>
+          </div>
+        </div>
+        <div class="list" id="list"></div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+
+/* ---------- state ---------- */
+const S = {
+  db: null, user: null, me: null, canWrite: null,
+  reviews: new Map(),      // reviewDocId -> review body
+  proposals: new Map(),    // proposalId -> body
+  selected: null,          // {kind:'lane'|'prop', id}
+  choices: null,           // overlapping hits to choose from
+  drawing: null,           // [[lat,lng],...] while drawing
+  pendingProposal: null,   // drawn line awaiting the form
+  filter: { q: "", status: "all" },
+  tab: "details",
+};
+const LANES = DATA.lanes;
+const LANE_BY_ID = new Map(LANES.map(l => [l.id, l]));
+const LANE_BOUNDS = new Map(LANES.map(l => [l.id, L.latLngBounds(l.line[0])]));
+const DATE_TXT = (d => `${d.slice(6, 8)}.${d.slice(4, 6)}.${d.slice(0, 4)}`)(DATA.date);
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) n.append(k);
+  return n;
+};
+const fmtKm = m => m >= 1000 ? `${(m / 1000).toFixed(2).replace(".", ",")} km` : `${m} m`;
+const keyLane = id => "l:" + id, keyProp = id => "p:" + id;
+const VERDICT = { ok: "Jest i się zgadza", missing: "Nie ma takiego buspasu", different: "Jest, ale inaczej" };
+
+function reviewsFor(key) {
+  return [...S.reviews.values()].filter(r => r.target === key).sort((a, b) => (a.at < b.at ? 1 : -1));
+}
+function statusOf(key) {
+  const rs = reviewsFor(key);
+  if (rs.some(r => r.verdict === "missing" || r.verdict === "different")) return "issue";
+  if (rs.some(r => r.verdict === "ok")) return "ok";
+  return key.startsWith("p:") ? "prop" : "new";
+}
+const STATUS_TXT = { new: "niesprawdzony", ok: "potwierdzony", issue: "zgłoszone uwagi", prop: "nowa propozycja" };
+const statusColor = st => css({ new: "--lane", ok: "--ok", issue: "--issue", prop: "--proposal" }[st]);
+
+/* ---------- map ---------- */
+const map = L.map("map", { preferCanvas: true, zoomControl: false, attributionControl: true, minZoom: 10, maxZoom: 19 })
+  .setView([52.235, 21.01], 12);
+L.control.zoom({ position: "topright", zoomInTitle: "Przybliż", zoomOutTitle: "Oddal" }).addTo(map);
+map.attributionControl.setPrefix(false)
+  .addAttribution('Ulice: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>');
+const renderer = L.canvas({ padding: 0.3, tolerance: 0 });
+
+const base = { water: [], boundary: [], major: null, minor: null, labels: L.layerGroup() };
+function buildBase() {
+  for (const ring of DATA.base.river) base.water.push(L.polygon(ring, { renderer, interactive: false, stroke: false, fillOpacity: 1 }).addTo(map));
+  for (const ring of DATA.base.boundary) base.boundary.push(L.polygon(ring, { renderer, interactive: false, fill: false, weight: 1.5, dashArray: "6 5" }).addTo(map));
+  base.minor = L.polyline(DATA.base.minor, { renderer, interactive: false, weight: 1 });
+  base.major = L.polyline(DATA.base.major, { renderer, interactive: false, weight: 2 }).addTo(map);
+}
+// labels: plain divIcons with text set safely after creation
+function buildLabels() {
+  base.labels.clearLayers();
+  for (const [lat, lng, name] of DATA.base.labels) {
+    const span = document.createElement("span"); span.className = "map-label"; span.textContent = name;
+    L.marker([lat, lng], { interactive: false, keyboard: false, icon: L.divIcon({ className: "", html: span, iconSize: [0, 0] }) }).addTo(base.labels);
+  }
+}
+function zoomLayers() {
+  const z = map.getZoom();
+  if (z >= 14) { base.minor.addTo(map); base.minor.bringToBack(); base.water.forEach(w => w.bringToBack()); } else base.minor.remove();
+  if (z >= 15) base.labels.addTo(map); else base.labels.remove();
+}
+
+const laneLayers = new Map();   // key -> polyline
+const propLayers = new Map();
+function laneStyle(key) {
+  const st = statusOf(key), sel = S.selected && keyOf(S.selected) === key;
+  return { color: sel ? css("--select") : statusColor(st), weight: sel ? 7 : 4, opacity: 1,
+           dashArray: st === "prop" || key.startsWith("p:") ? "8 6" : null, lineCap: "round", lineJoin: "round" };
+}
+const keyOf = sel => sel.kind === "lane" ? keyLane(sel.id) : keyProp(sel.id);
+function buildLanes() {
+  for (const l of LANES) {
+    const pl = L.polyline([l.line[0], ...l.arrows], { renderer, interactive: false, ...laneStyle(keyLane(l.id)) }).addTo(map);
+    laneLayers.set(keyLane(l.id), pl);
+  }
+}
+function arrowsFor(line) {
+  // one chevron at the end of a drawn proposal, sized in metres
+  if (line.length < 2) return [];
+  const [a, b] = [line[line.length - 2], line[line.length - 1]];
+  const k = Math.cos(b[0] * Math.PI / 180);
+  const v = [(b[0] - a[0]), (b[1] - a[1]) * k]; const n = Math.hypot(...v) || 1;
+  const u = [v[0] / n, v[1] / n], p = [-u[1], u[0]], s = 12 / 111320;
+  const back = [b[0] - u[0] * s, b[1] - u[1] * s / k];
+  return [[[back[0] + p[0] * s * .7, back[1] + p[1] * s * .7 / k], b, [back[0] - p[0] * s * .7, back[1] - p[1] * s * .7 / k]]];
+}
+function syncProposalLayers() {
+  for (const [id, layer] of propLayers) if (!S.proposals.has(id)) { layer.remove(); propLayers.delete(id); }
+  for (const [id, p] of S.proposals) {
+    const line = p.line || [];
+    if (!propLayers.has(id)) propLayers.set(id, L.polyline([line, ...arrowsFor(line)], { renderer, interactive: false }).addTo(map));
+    propLayers.get(id).setLatLngs([line, ...arrowsFor(line)]);
+  }
+}
+function restyle() {
+  base.water.forEach(w => w.setStyle({ fillColor: css("--map-water") }));
+  base.boundary.forEach(b => b.setStyle({ color: css("--map-boundary") }));
+  base.major.setStyle({ color: css("--map-street") });
+  base.minor.setStyle({ color: css("--map-minor") });
+  for (const [key, layer] of laneLayers) layer.setStyle(laneStyle(key));
+  for (const [id, layer] of propLayers) layer.setStyle({ ...laneStyle(keyProp(id)), dashArray: "8 6" });
+  const sel = S.selected && (S.selected.kind === "lane" ? laneLayers : propLayers).get(S.selected.id);
+  sel?.bringToFront();
+  drawLayer?.setStyle({ color: css("--proposal") });
+}
+let drawLayer = null;
+
+/* hit test in screen pixels: every stretch within 12 px of the click */
+function segDist(p, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, len = dx * dx + dy * dy;
+  let t = len ? ((p.x - a.x) * dx + (p.y - a.y) * dy) / len : 0; t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+function lineDist(pt, line) {
+  let best = Infinity, prev = null;
+  for (const ll of line) { const q = map.latLngToContainerPoint(ll); if (prev) best = Math.min(best, segDist(pt, prev, q)); prev = q; }
+  return best;
+}
+function hits(latlng) {
+  const pt = map.latLngToContainerPoint(latlng), out = [];
+  const view = map.getBounds().pad(0.2);
+  for (const l of LANES) {
+    if (!view.intersects(LANE_BOUNDS.get(l.id))) continue;
+    const d = lineDist(pt, l.line[0]); if (d <= 12) out.push({ kind: "lane", id: l.id, d });
+  }
+  for (const [id, p] of S.proposals) { const d = lineDist(pt, p.line || []); if (d <= 12) out.push({ kind: "prop", id, d }); }
+  return out.sort((a, b) => a.d - b.d);
+}
+map.on("click", e => {
+  if (S.drawing) { S.drawing.push([+e.latlng.lat.toFixed(6), +e.latlng.lng.toFixed(6)]); updateDraw(); return; }
+  const h = hits(e.latlng);
+  if (!h.length) { S.choices = null; select(null); return; }
+  if (h.length === 1 || h[1].d - h[0].d > 5) { S.choices = null; select(h[0]); return; }
+  S.choices = h.slice(0, 6); select(null, true);
+});
+map.on("zoomend", zoomLayers);
+
+/* ---------- selection & panel ---------- */
+function select(sel, keepChoices = false) {
+  S.selected = sel ? { kind: sel.kind, id: sel.id } : null;
+  if (!keepChoices) S.choices = null;
+  setTab("details"); restyle(); renderDetails();
+}
+function zoomTo(sel) {
+  const line = sel.kind === "lane" ? LANE_BY_ID.get(sel.id).line[0] : S.proposals.get(sel.id).line;
+  map.fitBounds(L.latLngBounds(line).pad(0.6), { maxZoom: 17 });
+}
+function setTab(t) {
+  S.tab = t;
+  $("tab-details").setAttribute("aria-selected", t === "details");
+  $("tab-list").setAttribute("aria-selected", t === "list");
+  $("pane-details").hidden = t !== "details"; $("pane-list").hidden = t !== "list";
+  if (t === "list") renderList();
+}
+$("tab-details").onclick = () => setTab("details");
+$("tab-list").onclick = () => setTab("list");
+
+function describeLane(l) {
+  const parts = [];
+  if (l.busOnly) parts.push("ulica tylko dla autobusów");
+  return parts;
+}
+function sourcesTxt(l) { return l.src.map(s => DATA.sources[s]).join(", "); }
+
+function renderDetails() {
+  const pane = $("pane-details"); pane.replaceChildren();
+  if (S.pendingProposal) return renderProposalForm(pane);
+  if (S.choices) {
+    pane.append(el("div", { class: "eyebrow", text: "W tym miejscu jest kilka odcinków" }),
+      el("p", { class: "muted", text: "Wybierz ten, który chcesz sprawdzić (zwykle dwa kierunki jednej ulicy)." }));
+    const box = el("div", { class: "chooser" });
+    for (const c of S.choices) {
+      const key = c.kind === "lane" ? keyLane(c.id) : keyProp(c.id);
+      const name = c.kind === "lane" ? LANE_BY_ID.get(c.id).street : (S.proposals.get(c.id).street || "Nowy buspas");
+      const dir = c.kind === "lane" ? "w kierunku: " + LANE_BY_ID.get(c.id).dir : "propozycja";
+      const st = statusOf(key);
+      box.append(el("button", { type: "button", onclick: () => select(c) },
+        el("span", {}, el("strong", { text: name }), el("br"), el("span", { class: "muted small", text: dir })),
+        el("span", { class: `chip st-${st}`, text: STATUS_TXT[st] })));
+    }
+    pane.append(box); return;
+  }
+  if (!S.selected) return renderIntro(pane);
+  if (S.selected.kind === "lane") return renderLane(pane, LANE_BY_ID.get(S.selected.id));
+  const p = S.proposals.get(S.selected.id);
+  if (!p) { S.selected = null; return renderIntro(pane); }
+  return renderProposal(pane, S.selected.id, p);
+}
+
+function renderIntro(pane) {
+  pane.append(
+    el("div", { class: "eyebrow", text: "Jak to działa" }),
+    el("h2", { text: "Sprawdźmy razem, gdzie naprawdę są buspasy" }),
+    el("p", { text: "Miasto nie prowadzi aktualnej mapy buspasów. Tu zebraliśmy wszystko, co wiadomo z OpenStreetMap, mapy miasta (stan z 2021 r.) i komunikatów ZDM. Kliknij odcinek na mapie i oceń, czy się zgadza. Jeśli znasz buspas, którego brakuje, narysuj go." }),
+    el("div", { class: "legend" },
+      legendRow("--lane", "niesprawdzony"), legendRow("--ok", "potwierdzony"),
+      legendRow("--issue", "ktoś zgłosił uwagi"), legendRow("--proposal", "nowy, dodany przez kogoś z nas", true)),
+    el("p", { class: "muted small", text: "Każdy kierunek jazdy to osobny odcinek. Strzałki pokazują kierunek; przy dużym przybliżeniu oba kierunki widać obok siebie. Przybliż mapę, żeby zobaczyć wszystkie ulice i ich nazwy." }),
+    drawButton(), writeNote());
+}
+function legendRow(token, text, dash) {
+  const sw = el("span", { class: "swatch" + (dash ? " dash" : "") }); sw.style.borderTopColor = `var(${token})`;
+  return el("div", {}, sw, el("span", { text }));
+}
+function drawButton() {
+  const b = el("button", { class: "btn ghost", type: "button", onclick: startDraw, text: "+ Dodaj brakujący buspas" });
+  if (S.canWrite === false || !S.db) b.disabled = true;
+  return el("div", { class: "row" }, b);
+}
+function writeNote() {
+  if (S.db === null) return el("p", { class: "note warn", text: "Zapisywanie jest niedostępne w tym widoku. Otwórz stronę na claude.ai po zalogowaniu, żeby dodawać oceny." });
+  if (S.canWrite === false) return el("p", { class: "note warn", text: "Masz dostęp tylko do podglądu. Poproś autora mapy o uprawnienia współtwórcy, żeby dodawać oceny." });
+  return null;
+}
+
+function renderLane(pane, l) {
+  const key = keyLane(l.id), st = statusOf(key);
+  pane.append(
+    el("div", { class: "row" }, el("span", { class: `chip st-${st}`, text: STATUS_TXT[st] })),
+    el("h2", { text: l.street }),
+    el("p", { class: "muted", text: `Kierunek jazdy: ${l.dir}` }));
+  const facts = el("dl", { class: "facts" });
+  const fact = (k, v) => { if (v) facts.append(el("dt", { text: k }), el("dd", { text: v })); };
+  fact("Długość", fmtKm(l.len));
+  fact("Źródło", sourcesTxt(l));
+  if (l.busOnly) fact("Rodzaj", "ulica tylko dla autobusów");
+  fact("Mapa miasta", l.cityOdcinek ? `${l.cityOdcinek}` : null);
+  fact("Kiedy działa", l.cityDni ? `${l.cityDni}, ${l.cityGodziny}` : null);
+  fact("Otwarty", l.opened);
+  fact("Uwagi", l.manualNote);
+  fact("Autobusy", l.perH != null ? `${String(l.perH).replace(".", ",")} na godzinę w szczycie (rozkład ZTM, ${DATE_TXT})` : null);
+  pane.append(facts,
+    el("div", { class: "row" },
+      el("button", { class: "btn ghost", type: "button", onclick: () => zoomTo(S.selected), text: "Przybliż do odcinka" }),
+      el("button", { class: "btn ghost", type: "button", onclick: () => select(null), text: "Zamknij" })));
+  pane.append(reviewBlock(key, { street: l.street, dir: l.dir, mid: l.line[0][Math.floor(l.line[0].length / 2)], src: l.src }));
+}
+
+function renderProposal(pane, id, p) {
+  const key = keyProp(id), st = statusOf(key);
+  pane.append(
+    el("div", { class: "row" }, el("span", { class: `chip st-${st}`, text: STATUS_TXT[st] })),
+    el("h2", { text: p.street || "Nowy buspas" }),
+    el("p", { class: "muted", text: "Buspas dodany przez kogoś z nas. Strzałka na końcu pokazuje kierunek jazdy." }));
+  const facts = el("dl", { class: "facts" });
+  const authorDd = el("dd", { text: "…" });
+  facts.append(el("dt", { text: "Dodał(a)" }), authorDd);
+  if (p.hours) facts.append(el("dt", { text: "Kiedy działa" }), el("dd", { text: p.hours }));
+  if (p.comment) facts.append(el("dt", { text: "Opis" }), el("dd", { text: p.comment }));
+  facts.append(el("dt", { text: "Dodano" }), el("dd", { text: fmtDate(p.at) }));
+  pane.append(facts);
+  nameOf(p.by).then(n => authorDd.textContent = n);
+  const row = el("div", { class: "row" },
+    el("button", { class: "btn ghost", type: "button", onclick: () => zoomTo(S.selected), text: "Przybliż" }),
+    el("button", { class: "btn ghost", type: "button", onclick: () => select(null), text: "Zamknij" }));
+  if (S.me && p.by === S.me.id) {
+    const del = el("button", { class: "btn danger", type: "button", text: "Usuń moją propozycję" });
+    del.onclick = async () => {
+      if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "Na pewno usunąć? Kliknij ponownie"; return; }
+      del.disabled = true;
+      try { await S.db.collection("proposals").doc(id).delete(); select(null); }
+      catch (e) { del.disabled = false; del.textContent = "Nie udało się usunąć — spróbuj ponownie"; }
+    };
+    row.append(del);
+  }
+  pane.append(row, reviewBlock(key, { street: p.street || "", dir: "propozycja", mid: (p.line || [])[0] || null, src: ["proposal"] }));
+}
+
+function fmtDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString("pl-PL", { day: "numeric", month: "long" }) + ", " + d.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
+}
+async function nameOf(id) {
+  if (!id) return "Ktoś";
+  if (!S.user) return "Ktoś z zespołu";
+  const ps = await S.user.profiles([id]);
+  return (ps[id] && ps[id].name) || (S.me && id === S.me.id ? "Ty" : "Ktoś z zespołu");
+}
+
+function reviewBlock(key, ctx) {
+  const wrap = el("div", { class: "pane", style: "padding:0" });
+  const list = reviewsFor(key);
+  wrap.append(el("div", { class: "eyebrow", text: list.length ? `Oceny (${list.length})` : "Oceny" }));
+  if (!list.length) wrap.append(el("p", { class: "muted small", text: "Nikt jeszcze nie sprawdził tego odcinka." }));
+  const box = el("div", { class: "reviews" }); wrap.append(box);
+  const ids = [...new Set(list.map(r => r.by))];
+  const render = ps => {
+    box.replaceChildren();
+    for (const r of list) {
+      const prof = ps && ps[r.by];
+      const st = r.verdict === "ok" ? "ok" : "issue";
+      const who = el("div", { class: "who" });
+      if (prof) who.append(el("img", { src: prof.avatarUrl, alt: "" }));
+      who.append(el("span", { text: (prof && prof.name) || (S.me && r.by === S.me.id ? "Ty" : "Ktoś z zespołu") }),
+        el("span", { class: `chip st-${st}`, text: VERDICT[r.verdict] || r.verdict }),
+        el("span", { class: "when", text: fmtDate(r.at) }));
+      box.append(el("div", { class: "review" }, who, r.comment ? el("p", { text: r.comment }) : null));
+    }
+  };
+  render(null);
+  if (S.user && ids.length) S.user.profiles(ids).then(render);
+  wrap.append(reviewForm(key, ctx));
+  return wrap;
+}
+
+function reviewForm(key, ctx) {
+  const note = writeNote(); if (note) return note;
+  if (!S.me || !S.me.id) return el("p", { class: "note warn", text: "Zaloguj się do claude.ai, żeby dodać ocenę." });
+  const docId = `${key}~${S.me.id}`;
+  const mine = S.reviews.get(docId);
+  const form = el("form", { class: "pane", style: "padding:0", novalidate: true });
+  const fs = el("fieldset", {}, el("legend", { text: mine ? "Twoja ocena (możesz ją zmienić)" : "Twoja ocena" }));
+  const opts = [["ok", "Jest i się zgadza"], ["missing", "Nie ma takiego buspasu"], ["different", "Jest, ale inaczej (zakres, kierunek, godziny)"]];
+  for (const [v, t] of opts) {
+    const id = `v-${v}`;
+    const input = el("input", { type: "radio", name: "verdict", value: v, id });
+    if (mine && mine.verdict === v) input.checked = true;
+    fs.append(el("label", { class: "choice", for: id }, input, el("span", { text: t })));
+  }
+  const ta = el("textarea", { id: "review-comment", name: "comment", placeholder: "Np. buspas zaczyna się dopiero za skrzyżowaniem z …, działa tylko 7–10" });
+  if (mine && mine.comment) ta.value = mine.comment;
+  const toast = el("div", { class: "toast", role: "status" });
+  const save = el("button", { class: "btn", type: "submit", text: mine ? "Zapisz zmiany" : "Zapisz ocenę" });
+  const row = el("div", { class: "row" }, save);
+  if (mine) {
+    const del = el("button", { class: "btn ghost", type: "button", text: "Usuń moją ocenę" });
+    del.onclick = async () => { del.disabled = true; try { await S.db.collection("reviews").doc(docId).delete(); } catch (e) { del.disabled = false; toast.textContent = "Nie udało się usunąć. Spróbuj ponownie."; } };
+    row.append(del);
+  }
+  form.append(fs, el("label", { class: "field", for: "review-comment" }, "Komentarz (opcjonalnie)", ta), row, toast);
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const v = form.querySelector('input[name="verdict"]:checked');
+    if (!v) { toast.style.color = "var(--issue)"; toast.textContent = "Wybierz jedną z trzech odpowiedzi."; return; }
+    save.disabled = true; toast.style.color = ""; toast.textContent = "Zapisuję…";
+    try {
+      await S.db.collection("reviews").doc(docId).set({
+        target: key, verdict: v.value, comment: ta.value.trim().slice(0, 2000), by: S.me.id,
+        at: new Date().toISOString(), street: ctx.street, dir: ctx.dir, mid: ctx.mid, src: ctx.src,
+      });
+      toast.textContent = "Zapisano. Dziękujemy!";
+    } catch (err) {
+      save.disabled = false; toast.style.color = "var(--issue)";
+      toast.textContent = err && err.code === "invalid_argument" ? "Nie masz uprawnień do zapisu na tej mapie." : "Nie udało się zapisać. Spróbuj ponownie za chwilę.";
+    }
+  });
+  return form;
+}
+
+/* ---------- drawing a missing lane ---------- */
+function startDraw() {
+  S.drawing = []; S.selected = null; S.choices = null;
+  document.body.classList.add("drawing"); $("drawbar").hidden = false;
+  drawLayer = L.polyline([], { renderer, interactive: false, weight: 4, dashArray: "8 6", color: css("--proposal") }).addTo(map);
+  updateDraw(); restyle(); renderDetails();
+}
+function updateDraw() {
+  const pts = S.drawing || [];
+  drawLayer?.setLatLngs([pts, ...arrowsFor(pts)]);
+  $("draw-done").disabled = pts.length < 2;
+  $("drawhint").textContent = pts.length ? `Punkty: ${pts.length}. Klikaj dalej w kierunku jazdy.` : "Klikaj punkty wzdłuż ulicy, w kierunku jazdy autobusu.";
+}
+function endDraw() { S.drawing = null; document.body.classList.remove("drawing"); $("drawbar").hidden = true; }
+$("draw-undo").onclick = () => { S.drawing?.pop(); updateDraw(); };
+$("draw-cancel").onclick = () => { endDraw(); drawLayer?.remove(); drawLayer = null; S.pendingProposal = null; renderDetails(); };
+$("draw-done").onclick = () => { S.pendingProposal = S.drawing.slice(); endDraw(); setTab("details"); renderDetails(); };
+
+function renderProposalForm(pane) {
+  pane.append(el("div", { class: "eyebrow", text: "Nowy buspas" }), el("h2", { text: "Opisz narysowany buspas" }));
+  const form = el("form", { class: "pane", style: "padding:0", novalidate: true });
+  const street = el("input", { type: "text", id: "prop-street", placeholder: "np. al. Zieleniecka", autocomplete: "off" });
+  const hours = el("input", { type: "text", id: "prop-hours", placeholder: "np. całodobowo / dni robocze 7–10, 15–19", autocomplete: "off" });
+  const comment = el("textarea", { id: "prop-comment", placeholder: "Od skąd do dokąd, od kiedy działa, skąd wiesz (np. jeżdżę tędy codziennie)" });
+  const toast = el("div", { class: "toast", role: "status" });
+  const save = el("button", { class: "btn", type: "submit", text: "Zapisz buspas" });
+  const cancel = el("button", { class: "btn ghost", type: "button", text: "Anuluj" });
+  cancel.onclick = () => { S.pendingProposal = null; drawLayer?.remove(); drawLayer = null; renderDetails(); };
+  form.append(
+    el("label", { class: "field", for: "prop-street" }, "Ulica", street),
+    el("label", { class: "field", for: "prop-hours" }, "Kiedy działa (jeśli wiesz)", hours),
+    el("label", { class: "field", for: "prop-comment" }, "Opis", comment),
+    el("div", { class: "row" }, save, cancel), toast);
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!street.value.trim()) { toast.style.color = "var(--issue)"; toast.textContent = "Podaj nazwę ulicy."; street.focus(); return; }
+    save.disabled = true; toast.style.color = ""; toast.textContent = "Zapisuję…";
+    try {
+      const ref = await S.db.collection("proposals").add({
+        line: S.pendingProposal, street: street.value.trim().slice(0, 120), hours: hours.value.trim().slice(0, 200),
+        comment: comment.value.trim().slice(0, 2000), by: S.me.id, at: new Date().toISOString(),
+      });
+      S.pendingProposal = null; drawLayer?.remove(); drawLayer = null;
+      select({ kind: "prop", id: ref.id });
+    } catch (err) {
+      save.disabled = false; toast.style.color = "var(--issue)";
+      toast.textContent = err && err.code === "invalid_argument" ? "Nie masz uprawnień do zapisu na tej mapie." : "Nie udało się zapisać. Spróbuj ponownie za chwilę.";
+    }
+  });
+  pane.append(form);
+  setTimeout(() => street.focus(), 0);
+}
+
+/* ---------- list ---------- */
+document.querySelectorAll("#filter-status button").forEach(b => b.onclick = () => {
+  S.filter.status = b.dataset.v;
+  document.querySelectorAll("#filter-status button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderList();
+});
+$("filter-q").addEventListener("input", e => { S.filter.q = e.target.value.trim().toLowerCase(); renderList(); });
+
+function renderList() {
+  const box = $("list"); box.replaceChildren();
+  const items = [];
+  for (const l of LANES) items.push({ kind: "lane", id: l.id, street: l.street, dir: l.dir, len: l.len, st: statusOf(keyLane(l.id)) });
+  for (const [id, p] of S.proposals) items.push({ kind: "prop", id, street: p.street || "Nowy buspas", dir: "propozycja", len: null, st: statusOf(keyProp(id)) });
+  const f = S.filter;
+  const shown = items.filter(i => (f.status === "all" || (f.status === "prop" ? i.kind === "prop" : i.st === f.status))
+    && (!f.q || i.street.toLowerCase().includes(f.q)));
+  shown.sort((a, b) => a.street.localeCompare(b.street, "pl") || a.dir.localeCompare(b.dir, "pl"));
+  if (!shown.length) { box.append(el("p", { class: "muted", text: "Brak odcinków dla tego filtra." })); return; }
+  let last = null;
+  for (const i of shown) {
+    if (i.street !== last) { box.append(el("div", { class: "street", text: i.street })); last = i.street; }
+    box.append(el("button", { class: "item", type: "button", onclick: () => { select(i); zoomTo(i); } },
+      el("span", { text: i.kind === "lane" ? `→ ${i.dir}` : "nowa propozycja" }),
+      el("span", { class: `chip st-${i.st}`, text: STATUS_TXT[i.st] }),
+      el("span", { class: "meta", text: i.len != null ? fmtKm(i.len) : "" })));
+  }
+}
+
+/* ---------- header ---------- */
+function renderStats() {
+  let ok = 0, issue = 0;
+  for (const l of LANES) { const st = statusOf(keyLane(l.id)); if (st === "ok") ok++; else if (st === "issue") issue++; }
+  const km = LANES.reduce((s, l) => s + l.len, 0) / 1000;
+  const reviewers = new Set([...S.reviews.values()].map(r => r.by)).size;
+  const st = $("stats"); st.replaceChildren();
+  const it = (b, t) => st.append(el("span", {}, el("b", { text: b }), " " + t));
+  it(String(LANES.length), `odcinków (${km.toFixed(0)} km, każdy kierunek osobno)`);
+  it(String(ok), "potwierdzonych");
+  it(String(issue), "z uwagami");
+  it(String(S.proposals.size), "nowych");
+  if (reviewers) it(String(reviewers), reviewers === 1 ? "osoba sprawdza" : "osób sprawdza");
+}
+function refreshAll() { restyle(); renderStats(); if (S.tab === "list") renderList(); if (!S.drawing) renderDetails(); }
+
+/* ---------- boot ---------- */
+buildBase(); buildLabels(); buildLanes(); zoomLayers(); restyle(); renderStats(); renderDetails();
+const mq = matchMedia("(prefers-color-scheme: dark)");
+mq.addEventListener?.("change", restyle);
+new MutationObserver(restyle).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+(async () => {
+  const claude = window.claude;
+  if (!claude || !claude.use) { S.db = null; renderDetails(); return; }
+  const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+  S.db = db; S.user = user;
+  if (user) { S.me = await user.me(); S.canWrite = await user.can("data.write"); }
+  if (db) {
+    db.collection("reviews").onSnapshot(snap => {
+      S.reviews = new Map(snap.docs.map(d => [d.id, d.data()]));
+      refreshAll();
+    }, () => {});
+    db.collection("proposals").onSnapshot(snap => {
+      S.proposals = new Map(snap.docs.map(d => [d.id, d.data()]));
+      syncProposalLayers(); refreshAll();
+    }, () => {});
+  }
+  renderDetails();
+})();
+</script>

@@ -55,3 +55,5 @@ nul
 # Bus lane map
 bus_lanes/_data/
 bus_lanes/_output/*.gpkg
+bus_lanes/_output/review_data.json
+bus_lanes/_output/weryfikacja_buspasow.html

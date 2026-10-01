@@ -136,6 +136,13 @@ How it works:
 Outputs (`bus_lanes/_output/`): `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png`,
 `bus_lane_gaps_ranking.csv`, `bus_lane_need.gpkg` (layers `bus_dir`, `tram_dir`, `boundary` — for QGIS).
 
+**Colleague review page** (own bus-lane database, to be uploaded to OSM later):
+`python bus_lanes/export_review.py` merges the current lane set into stretches and fills
+`bus_lanes/review/review_template.html` → `bus_lanes/_output/weryfikacja_buspasow.html`, published as the
+artifact https://claude.ai/artifact/6wqUrGoJD67rcQPoWwsJL6 (shared db: `reviews` — one doc per person per stretch,
+id `l:<stretch id>~<user id>` or `p:<proposal id>~<user id>`, verdict ok|missing|different + comment, with street/dir/mid
+so reviews survive re-exports; `proposals` — drawn missing lanes, `line` = [[lat,lng],...] in travel direction).
+
 Pin the date with `ANALYSIS_DATE` in `bl_config.py`; delete `bus_lanes/_data/osm_*.json` to refresh OSM.
 
 ---
