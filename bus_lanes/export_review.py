@@ -78,9 +78,21 @@ def build_lanes():
     extra_tree = shapely.STRtree(extra.geometry.values)
 
     rows = []
-    keys = ["name", "bl_osm", "bl_city", "bl_manual", "bus_only"]
+    # Split each street's pieces into its two travel directions (relative to the street's main
+    # axis) BEFORE merging. Merging both at once — or via union_all — collapses a two-way way's
+    # forward and backward pieces into one line and silently drops a direction.
+    s0 = shapely.get_coordinates(shapely.get_point(bus.geometry.values, 0))
+    s1 = shapely.get_coordinates(shapely.get_point(bus.geometry.values, -1))
+    bus["hd"] = np.degrees(np.arctan2(s1[:, 0] - s0[:, 0], s1[:, 1] - s0[:, 1])) % 360
+    ang2 = np.radians(2 * bus.hd)
+    w = bus.geometry.length
+    ax = (bus.assign(sx=np.sin(ang2) * w, cx=np.cos(ang2) * w).groupby("name")[["sx", "cx"]].sum())
+    axis = bus.name.map((np.degrees(np.arctan2(ax.sx, ax.cx)) / 2) % 180)
+    bus["along"] = (np.cos(np.radians(bus.hd - axis)) >= 0).astype(int)
+
+    keys = ["name", "bl_osm", "bl_city", "bl_manual", "bus_only", "along"]
     for key, g in bus.groupby(keys):
-        merged = shapely.line_merge(shapely.union_all(g.geometry.values), directed=True)
+        merged = shapely.line_merge(shapely.MultiLineString(list(g.geometry.values)), directed=True)
         mids = shapely.line_interpolate_point(g.geometry.values, 0.5, normalized=True)
         for chain in getattr(merged, "geoms", [merged]):
             if chain.length < 15:
