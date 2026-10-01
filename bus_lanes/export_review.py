@@ -7,6 +7,7 @@ street, sources and direction are merged into one stretch, so reviewers judge st
 rather than hundreds of OSM fragments.
 
 Output: bus_lanes/_output/review_data.json (WGS84, coordinates rounded to ~1 m)
+        bus_lanes/_output/buspasy_do_weryfikacji.geojson  (for a no-login uMap, umap.openstreetmap.fr)
         bus_lanes/_output/weryfikacja_buspasow.html  (template + data, ready to publish)
 """
 import hashlib
@@ -173,6 +174,51 @@ def build_base():
             "boundary": bnd_ll, "labels": labels}
 
 
+UMAP_COLORS = {  # how much we trust a stretch before review
+    "multi": "#1f63d1",   # in 2+ sources
+    "city": "#e08a00",    # only the city map (state 2021) — most likely outdated
+    "osm": "#0f9b8e",     # only OpenStreetMap
+    "manual": "#7b45c9",  # announcement / reported by us
+}
+
+
+def write_umap(lanes: pd.DataFrame, date: str, out: Path):
+    """GeoJSON for uMap (umap.openstreetmap.fr): one feature per stretch, arrows included,
+    per-feature style in `_umap_options`, empty `status` / `uwagi` fields for reviewers."""
+    feats = []
+    for l in lanes.itertuples():
+        src = list(l.src)
+        kind = "multi" if len(src) > 1 else src[0]
+        desc = [f"Kierunek jazdy: **{l.dir}**", f"Długość: {l.len} m",
+                "Źródło: " + ", ".join(SOURCE_LABEL[x] for x in src)]
+        if l.busOnly:
+            desc.append("Ulica tylko dla autobusów")
+        if l.cityOdcinek:
+            desc.append(f"Mapa miasta: {l.cityOdcinek}, {l.cityDni}, {l.cityGodziny}")
+        if l.opened:
+            desc.append(f"Otwarty: {l.opened}")
+        if l.manualNote:
+            desc.append(f"Uwagi: {l.manualNote}")
+        if l.perH is not None:
+            desc.append(f"Autobusy w szczycie: {l.perH}/h (rozkład ZTM {date[6:]}.{date[4:6]}.{date[:4]})")
+        parts = [[[x, y] for y, x in part] for part in [l.line[0], *l.arrows]]
+        feats.append({
+            "type": "Feature",
+            "geometry": {"type": "MultiLineString", "coordinates": parts},
+            "properties": {
+                "name": f"{l.street} → {l.dir}",
+                "description": "\n".join(desc),
+                "id": l.id,
+                "status": "",
+                "uwagi": "",
+                "_umap_options": {"color": UMAP_COLORS[kind], "weight": 5, "opacity": 0.9},
+            },
+        })
+    out.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, ensure_ascii=False),
+                   encoding="utf-8")
+    print(f"Saved {out} ({len(feats)} features)")
+
+
 def main():
     date = (DATA_DIR / "analysis_date.txt").read_text(encoding="utf-8").split()[0]
     lanes = build_lanes()
@@ -180,6 +226,7 @@ def main():
     data = {"date": date, "sources": SOURCE_LABEL, "lanes": lanes.to_dict("records"), "base": base}
     js = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     (OUTPUT_DIR / "review_data.json").write_text(js, encoding="utf-8")
+    write_umap(lanes, date, OUTPUT_DIR / "buspasy_do_weryfikacji.geojson")
     print(f"Lanes: {len(lanes)} stretches, {lanes.len.sum() / 1000:.1f} km; "
           f"by source: {pd.Series([s for l in lanes.src for s in l]).value_counts().to_dict()}")
     print(f"Base: {len(base['major'])} major + {len(base['minor'])} minor lines, {len(base['labels'])} labels")
