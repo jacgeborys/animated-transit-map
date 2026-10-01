@@ -39,13 +39,13 @@ ORDER = ["low", "lane", "medium", "high"]  # draw order (last on top)
 FONT = "Segoe UI"
 # Street labels: condensed face (loaded from file — matplotlib's font cache may not list it)
 _NARROW = Path(r"C:\Windows\Fonts\LiberationSansNarrow-Regular.ttf")
-LABEL_TRACKING = 0.06          # extra space between letters, in em
+LABEL_TRACKING = 0.13          # extra space between letters, in em
 LABEL_SQUEEZE = 0.82           # horizontal glyph scale (< 1 = narrower than the font itself)
 # Per-street label tweaks (keys = short names as printed on the map)
 LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "Bora-Komorowskiego": -1}   # -1 = right of / below the street
 LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
-LABEL_NUDGE = {"Modlińska": (-600, 1000), "Czerniakowska": (0, -1500)}            # move label anchor by (dx, dy) metres
-CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska"]  # always labelled (if not in top 12)
+LABEL_NUDGE = {"Modlińska": (-600, 1000), "Czerniakowska": (0, -2500)}  # city map only: move anchor (dx, dy) m
+CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska", "Aleja Armii Krajowej"]  # always labelled (if not in top 12)
 LABEL_PRIORITY = ["Bora-Komorowskiego"]   # placed first, others dodge them
 
 
@@ -158,7 +158,7 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
     print(f"Saved {out}")
 
 
-def label_points(bus, streets, names):
+def label_points(bus, streets, names, nudge=False):
     """Per street: (all same-named OSM ways, point to label, side). The point sits on the
     street's high/medium stretch, or anywhere on its bus route if it has none left."""
     out = {}
@@ -178,7 +178,7 @@ def label_points(bus, streets, names):
         else:
             longest = gaps.geometry.iloc[int(np.argmax(gaps.length.to_numpy()))]
             target = longest.interpolate(0.5, normalized=True)
-        if label in LABEL_NUDGE:
+        if nudge and label in LABEL_NUDGE:
             dx, dy = LABEL_NUDGE[label]
             target = shapely.Point(target.x + dx, target.y + dy)
         out[label] = (list(ways.geometry.values), target, LABEL_SIDE.get(label, 1))
@@ -306,7 +306,7 @@ def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
     placed.append((text, xy))
     # glyphs drawn as outlines so they can be squeezed horizontally (data units = metres);
     # round joins, otherwise the halo's miter joins spike out of sharp glyph corners
-    halo = [pe.withStroke(linewidth=3, foreground=BG, joinstyle="round", capstyle="round")]
+    halo = [pe.withStroke(linewidth=1.8, foreground=BG, joinstyle="round", capstyle="round")]
     for ch, x, y, ang in glyphs:
         tp = TextPath((0, 0), ch, prop=prop)  # units: points, baseline at y=0
         tr = (Affine2D().translate(-adv(ch) / LABEL_SQUEEZE / 2, -0.36 * fs)
@@ -384,7 +384,7 @@ def main():
     city = boundary.total_bounds
     top = rank.drop_duplicates("ulica").head(12).ulica.tolist() + CITY_EXTRA_LABELS
     draw_map(bus, streets, river, boundary, date, city, OUTPUT_DIR / "buspasy_warszawa.png",
-             "Gdzie brakuje buspasów?", scale=1.3, labels=label_points(bus, named, top))
+             "Gdzie brakuje buspasów?", scale=1.3, labels=label_points(bus, named, top, nudge=True))
 
     # Central zoom: ~9 x 11 km around Śródmieście
     cx, cy = 638500, 486800   # EPSG:2180, near Rondo Dmowskiego
