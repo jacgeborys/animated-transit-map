@@ -41,7 +41,7 @@ LABEL_TRACKING = 0.10          # extra space between letters, in em
 # Per-street label tweaks (keys = short names as printed on the map)
 LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1}   # -1 = right of / below the street
 LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
-CITY_EXTRA_LABELS = ["Łopuszańska"]
+CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska"]  # always labelled (if not in top 12)
 
 
 def label_font(size):
@@ -152,16 +152,20 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
 
 
 def label_points(bus, streets, names):
-    """Per street: (all same-named OSM ways, point on its high/medium stretch to label)."""
+    """Per street: (all same-named OSM ways, point to label, side). The point sits on the
+    street's high/medium stretch, or anywhere on its bus route if it has none left."""
     out = {}
-    for name in names:
-        gaps = bus[(bus.name == name) & bus.status.isin(["high", "medium"])]
+    for name in dict.fromkeys(names):  # de-duplicate, keep order
+        street = bus[bus.name == name]
+        gaps = street[street.status.isin(["high", "medium"])]
         ways = streets[streets.name == name]
-        if gaps.empty or ways.empty:
+        if street.empty or ways.empty:
             continue
+        if gaps.empty:
+            gaps = street
         label = short(name)
         if LABEL_AT.get(label) == "south":
-            g = gaps[gaps.in_city]
+            g = street[street.in_city]  # southern end of the street, whatever its status
             xy = shapely.get_coordinates(g.geometry.values)
             target = shapely.Point(xy[np.argmin(xy[:, 1])])
         else:
