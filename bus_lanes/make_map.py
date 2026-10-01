@@ -144,7 +144,7 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
              f"Rozkład ZTM na {date_pl(date)}.",
              fontsize=10, color=INK3, fontfamily=FONT)
     fig.text(0.05, 0.027,
-             "Dane: ZTM Warszawa (GTFS via mkuran.pl) · buspasy i ulice © współtwórcy OpenStreetMap (ODbL)",
+             "Dane: ZTM (GTFS via mkuran.pl) · ulice i buspasy © OpenStreetMap (ODbL) · buspasy: mapa.um.warszawa.pl, komunikaty ZDM",
              fontsize=10, color=INK3, fontfamily=FONT)
     fig.savefig(out, facecolor=BG, dpi=200)
     plt.close(fig)
@@ -332,7 +332,7 @@ def draw_ranking(rank: pd.DataFrame, date: str, out: Path, n=15):
                           "średnia liczba autobusów/h na całym odcinku",
              fontsize=13, color=INK2, fontfamily=FONT, va="top")
     fig.text(0.05, 0.027, f"Rozkład ZTM na {date_pl(date)} · szczyt 7–9 i 15–17 · "
-                          "buspasy © współtwórcy OpenStreetMap",
+                          "buspasy: OpenStreetMap, mapa.um.warszawa.pl, komunikaty ZDM",
              fontsize=10, color=INK3, fontfamily=FONT)
     fig.savefig(out, facecolor=BG, dpi=200)
     plt.close(fig)

@@ -13,6 +13,9 @@ Outputs:
         layer 'tram_dir'  same for tram tracks
         layer 'boundary'  Warsaw boundary
     bus_lanes/_output/bus_lane_gaps_ranking.csv   streets without bus lanes, ranked
+
+Bus lanes = OSM tags OR city layer OR manual list (bus_lanes/_data/extra_lanes.gpkg, built by
+official_lanes.py). Columns bl_osm / bl_city / bl_manual record which source says so.
 """
 import sys
 from pathlib import Path
@@ -140,6 +143,32 @@ def directional_geoms(agg: pd.DataFrame, ways: gpd.GeoDataFrame) -> gpd.GeoDataF
     return gpd.GeoDataFrame(out, geometry=geom, crs=POLAND_CRS)
 
 
+def extra_lane_cover(gdf: gpd.GeoDataFrame, lanes: gpd.GeoDataFrame, step=10, dist=25,
+                     max_angle=35, min_share=0.5) -> np.ndarray:
+    """Per directional way: True if ≥ min_share of it runs within `dist` m of a lane line
+    pointing the same way (lane lines are directional: vertex order = travel direction)."""
+    if lanes.empty:
+        return np.zeros(len(gdf), bool)
+    lg = lanes.geometry.values
+    tree = shapely.STRtree(lg)
+    hit = np.zeros(len(gdf), bool)
+    for i, geom in enumerate(gdf.geometry.values):
+        L = geom.length
+        n = max(int(L // step), 1)
+        d = (np.arange(n) + 0.5) * (L / n)
+        pts = shapely.line_interpolate_point(geom, d)
+        a = shapely.get_coordinates(shapely.line_interpolate_point(geom, np.clip(d - 3, 0, L)))
+        b = shapely.get_coordinates(shapely.line_interpolate_point(geom, np.clip(d + 3, 0, L)))
+        hb = np.degrees(np.arctan2(b[:, 0] - a[:, 0], b[:, 1] - a[:, 1])) % 360
+        pi, li = tree.query(pts, predicate="dwithin", distance=dist)
+        if len(pi) == 0:
+            continue
+        lb = way_bearing_at(lg[li], pts[pi])
+        ok = np.abs((hb[pi] - lb + 180) % 360 - 180) < max_angle
+        hit[i] = len(np.unique(pi[ok])) >= min_share * n
+    return hit
+
+
 def compass(bearing: float) -> str:
     names = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     pl = {"N": "północ", "NE": "płn.-wsch.", "E": "wschód", "SE": "płd.-wsch.",
@@ -177,6 +206,34 @@ def ranking(bus: gpd.GeoDataFrame) -> pd.DataFrame:
              [["ulica", "kierunek", "len_km", "avg_per_h", "max_per_h", "day_max", "score"]])
 
 
+def extra_lane_flags(gdf: gpd.GeoDataFrame, lanes: gpd.GeoDataFrame, step=10, dist=25,
+                     max_angle=35, min_cover=0.5) -> dict:
+    """For each directional way geometry: does a same-direction lane line from `lanes` run
+    along at least `min_cover` of it? Returns {source: bool array} per lane source."""
+    geoms = gdf.geometry.values
+    L = shapely.length(geoms)
+    n = np.maximum((L // step).astype(int), 1)
+    owner = np.repeat(np.arange(len(geoms)), n)
+    frac = np.concatenate([(np.arange(k) + 0.5) / k for k in n])
+    d = frac * L[owner]
+    pts = shapely.line_interpolate_point(geoms[owner], d)
+    a = shapely.line_interpolate_point(geoms[owner], np.clip(d - 3, 0, L[owner]))
+    b = shapely.line_interpolate_point(geoms[owner], np.clip(d + 3, 0, L[owner]))
+    ca, cb = shapely.get_coordinates(a), shapely.get_coordinates(b)
+    brg = np.degrees(np.arctan2(cb[:, 0] - ca[:, 0], cb[:, 1] - ca[:, 1])) % 360
+    out = {}
+    for src, lg in lanes.groupby("zrodlo"):
+        lgeom = lg.geometry.values
+        pi, li = shapely.STRtree(lgeom).query(pts, predicate="dwithin", distance=dist)
+        lb = way_bearing_at(lgeom[li], pts[pi])
+        ok = np.abs((brg[pi] - lb + 180) % 360 - 180) < max_angle
+        hit = np.zeros(len(pts), bool)
+        hit[pi[ok]] = True
+        cover = np.bincount(owner, weights=hit, minlength=len(geoms)) / n
+        out[src] = cover >= min_cover
+    return out
+
+
 def main():
     date, feed_name = (DATA_DIR / "analysis_date.txt").read_text(encoding="utf-8").split()
     feed = RAW_DIR / feed_name
@@ -202,7 +259,17 @@ def main():
         gdf = directional_geoms(agg, ways)
         gdf["in_city"] = gdf.geometry.intersects(city)
         if mode == "bus":
-            has_lane = np.where(gdf.dir == 1, gdf.bl_fwd, gdf.bl_bwd) == 1
+            gdf["bl_osm"] = (np.where(gdf.dir == 1, gdf.bl_fwd, gdf.bl_bwd) == 1).astype(int)
+            has_lane = gdf.bl_osm.to_numpy() == 1
+            extra = DATA_DIR / "extra_lanes.gpkg"   # city layer + manual list (official_lanes.py)
+            if extra.exists():
+                flags = extra_lane_flags(gdf, gpd.read_file(extra, layer="lanes"))
+                for src, col in (("miasto", "bl_city"), ("reczne", "bl_manual")):
+                    gdf[col] = flags.get(src, np.zeros(len(gdf), bool)).astype(int)
+                    has_lane = has_lane | (gdf[col].to_numpy() == 1)
+                    km = gdf.geometry.length[gdf[col] == 1].sum() / 1000
+                    new = gdf.geometry.length[(gdf[col] == 1) & (gdf.bl_osm == 0)].sum() / 1000
+                    print(f"  {col}: {km:.1f} km of bus street-direction, {new:.1f} km not in OSM")
             gdf["bus_lane"] = has_lane.astype(int)
             gdf["status"] = np.select(
                 [has_lane, gdf.per_h >= NEED_HIGH, gdf.per_h >= NEED_MED],
@@ -219,6 +286,9 @@ def main():
             hi = c.per_h >= NEED_HIGH
             print(f"  ≥{NEED_HIGH}/h: {km[hi].sum():.1f} km, of which with bus lane "
                   f"{km[hi & (c.bus_lane == 1)].sum():.1f} km")
+            for col in ("bl_osm", "bl_city", "bl_manual"):
+                print(f"    lane km per source ({col}): all {km[c[col] == 1].sum():.1f}, "
+                      f"on ≥{NEED_HIGH}/h {km[hi & (c[col] == 1)].sum():.1f}")
             rk = ranking(gdf)
             rk.to_csv(OUTPUT_DIR / "bus_lane_gaps_ranking.csv", index=False, encoding="utf-8-sig")
             print(rk.head(25).to_string(index=False))
