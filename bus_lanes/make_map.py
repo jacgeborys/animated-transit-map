@@ -18,7 +18,9 @@ import shapely
 from matplotlib.lines import Line2D
 from matplotlib import patheffects as pe
 from matplotlib.font_manager import FontProperties
-from matplotlib.textpath import TextToPath
+from matplotlib.patches import PathPatch
+from matplotlib.textpath import TextPath, TextToPath
+from matplotlib.transforms import Affine2D
 from shapely.geometry import LineString
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -37,12 +39,14 @@ ORDER = ["low", "lane", "medium", "high"]  # draw order (last on top)
 FONT = "Segoe UI"
 # Street labels: condensed face (loaded from file — matplotlib's font cache may not list it)
 _NARROW = Path(r"C:\Windows\Fonts\LiberationSansNarrow-Regular.ttf")
-LABEL_TRACKING = 0.10          # extra space between letters, in em
+LABEL_TRACKING = 0.06          # extra space between letters, in em
+LABEL_SQUEEZE = 0.82           # horizontal glyph scale (< 1 = narrower than the font itself)
 # Per-street label tweaks (keys = short names as printed on the map)
-LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "gen. Bora-Komorowskiego": -1}   # -1 = right of / below the street
+LABEL_SIDE = {"Radzymińska": -1, "Łopuszańska": -1, "Bora-Komorowskiego": -1}   # -1 = right of / below the street
 LABEL_AT = {"Puławska": "south"}                       # label the southern end instead
-LABEL_NUDGE = {"Modlińska": (-600, 1000)}            # move label anchor by (dx, dy) metres
+LABEL_NUDGE = {"Modlińska": (-600, 1000), "Czerniakowska": (0, -1500)}            # move label anchor by (dx, dy) metres
 CITY_EXTRA_LABELS = ["Łopuszańska", "Puławska", "Modlińska"]  # always labelled (if not in top 12)
+LABEL_PRIORITY = ["Bora-Komorowskiego"]   # placed first, others dodge them
 
 
 def label_font(size):
@@ -110,8 +114,10 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
     fs = 11 if scale > 1.5 else 10
     gap_m = (width(60, scale) / 2 + fs * 0.75) * m_per_pt  # clear the thickest line
     frame = shapely.box(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2).buffer(-4 * fs * m_per_pt)
-    placed = []  # glyph positions of labels already drawn (in ranking order)
-    for name, (ways, target, side) in labels.items():
+    placed = []  # glyph positions of labels already drawn (priority first, then ranking order)
+    order = sorted(labels, key=lambda k: k not in LABEL_PRIORITY)
+    for name in order:
+        ways, target, side = labels[name]
         curved_label(ax, name, ways, target, fs, m_per_pt, gap_m * side, frame, placed)
 
     # --- header ---
@@ -235,7 +241,7 @@ def _extend(line: LineString, d: float) -> LineString:
 def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
     """Street label set letter by letter along the street, parallel and offset to one side."""
     prop = label_font(fs)
-    adv = lambda t: _T2P.get_text_width_height_descent(t, prop, ismath=False)[0]  # pt
+    adv = lambda t: LABEL_SQUEEZE * _T2P.get_text_width_height_descent(t, prop, ismath=False)[0]  # pt
     track = LABEL_TRACKING * fs  # pt
     total = (adv(text) + track * (len(text) - 1)) * m_per_pt
     if frame is not None and not frame.contains(target):
@@ -282,7 +288,7 @@ def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
         return glyphs
 
     # try the target position first, then slide along the street to dodge earlier labels
-    clear = 1.4 * fs * m_per_pt
+    clear = 1.0 * fs * m_per_pt  # min distance between glyphs of different labels
     base = min(max(mid - total / 2, 0), max(L - total, 0))
     for shift in (0, 0.5, -0.5, 1.0, -1.0, 1.5, -1.5):
         start = base + shift * total
@@ -290,20 +296,32 @@ def curved_label(ax, text, ways, target, fs, m_per_pt, gap_m, frame, placed):
             continue
         glyphs = layout(start)
         xy = np.array([(g[1], g[2]) for g in glyphs])
-        if all(np.min(np.hypot(*(xy[:, None, :] - q[None, :, :]).transpose(2, 0, 1))) > clear
-               for q in placed):
+        blockers = [n for n, q in placed
+                    if np.min(np.hypot(*(xy[:, None, :] - q[None, :, :]).transpose(2, 0, 1))) <= clear]
+        if not blockers:
             break
     else:
-        print(f"  label skipped (collides): {text}")
+        print(f"  label skipped (collides with {', '.join(blockers)}): {text}")
         return
-    placed.append(xy)
-    halo = [pe.withStroke(linewidth=3, foreground=BG)]
+    placed.append((text, xy))
+    # glyphs drawn as outlines so they can be squeezed horizontally (data units = metres);
+    # round joins, otherwise the halo's miter joins spike out of sharp glyph corners
+    halo = [pe.withStroke(linewidth=3, foreground=BG, joinstyle="round", capstyle="round")]
     for ch, x, y, ang in glyphs:
-        ax.text(x, y, ch, fontproperties=prop, color=INK, rotation=ang,
-                rotation_mode="anchor", ha="center", va="center", zorder=10, path_effects=halo)
+        tp = TextPath((0, 0), ch, prop=prop)  # units: points, baseline at y=0
+        tr = (Affine2D().translate(-adv(ch) / LABEL_SQUEEZE / 2, -0.36 * fs)
+              .scale(LABEL_SQUEEZE * m_per_pt, m_per_pt).rotate_deg(ang).translate(x, y))
+        ax.add_patch(PathPatch(tr.transform_path(tp), facecolor=INK, edgecolor="none",
+                               zorder=10, path_effects=halo))
 
 
 def short(name: str) -> str:
+    if "Armii Krajowej" in name:
+        return "AK"
+    if "Trasa Łazienkowska" in name:
+        return "TŁ"
+    if "Bora-Komorowskiego" in name:
+        return "Bora-Komorowskiego"
     rep = {"Aleje ": "Al. ", "Aleja ": "Al. ", "Generała ": "gen. ", "Tadeusza ": "", "Most ": "Most ",
            "Aleja Prymasa Tysiąclecia": "Al. Prymasa Tysiąclecia"}
     for a, b in rep.items():
