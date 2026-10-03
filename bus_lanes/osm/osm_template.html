@@ -65,6 +65,9 @@ input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--lin
 .pop h4 { margin: 0 0 4px; font-size: 16px; }
 .pop .k { color: var(--ink-3); }
 .pop .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; font-weight: 600; }
+#map { background: #eef0ec; }
+.map-label { font: 500 12.5px var(--font-ui); color: #4d555b; white-space: nowrap; pointer-events: none;
+  transform: translate(-50%, -50%); text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 2px #fff; }
 .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; color: #fff; }
 </style>
 </head>
@@ -132,9 +135,26 @@ function chevrons(line, every = 50, size = 4) {
 }
 
 /* ---------- map ---------- */
-const map = L.map("map", { preferCanvas: true }).setView([52.235, 21.01], 12);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19,
-  attribution: '© <a href="https://www.openstreetmap.org/copyright">współtwórcy OpenStreetMap</a>' }).addTo(map);
+const map = L.map("map", { preferCanvas: true, minZoom: 10, maxZoom: 19 }).setView([52.235, 21.01], 12);
+map.attributionControl.addAttribution('Dane: © <a href="https://www.openstreetmap.org/copyright">współtwórcy OpenStreetMap</a>');
+/* Own vector basemap built from OSM data (no tile server: the OSM tile policy blocks local/embedded use) */
+const R = L.canvas({ padding: 0.3 });
+const B = DATA.base;
+for (const ring of B.boundary) L.polygon(ring, { renderer: R, interactive: false, color: "#a3aaa1", weight: 1.2, dashArray: "6 5", fillColor: "#ffffff", fillOpacity: 1 }).addTo(map);
+for (const ring of B.river) L.polygon(ring, { renderer: R, interactive: false, stroke: false, fillColor: "#bcd5e8", fillOpacity: 1 }).addTo(map);
+const minor = L.polyline(B.minor, { renderer: R, interactive: false, color: "#e0e3dd", weight: 1 });
+L.polyline(B.major, { renderer: R, interactive: false, color: "#c3c8c0", weight: 2 }).addTo(map);
+const labels = L.layerGroup();
+for (const [lat, lng, name] of B.labels) {
+  const s = document.createElement("span"); s.className = "map-label"; s.textContent = name;
+  L.marker([lat, lng], { interactive: false, keyboard: false, icon: L.divIcon({ className: "", html: s, iconSize: [0, 0] }) }).addTo(labels);
+}
+function zoomLayers() {
+  const z = map.getZoom();
+  if (z >= 14) { minor.addTo(map); minor.bringToBack(); } else minor.remove();
+  if (z >= 15) labels.addTo(map); else labels.remove();
+}
+map.on("zoomend", zoomLayers); zoomLayers();
 const groups = { osm: L.layerGroup().addTo(map), check: L.layerGroup().addTo(map), todo: L.layerGroup().addTo(map) };
 const layerOf = new Map();
 for (const f of F) {

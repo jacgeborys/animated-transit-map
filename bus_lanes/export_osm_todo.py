@@ -11,7 +11,7 @@ Direction is given relative to the OSM way ("forward"/"backward"), which decides
 :forward / :backward suffix of lane tags.
 
 Outputs (bus_lanes/_output/osm/):
-  buspasy_osm.html                  standalone page (Leaflet + OSM tiles), opens without login
+  buspasy_osm.html                  standalone page (Leaflet + own vector basemap), opens without login
   buspasy_osm_do_dodania.geojson    'todo' + 'check' features, loadable in iD as custom data
 """
 import json
@@ -136,7 +136,8 @@ def main():
                          if any(x in k for x in ("psv", "bus")) and k not in ("bus_bay", "maxspeed:bus", "toll:bus")])
     usage = schemes.value_counts().head(8).to_dict()
     print("Tag usage on existing lanes:", usage)
-    data = {"osmDate": osm_date, "gtfsDate": date, "usage": usage, "features": feats}
+    from export_review import build_base  # same vector basemap as the review page
+    data = {"osmDate": osm_date, "gtfsDate": date, "usage": usage, "features": feats, "base": build_base()}
 
     gj = {"type": "FeatureCollection", "features": [
         {"type": "Feature",
