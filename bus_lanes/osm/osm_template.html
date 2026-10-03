@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buspasy Warszawy w OSM</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: OSM map on the left, to-do list + tagging guide on the right; stacked on phones. */
+:root {
+  --bg: #f4f5f2; --surface: #ffffff; --ink: #1c2125; --ink-2: #555e65; --ink-3: #868f95; --line: #dcdfd9;
+  --osm: #1c5fd0; --todo: #e8590c; --check: #c2255c; --done: #2b8a3e;
+  --font-ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 var(--font-ui); }
+:focus-visible { outline: 2px solid var(--osm); outline-offset: 2px; }
+a { color: var(--osm); }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
+header { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: baseline; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+header h1 { margin: 0; font-size: 20px; font-weight: 700; }
+.stats { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.stats b { color: var(--ink); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 400px; min-height: 0; }
+#map { min-height: 0; }
+aside { min-height: 0; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--line); }
+@media (max-width: 860px) {
+  .app { height: auto; }
+  .main { grid-template-columns: 1fr; grid-template-rows: 60vh auto; }
+  aside { border-left: 0; border-top: 1px solid var(--line); }
+}
+.tabs { display: flex; position: sticky; top: 0; background: var(--surface); border-bottom: 1px solid var(--line); z-index: 2; }
+.tabs button { flex: 1; padding: 11px 6px; border: 0; background: none; font: 600 15px var(--font-ui); color: var(--ink-2); border-bottom: 3px solid transparent; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.pane { padding: 16px; display: grid; gap: 14px; }
+h2 { margin: 0; font-size: 19px; }
+h3 { margin: 6px 0 0; font-size: 16px; }
+p { margin: 0; }
+.muted { color: var(--ink-2); } .small { font-size: 13px; }
+.legend { display: grid; gap: 6px; font-size: 14px; }
+.legend label { display: flex; gap: 10px; align-items: center; cursor: pointer; }
+.sw { width: 28px; border-top: 4px solid; border-radius: 2px; }
+.note { padding: 10px 12px; border-radius: 8px; background: #fff4e6; font-size: 14px; }
+code, .tags { font-family: var(--font-mono); font-size: 12.5px; }
+code { background: #eef0ec; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.tags { background: #f2f4f0; border-radius: 6px; padding: 8px 10px; white-space: pre-wrap; overflow-wrap: anywhere; margin: 4px 0 0; }
+input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: none; font: 600 13px var(--font-ui); color: var(--ink-2); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.street { font-weight: 700; margin-top: 10px; }
+.item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 6px; border-radius: 6px; }
+.item:hover { background: #f1f3ef; }
+.item button.go { text-align: left; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; color: var(--ink); }
+.item .meta { color: var(--ink-3); font-size: 13px; }
+.item.done .go { color: var(--ink-3); text-decoration: line-through; }
+.item a { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.leaflet-popup-content { font: 14px/1.45 var(--font-ui); margin: 12px 14px; min-width: 250px; max-width: 320px; }
+.pop h4 { margin: 0 0 4px; font-size: 16px; }
+.pop .k { color: var(--ink-3); }
+.pop .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; font-weight: 600; }
+.badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; color: #fff; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Buspasy Warszawy w OpenStreetMap</h1>
+    <div class="stats" id="stats"></div>
+  </header>
+  <div class="main">
+    <div id="map" aria-label="Mapa buspasów w OSM"></div>
+    <aside>
+      <div class="tabs" role="tablist">
+        <button role="tab" id="t-list" aria-selected="true" type="button">Do zrobienia</button>
+        <button role="tab" id="t-guide" aria-selected="false" type="button">Jak tagować</button>
+      </div>
+      <section class="pane" id="p-list">
+        <div class="legend">
+          <label><input type="checkbox" id="l-todo" checked><span class="sw" style="border-color:var(--todo)"></span>do dodania w OSM (wg mapy miasta / komunikatów)</label>
+          <label><input type="checkbox" id="l-check" checked><span class="sw" style="border-color:var(--check)"></span>jest w OSM, ale zgłoszono, że nie istnieje</label>
+          <label><input type="checkbox" id="l-osm" checked><span class="sw" style="border-color:var(--osm)"></span>już w OSM (wzór do tagowania)</label>
+        </div>
+        <p class="muted small">Strzałki (widoczne po przybliżeniu) pokazują kierunek jazdy. Kliknij odcinek, żeby zobaczyć tagi i link do edycji.</p>
+        <input type="text" id="q" placeholder="Szukaj ulicy…" aria-label="Szukaj ulicy" autocomplete="off">
+        <div class="seg" id="seg">
+          <button type="button" data-v="todo" aria-pressed="true">Do dodania</button>
+          <button type="button" data-v="check" aria-pressed="false">Do sprawdzenia</button>
+          <button type="button" data-v="open" aria-pressed="false">Niezrobione</button>
+        </div>
+        <div id="list"></div>
+      </section>
+      <section class="pane" id="p-guide" hidden></section>
+    </aside>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+const F = DATA.features.map((f, i) => ({ ...f, i, key: `${f.cat}:${f.way}:${f.rel}` }));
+const COLOR = { osm: "#1c5fd0", todo: "#e8590c", check: "#c2255c" };
+const $ = id => document.getElementById(id);
+const el = (t, a = {}, ...k) => { const n = document.createElement(t); for (const [x, v] of Object.entries(a)) { if (x === "text") n.textContent = v; else if (x === "class") n.className = v; else if (x.startsWith("on")) n.addEventListener(x.slice(2), v); else n.setAttribute(x, v); } k.forEach(c => c != null && n.append(c)); return n; };
+
+/* done marks: per browser, so each mapper keeps their own progress */
+let DONE = new Set();
+try { DONE = new Set(JSON.parse(localStorage.getItem("buspasy-osm-done") || "[]")); } catch (e) {}
+const saveDone = () => { try { localStorage.setItem("buspasy-osm-done", JSON.stringify([...DONE])); } catch (e) {} };
+
+const lenM = line => { let s = 0; for (let i = 1; i < line.length; i++) s += dist(line[i - 1], line[i]); return s; };
+function dist(a, b) { const k = Math.cos(a[0] * Math.PI / 180); return Math.hypot((b[0] - a[0]) * 111320, (b[1] - a[1]) * 111320 * k); }
+function chevrons(line, every = 50, size = 4) {
+  const out = []; let acc = 0, next = every / 2;
+  for (let i = 1; i < line.length; i++) {
+    const a = line[i - 1], b = line[i], d = dist(a, b);
+    while (next <= acc + d && d > 0) {
+      const t = (next - acc) / d, p = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+      const k = Math.cos(p[0] * Math.PI / 180), ux = (b[0] - a[0]) * 111320 / d, uy = (b[1] - a[1]) * 111320 * k / d;
+      const back = [p[0] - ux * size / 111320, p[1] - uy * size / 111320 / k];
+      out.push([[back[0] - uy * size * .7 / 111320, back[1] + ux * size * .7 / 111320 / k], p, [back[0] + uy * size * .7 / 111320, back[1] - ux * size * .7 / 111320 / k]]);
+      next += every;
+    }
+    acc += d;
+  }
+  return out;
+}
+
+/* ---------- map ---------- */
+const map = L.map("map", { preferCanvas: true }).setView([52.235, 21.01], 12);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19,
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">współtwórcy OpenStreetMap</a>' }).addTo(map);
+const groups = { osm: L.layerGroup().addTo(map), check: L.layerGroup().addTo(map), todo: L.layerGroup().addTo(map) };
+const layerOf = new Map();
+for (const f of F) {
+  f.len = Math.round(lenM(f.line));
+  const pl = L.polyline([f.line, ...chevrons(f.line)], { color: COLOR[f.cat], weight: f.cat === "osm" ? 3 : 5, opacity: f.cat === "osm" ? .8 : .95 });
+  pl.bindPopup(() => popup(f), { maxWidth: 340 });
+  pl.addTo(groups[f.cat]); layerOf.set(f.i, pl);
+}
+for (const c of ["todo", "check", "osm"]) $("l-" + c).onchange = e => e.target.checked ? groups[c].addTo(map) : groups[c].remove();
+
+const tagText = t => Object.entries(t).map(([k, v]) => `${k}=${v}`).join("\n") || "(brak tagów pasów)";
+const suffix = f => f.oneway ? "" : `:${f.rel}`;
+function popup(f) {
+  const box = el("div", { class: "pop" });
+  const badge = el("span", { class: "badge", text: { todo: "do dodania", check: "do sprawdzenia", osm: "już w OSM" }[f.cat] });
+  badge.style.background = COLOR[f.cat];
+  box.append(badge, el("h4", { text: f.name || "(ulica bez nazwy)" }),
+    el("p", {}, el("span", { class: "k", text: "Kierunek jazdy: " }), f.dir),
+    el("p", {}, el("span", { class: "k", text: "Względem linii OSM: " }),
+      f.oneway ? "jezdnia jednokierunkowa (bez sufiksu)" : `${f.rel} → tagi z sufiksem `, f.oneway ? null : el("code", { text: suffix(f) })));
+  if (f.cat === "todo") {
+    for (const h of f.hint || []) box.append(el("p", { class: "small muted", text: h }));
+    if (f.perH) box.append(el("p", { class: "small muted", text: `Autobusy w szczycie: ${f.perH}/h (rozkład ZTM)` }));
+    box.append(el("p", { class: "small", text: "Obecne tagi tej linii:" }), el("pre", { class: "tags", text: tagText(f.tags) }));
+    if (f.example) {
+      const ex = f.example;
+      box.append(el("p", { class: "small" }, "Wzór w okolicy (", el("a", { href: `https://www.openstreetmap.org/way/${ex.way}`, target: "_blank", rel: "noopener", text: ex.name || `way ${ex.way}` }), `, ${ex.dist} m stąd):`),
+        el("pre", { class: "tags", text: tagText(ex.tags) }));
+    }
+  } else {
+    box.append(el("pre", { class: "tags", text: tagText(f.tags) }));
+    if (f.cat === "check") box.append(el("p", { class: "small", text: "Ktoś zgłosił, że tego buspasu nie ma. Sprawdź i jeśli to prawda, usuń tagi pasa w tym kierunku." }));
+  }
+  box.append(el("div", { class: "links" },
+    el("a", { href: `https://www.openstreetmap.org/edit?editor=id&way=${f.way}`, target: "_blank", rel: "noopener", text: "Edytuj w iD" }),
+    el("a", { href: `https://www.openstreetmap.org/way/${f.way}`, target: "_blank", rel: "noopener", text: "Zobacz w OSM" }),
+    el("a", { href: `http://127.0.0.1:8111/load_object?objects=w${f.way}`, target: "_blank", rel: "noopener", text: "JOSM" })));
+  if (f.cat !== "osm") {
+    const cb = el("input", { type: "checkbox", id: "done-pop" }); cb.checked = DONE.has(f.key);
+    cb.onchange = () => { cb.checked ? DONE.add(f.key) : DONE.delete(f.key); saveDone(); renderList(); renderStats(); };
+    box.append(el("label", { for: "done-pop", class: "small", style: "display:flex;gap:6px;margin-top:8px" }, cb, "Zrobione (zapamiętane w tej przeglądarce)"));
+  }
+  return box;
+}
+
+/* ---------- list ---------- */
+let filter = { q: "", v: "todo" };
+$("q").oninput = e => { filter.q = e.target.value.trim().toLowerCase(); renderList(); };
+document.querySelectorAll("#seg button").forEach(b => b.onclick = () => {
+  filter.v = b.dataset.v; document.querySelectorAll("#seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); renderList();
+});
+function renderList() {
+  const box = $("list"); box.replaceChildren();
+  // tiny junction fragments (< 20 m) stay on the map but would only clutter the list
+  let items = F.filter(f => f.cat !== "osm" && (f.len >= 20 || f.cat === "check"));
+  if (filter.v === "todo") items = items.filter(f => f.cat === "todo");
+  if (filter.v === "check") items = items.filter(f => f.cat === "check");
+  if (filter.v === "open") items = items.filter(f => !DONE.has(f.key));
+  if (filter.q) items = items.filter(f => (f.name || "").toLowerCase().includes(filter.q));
+  // merge pieces of one street + direction into one row per way-direction, grouped by street
+  items.sort((a, b) => (!a.name - !b.name) || (a.name || "").localeCompare(b.name || "", "pl")
+    || a.dir.localeCompare(b.dir, "pl") || b.len - a.len);  // unnamed pieces last
+  if (!items.length) { box.append(el("p", { class: "muted", text: "Nic tu nie ma dla tego filtra." })); return; }
+  let last = null, shown = 0;
+  for (const f of items) {
+    if (shown++ > 400) { box.append(el("p", { class: "muted small", text: "Pokazano 400 pozycji — zawęź wyszukiwanie." })); break; }
+    const nm = f.name || "(bez nazwy)";
+    if (nm !== last) { box.append(el("div", { class: "street", text: nm })); last = nm; }
+    const cb = el("input", { type: "checkbox", "aria-label": "Zrobione" }); cb.checked = DONE.has(f.key);
+    cb.onchange = () => { cb.checked ? DONE.add(f.key) : DONE.delete(f.key); saveDone(); row.classList.toggle("done", cb.checked); renderStats(); };
+    const row = el("div", { class: "item" + (DONE.has(f.key) ? " done" : "") }, cb,
+      el("button", { class: "go", type: "button", onclick: () => { const l = layerOf.get(f.i); map.fitBounds(l.getBounds().pad(1.5), { maxZoom: 18 }); l.openPopup(); } },
+        `→ ${f.dir} `, el("span", { class: "meta", text: `${f.len} m · way ${f.way}` })),
+      el("a", { href: `https://www.openstreetmap.org/edit?editor=id&way=${f.way}`, target: "_blank", rel: "noopener", text: "iD" }));
+    box.append(row);
+  }
+}
+function renderStats() {
+  const todo = F.filter(f => f.cat === "todo"), km = todo.reduce((s, f) => s + f.len, 0) / 1000;
+  const done = todo.filter(f => DONE.has(f.key)).length;
+  const s = $("stats"); s.replaceChildren();
+  const it = (b, t) => s.append(el("span", {}, el("b", { text: b }), " " + t));
+  it(String(F.filter(f => f.cat === "osm").length), "odcinków już w OSM");
+  it(`${todo.length}`, `do dodania (${km.toFixed(0)} km)`);
+  it(String(F.filter(f => f.cat === "check").length), "do sprawdzenia");
+  if (done) it(String(done), "zrobionych przez Ciebie");
+  s.append(el("span", { class: "small", text: `dane OSM z ${DATA.osmDate}` }));
+}
+
+/* ---------- guide ---------- */
+function renderGuide() {
+  const g = $("p-guide");
+  const usage = Object.entries(DATA.usage).map(([k, v]) => `${k} — ${v}`).join("\n");
+  g.append(
+    el("h2", { text: "Jak dodać buspas w OSM" }),
+    el("p", { class: "note", text: "Pomarańczowe odcinki to tylko wskazówki z mapy miasta (stan 2021) i komunikatów ZDM. Nie przerysowuj ich do OSM. Każdy buspas sprawdź na miejscu albo na zdjęciach, z których wolno korzystać w OSM (np. ortofotomapa Geoportalu, Mapillary, Panoramax)." }),
+    el("h3", { text: "1. Podziel linię" }),
+    el("p", { text: "Jeśli buspas obejmuje tylko część linii (way), podziel ją w miejscu, gdzie buspas się zaczyna i kończy." }),
+    el("h3", { text: "2. Dodaj tagi pasów" }),
+    el("p", {}, "Pasy wymienia się od lewej do prawej w kierunku jazdy; buspas jest zwykle ostatni (prawy). W Warszawie najczęściej używa się pary ", el("code", { text: "lanes:psv" }), " + ", el("code", { text: "psv:lanes" }), "."),
+    el("p", { class: "small muted", text: "Jezdnia jednokierunkowa, 3 pasy, prawy dla autobusów:" }),
+    el("pre", { class: "tags", text: "lanes=3\nlanes:psv=1\npsv:lanes=yes|yes|designated" }),
+    el("p", { class: "small muted", text: "Ulica dwukierunkowa, buspas tylko w kierunku zgodnym z linią (forward), 2 pasy w tę stronę:" }),
+    el("pre", { class: "tags", text: "lanes:forward=2\nlanes:psv:forward=1\npsv:lanes:forward=yes|designated" }),
+    el("p", { class: "small muted", text: "Buspas działający tylko w godzinach — dopisz warunek, np.:" }),
+    el("pre", { class: "tags", text: "psv:lanes:forward:conditional=yes|designated @ (Mo-Fr 07:00-10:00,15:00-19:00)" }),
+    el("p", { class: "small muted", text: "Ulica tylko dla autobusów (cała jezdnia):" }),
+    el("pre", { class: "tags", text: "motor_vehicle=no\npsv=designated" }),
+    el("h3", { text: "3. Wzoruj się na sąsiadach" }),
+    el("p", { text: "W okienku każdego pomarańczowego odcinka jest najbliższy buspas, który już jest w OSM, z jego tagami. Niebieskie linie na mapie to wszystkie takie wzory." }),
+    el("p", { class: "small muted", text: "Tagi pasów autobusowych na istniejących buspasach w Warszawie (liczba odcinków):" }),
+    el("pre", { class: "tags", text: usage }),
+    el("h3", { text: "Więcej" }),
+    el("p", {}, el("a", { href: "https://wiki.openstreetmap.org/wiki/Lanes", target: "_blank", rel: "noopener", text: "Wiki: Lanes" }), " · ",
+      el("a", { href: "https://wiki.openstreetmap.org/wiki/Key:busway", target: "_blank", rel: "noopener", text: "Key:busway" }), " · ",
+      el("a", { href: "https://wiki.openstreetmap.org/wiki/Conditional_restrictions", target: "_blank", rel: "noopener", text: "Conditional restrictions" })),
+    el("p", { class: "small muted", text: `Odcinki do dodania: buspasy z mapy miasta (stan 2021) i komunikatów ZDM na ulicach, którymi jeżdżą autobusy ZTM (rozkład z ${DATA.gtfsDate.slice(6)}.${DATA.gtfsDate.slice(4, 6)}.${DATA.gtfsDate.slice(0, 4)}), bez buspasu w OSM z ${DATA.osmDate}.` }));
+}
+const tab = t => { $("t-list").setAttribute("aria-selected", t === "list"); $("t-guide").setAttribute("aria-selected", t === "guide"); $("p-list").hidden = t !== "list"; $("p-guide").hidden = t !== "guide"; };
+$("t-list").onclick = () => tab("list"); $("t-guide").onclick = () => tab("guide");
+renderGuide(); renderList(); renderStats();
+</script>
+</body>
+</html>
