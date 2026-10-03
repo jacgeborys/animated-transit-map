@@ -107,6 +107,9 @@ Independent of the animation pipeline — only needs a fresh GTFS download (Step
 ```bash
 python core/gtfs_downloader.py        # fresh ZTM GTFS
 python bus_lanes/osm_fetch.py         # OSM streets + bus lane tags + Vistula (cached in bus_lanes/_data/)
+                                      #   --update : merge only ways changed since the cache (seconds) ← use this to refresh
+                                      #   --refresh: full re-download (9 resumable tiles; slow when Overpass is busy)
+                                      #   never delete _data/osm_raw.json just to refresh — it is the update baseline
 python bus_lanes/official_lanes.py    # city bus-lane layer + manual_bus_lanes.csv → _data/extra_lanes.gpkg
 python bus_lanes/transit_counts.py    # random regular Wednesday → per-shape passing counts
 python bus_lanes/match_streets.py     # shapes → OSM ways per direction, classify, ranking CSV
@@ -121,7 +124,7 @@ How it works:
   roads closed to cars but open to bus/psv, and `highway=service` with psv/bus=yes|designated.
 - Separate parallel bus lanes (bus-only ways alongside a street, within 35 m / 30°) count as that carriageway's
   lane (`bl_osm_par`); bus-only service ways NOT parallel to a street are loops/depots (`loop=1`) and are excluded
-  from stats and drawing. The OSM fetch is tiled (4 queries) and refuses Overpass data older than 3 days.
+  from stats and drawing. The OSM fetch refuses Overpass data older than 3 days (some mirrors lag months).
 - Bus lane sources (a street-direction has a lane if ANY says so; columns `bl_osm`, `bl_city`, `bl_manual`):
   1. OSM tags. 2. City layer `K_BUSPASY_0_4` from mapa.um.warszawa.pl (Oracle MapViewer dataserver,
   `https://mapa.um.warszawa.pl/mapviewer/dataserver/DANE_WAWA?t=K_BUSPASY_0_4`, GeoJSON in EPSG:2178 with a flat

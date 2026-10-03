@@ -2,7 +2,10 @@
 Step A — Fetch Warsaw street network + bus lane tags from OpenStreetMap (Overpass API).
 
 Outputs (bus_lanes/_data/):
-    osm_raw.json          raw Overpass response (cache; delete to re-fetch)
+    osm_raw.json          raw Overpass response (cache)
+Usage: osm_fetch.py            use the cache (download if missing)
+       osm_fetch.py --update   merge in only ways changed since the cached snapshot (fast)
+       osm_fetch.py --refresh  full re-download (9 tiles, resumable)
     osm_streets.gpkg      layer 'streets'  — drivable ways with parsed bus-lane flags
                           layer 'trams'    — railway=tram tracks
                           layer 'boundary' — Warsaw city boundary
@@ -24,7 +27,8 @@ from bl_config import BBOX, DATA_DIR, POLAND_CRS
 
 OVERPASS_URLS = [
     "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",   # often months stale; the freshness check skips it
 ]
 
 HIGHWAYS = (
@@ -33,22 +37,23 @@ HIGHWAYS = (
 )
 
 
-def build_query(bbox=BBOX, boundary=True):
+def build_query(bbox=BBOX, boundary=True, changed_since=None):
     s, w, n, e = bbox
+    ch = f'(changed:"{changed_since}")' if changed_since else ""
     q = f"""
-[out:json][timeout:300];
+[out:json][timeout:180];
 (
-  way["highway"~"^({HIGHWAYS})$"]({s},{w},{n},{e});
-  way["railway"="tram"]({s},{w},{n},{e});
+  way["highway"~"^({HIGHWAYS})$"]{ch}({s},{w},{n},{e});
+  way["railway"="tram"]{ch}({s},{w},{n},{e});
 );
-out tags geom;
+out tags geom qt;
 """
     if boundary:
         q += 'rel["boundary"="administrative"]["admin_level"="6"]["name"="Warszawa"];\nout geom;\n'
     return q
 
 
-def tiles(nx=2, ny=2):
+def tiles(nx=3, ny=3):
     s, w, n, e = BBOX
     for i in range(nx):
         for j in range(ny):
@@ -70,46 +75,89 @@ out geom;
 MAX_AGE_DAYS = 3   # mirrors can lag months behind; refuse data older than this
 
 
-def _post(query: str) -> dict:
-    for url in OVERPASS_URLS:
-        for attempt in range(2):
+def _post(query: str, rounds=4) -> dict:
+    """POST to the first server that answers with fresh data; back off between rounds
+    (honouring Retry-After on 429), so a busy server is not hammered."""
+    for rnd in range(rounds):
+        for url in OVERPASS_URLS:
             try:
-                print(f"  {url} (attempt {attempt + 1}) ...")
-                r = requests.post(url, data={"data": query}, timeout=600,
+                print(f"  {url.split('/')[2]} ...", flush=True)
+                r = requests.post(url, data={"data": query}, timeout=240,
                                   headers={"User-Agent": "warsaw-bus-lane-map/1.0 (gtfs_schedules_city)",
                                            "Accept": "application/json"})
+                if r.status_code == 429:
+                    wait = int(r.headers.get("Retry-After", "0") or 0)
+                    print(f"    busy (429){f', retry after {wait}s' if wait else ''}", flush=True)
+                    continue
                 r.raise_for_status()
                 data = r.json()
                 ts = data.get("osm3s", {}).get("timestamp_osm_base", "")
                 age = (datetime.now(timezone.utc) - datetime.fromisoformat(ts.replace("Z", "+00:00"))).days if ts else 999
                 if age > MAX_AGE_DAYS:
-                    print(f"    stale data ({ts}, {age} days old) — skipping this server")
-                    break
+                    print(f"    stale data ({ts}) — skipped", flush=True)
+                    continue
                 return data
             except Exception as ex:
-                print(f"    failed: {ex}")
-                time.sleep(10)
+                print(f"    failed: {str(ex)[:120]}", flush=True)
+        wait = 30 * (rnd + 1)
+        print(f"  all servers busy, waiting {wait}s (round {rnd + 1}/{rounds})", flush=True)
+        time.sleep(wait)
     raise RuntimeError("No Overpass server returned fresh data")
 
 
-def fetch(cache: Path, query: str = None) -> dict:
-    if cache.exists():
+def _merge(parts):
+    seen, elements = {}, []
+    for part in parts:
+        for el in part["elements"]:
+            key = (el["type"], el["id"])
+            if key in seen:
+                elements[seen[key]] = el      # later part wins (newer data in update mode)
+            else:
+                seen[key] = len(elements)
+                elements.append(el)
+    return elements
+
+
+def fetch(cache: Path, query: str = None, mode: str = "cache") -> dict:
+    """mode: 'cache' (use cache if present), 'refresh' (full download), 'update' (only ways changed
+    since the cached snapshot, merged in — seconds instead of minutes; deleted ways are not removed)."""
+    if query:  # small one-off query (river)
+        if cache.exists():
+            print(f"Using cached {cache.name}")
+            return json.loads(cache.read_text(encoding="utf-8"))
+        data = _post(query)
+    elif cache.exists() and mode == "cache":
         print(f"Using cached {cache.name}")
         return json.loads(cache.read_text(encoding="utf-8"))
-    if query:  # small one-off query
-        data = _post(query)
-    else:      # the big street query, in 4 tiles so the main server does not time out
-        seen, elements, base = set(), [], None
-        for k, bb in enumerate(tiles()):
-            print(f"Tile {k + 1}/4")
+    elif cache.exists() and mode == "update":
+        old = json.loads(cache.read_text(encoding="utf-8"))
+        since = old["osm3s"]["timestamp_osm_base"]
+        print(f"Update: ways changed since {since}")
+        new = _post(build_query(BBOX, boundary=False, changed_since=since))
+        print(f"  {len(new['elements'])} changed ways")
+        data = {"osm3s": new["osm3s"], "elements": _merge([old, new])}
+    else:
+        # full download in 9 tiles, each saved on arrival so an interrupted run resumes
+        tile_dir = cache.parent / "osm_tiles"
+        tile_dir.mkdir(exist_ok=True)
+        parts = []
+        all_tiles = list(tiles())
+        for k, bb in enumerate(all_tiles):
+            tf = tile_dir / f"tile_{k}.json"
+            if tf.exists():
+                print(f"Tile {k + 1}/{len(all_tiles)}: cached")
+                parts.append(json.loads(tf.read_text(encoding="utf-8")))
+                continue
+            print(f"Tile {k + 1}/{len(all_tiles)}", flush=True)
             part = _post(build_query(bb, boundary=(k == 0)))
-            base = base or part.get("osm3s")
-            for el in part["elements"]:
-                key = (el["type"], el["id"])
-                if key not in seen:
-                    seen.add(key)
-                    elements.append(el)
-        data = {"osm3s": base, "elements": elements}
+            tf.write_text(json.dumps(part), encoding="utf-8")
+            parts.append(part)
+        # oldest tile timestamp = safe base for later incremental updates
+        base = min((p["osm3s"] for p in parts), key=lambda o: o.get("timestamp_osm_base", ""))
+        data = {"osm3s": base, "elements": _merge(parts)}
+        for tf in tile_dir.glob("tile_*.json"):
+            tf.unlink()
+        tile_dir.rmdir()
     print(f"OSM data as of {data.get('osm3s', {}).get('timestamp_osm_base')}")
     cache.write_text(json.dumps(data), encoding="utf-8")
     return data
@@ -271,7 +319,8 @@ def build_river(data: dict) -> gpd.GeoDataFrame:
 
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    data = fetch(DATA_DIR / "osm_raw.json")
+    mode = "update" if "--update" in sys.argv else "refresh" if "--refresh" in sys.argv else "cache"
+    data = fetch(DATA_DIR / "osm_raw.json", mode=mode)
     streets, trams, boundary = build_layers(data)
     out = DATA_DIR / "osm_streets.gpkg"
     streets.to_file(out, layer="streets", driver="GPKG")
