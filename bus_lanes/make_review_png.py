@@ -96,7 +96,7 @@ def draw(lanes, streets, river, boundary, extent, out, title, scale, n_labels):
 
 def main():
     bus = gpd.read_file(OUTPUT_DIR / "bus_lane_need.gpkg", layer="bus_dir")
-    lanes = bus[(bus.bus_lane == 1) & ~((bus.bus_only == 1) & (bus.highway == "service"))].reset_index(drop=True)
+    lanes = bus[(bus.bus_lane == 1) & (bus.loop == 0)].reset_index(drop=True)
     boundary = gpd.read_file(OUTPUT_DIR / "bus_lane_need.gpkg", layer="boundary")
     osm = DATA_DIR / "osm_streets.gpkg"
     streets = gpd.read_file(osm, layer="streets")

@@ -76,8 +76,9 @@ def main():
 
     feats = []
     # --- existing OSM lanes (model) ---
+    par_ids = set(gpd.read_file(OUTPUT_DIR / "bus_lane_need.gpkg", layer="osm_parallel_busways").osm_id)
     o = st[((st.bl_fwd == 1) | (st.bl_bwd == 1)) & st.intersects(city)
-           & ~((st.bus_only == 1) & (st.highway == "service"))]
+           & ~((st.bus_only == 1) & (st.highway == "service") & ~st.osm_id.isin(par_ids))]  # drop loops only
     for r in o.itertuples():
         for d, flag in ((1, r.bl_fwd), (-1, r.bl_bwd)):
             if not flag:

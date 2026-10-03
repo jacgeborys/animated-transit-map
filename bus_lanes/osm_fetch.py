@@ -10,6 +10,8 @@ Outputs (bus_lanes/_data/):
 """
 import json
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 import geopandas as gpd
@@ -31,18 +33,26 @@ HIGHWAYS = (
 )
 
 
-def build_query():
-    s, w, n, e = BBOX
-    return f"""
+def build_query(bbox=BBOX, boundary=True):
+    s, w, n, e = bbox
+    q = f"""
 [out:json][timeout:300];
 (
   way["highway"~"^({HIGHWAYS})$"]({s},{w},{n},{e});
   way["railway"="tram"]({s},{w},{n},{e});
 );
 out tags geom;
-rel["boundary"="administrative"]["admin_level"="6"]["name"="Warszawa"];
-out geom;
 """
+    if boundary:
+        q += 'rel["boundary"="administrative"]["admin_level"="6"]["name"="Warszawa"];\nout geom;\n'
+    return q
+
+
+def tiles(nx=2, ny=2):
+    s, w, n, e = BBOX
+    for i in range(nx):
+        for j in range(ny):
+            yield (s + (n - s) * j / ny, w + (e - w) * i / nx, s + (n - s) * (j + 1) / ny, w + (e - w) * (i + 1) / nx)
 
 
 def river_query():
@@ -57,24 +67,52 @@ out geom;
 """
 
 
+MAX_AGE_DAYS = 3   # mirrors can lag months behind; refuse data older than this
+
+
+def _post(query: str) -> dict:
+    for url in OVERPASS_URLS:
+        for attempt in range(2):
+            try:
+                print(f"  {url} (attempt {attempt + 1}) ...")
+                r = requests.post(url, data={"data": query}, timeout=600,
+                                  headers={"User-Agent": "warsaw-bus-lane-map/1.0 (gtfs_schedules_city)",
+                                           "Accept": "application/json"})
+                r.raise_for_status()
+                data = r.json()
+                ts = data.get("osm3s", {}).get("timestamp_osm_base", "")
+                age = (datetime.now(timezone.utc) - datetime.fromisoformat(ts.replace("Z", "+00:00"))).days if ts else 999
+                if age > MAX_AGE_DAYS:
+                    print(f"    stale data ({ts}, {age} days old) — skipping this server")
+                    break
+                return data
+            except Exception as ex:
+                print(f"    failed: {ex}")
+                time.sleep(10)
+    raise RuntimeError("No Overpass server returned fresh data")
+
+
 def fetch(cache: Path, query: str = None) -> dict:
     if cache.exists():
         print(f"Using cached {cache.name}")
         return json.loads(cache.read_text(encoding="utf-8"))
-    query = query or build_query()
-    for url in OVERPASS_URLS:
-        try:
-            print(f"Querying {url} ...")
-            r = requests.post(url, data={"data": query}, timeout=600,
-                              headers={"User-Agent": "warsaw-bus-lane-map/1.0 (gtfs_schedules_city)",
-                                       "Accept": "application/json"})
-            r.raise_for_status()
-            data = r.json()
-            cache.write_text(json.dumps(data), encoding="utf-8")
-            return data
-        except Exception as ex:  # try next mirror
-            print(f"  failed: {ex}")
-    raise RuntimeError("All Overpass mirrors failed")
+    if query:  # small one-off query
+        data = _post(query)
+    else:      # the big street query, in 4 tiles so the main server does not time out
+        seen, elements, base = set(), [], None
+        for k, bb in enumerate(tiles()):
+            print(f"Tile {k + 1}/4")
+            part = _post(build_query(bb, boundary=(k == 0)))
+            base = base or part.get("osm3s")
+            for el in part["elements"]:
+                key = (el["type"], el["id"])
+                if key not in seen:
+                    seen.add(key)
+                    elements.append(el)
+        data = {"osm3s": base, "elements": elements}
+    print(f"OSM data as of {data.get('osm3s', {}).get('timestamp_osm_base')}")
+    cache.write_text(json.dumps(data), encoding="utf-8")
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -164,7 +202,10 @@ def bus_lane_flags(tags: dict) -> tuple[bool, bool, bool]:
     closed = t.get("access") in ("no", "private") or t.get("motor_vehicle") == "no" \
         or t.get("motorcar") == "no"
     bus_open = t.get("bus") in ("yes", "designated") or t.get("psv") in ("yes", "designated")
-    bus_only = hw in ("busway", "bus_guideway") or (closed and bus_open)
+    # Warsaw often maps separate bus roadways as highway=service + psv/bus=yes|designated without an
+    # explicit access=no; on a service road that clearly means "for buses". (Not applied to main
+    # roads, where psv=yes only restates the default.) Loops vs parallel lanes: see match_streets.
+    bus_only = hw in ("busway", "bus_guideway") or (closed and bus_open) or (hw == "service" and bus_open)
     if bus_only:
         fwd = bwd = True
 

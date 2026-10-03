@@ -144,7 +144,7 @@ def directional_geoms(agg: pd.DataFrame, ways: gpd.GeoDataFrame) -> gpd.GeoDataF
 
 
 def extra_lane_cover(gdf: gpd.GeoDataFrame, lanes: gpd.GeoDataFrame, step=10, dist=25,
-                     max_angle=35, min_share=0.5) -> np.ndarray:
+                     max_angle=35, min_share=0.5, directed=True) -> np.ndarray:
     """Per directional way: True if ≥ min_share of it runs within `dist` m of a lane line
     pointing the same way (lane lines are directional: vertex order = travel direction)."""
     if lanes.empty:
@@ -164,9 +164,29 @@ def extra_lane_cover(gdf: gpd.GeoDataFrame, lanes: gpd.GeoDataFrame, step=10, di
         if len(pi) == 0:
             continue
         lb = way_bearing_at(lg[li], pts[pi])
-        ok = np.abs((hb[pi] - lb + 180) % 360 - 180) < max_angle
+        diff = np.abs((hb[pi] - lb + 180) % 360 - 180)
+        if not directed:  # parallel either way
+            diff = np.minimum(diff, 180 - diff)
+        ok = diff < max_angle
         hit[i] = len(np.unique(pi[ok])) >= min_share * n
     return hit
+
+
+def parallel_busways(streets: gpd.GeoDataFrame, min_len=25):
+    """Bus-only ways (e.g. highway=service + access=no + psv=designated) that run alongside a normal
+    street for most of their length: OSM's 'separate bus lane' mapping style. Bus-only ways that
+    are not parallel to any street are loops/depots. Returns (osm_ids, directional lines)."""
+    bo = streets[(streets.bus_only == 1) & (streets.geometry.length >= min_len)]
+    roads = streets[(streets.bus_only == 0) & ~streets.highway.isin(["service", "living_street"])]
+    par = extra_lane_cover(bo, roads, dist=35, max_angle=30, directed=False)
+    p = bo[par]
+    ids, geoms = [], []
+    for r in p.itertuples():
+        if r.oneway != -1:
+            ids.append(r.osm_id); geoms.append(r.geometry)
+        if r.oneway != 1:
+            ids.append(r.osm_id); geoms.append(r.geometry.reverse())
+    return set(p.osm_id), gpd.GeoDataFrame({"osm_id": ids}, geometry=geoms, crs=streets.crs)
 
 
 def compass(bearing: float) -> str:
@@ -260,6 +280,18 @@ def main():
         gdf["in_city"] = gdf.geometry.intersects(city)
         if mode == "bus":
             gdf["bl_osm"] = (np.where(gdf.dir == 1, gdf.bl_fwd, gdf.bl_bwd) == 1).astype(int)
+            # separate parallel bus lanes in OSM count for the carriageway they run alongside
+            par_ids, busways = parallel_busways(ways)
+            side = (gdf.bus_only == 0).to_numpy()
+            par = np.zeros(len(gdf), bool)
+            par[side] = extra_lane_cover(gdf[side], busways, dist=35)
+            gdf["bl_osm_par"] = par.astype(int)
+            gdf.loc[par, "bl_osm"] = 1
+            gdf["loop"] = ((gdf.bus_only == 1) & (gdf.highway == "service")
+                           & ~gdf.osm_id.isin(par_ids)).astype(int)
+            busways.to_file(out, layer="osm_parallel_busways", driver="GPKG")
+            print(f"  parallel OSM busways: {len(par_ids)} ways; carriageway km covered: "
+                  f"{gdf.geometry.length[par].sum() / 1000:.1f}")
             has_lane = gdf.bl_osm.to_numpy() == 1
             extra = DATA_DIR / "extra_lanes.gpkg"   # city layer + manual list (official_lanes.py)
             if extra.exists():
@@ -280,7 +312,7 @@ def main():
 
         if mode == "bus":
             c = gdf[gdf.in_city]
-            c = c[~((c.bus_only == 1) & (c.highway == "service"))]  # skip loops/depots
+            c = c[c.loop == 0]  # skip bus loops/depots
             km = c.geometry.length / 1000
             print("  Warsaw km by status:", {k: round(v, 1) for k, v in km.groupby(c.status).sum().items()})
             hi = c.per_h >= NEED_HIGH

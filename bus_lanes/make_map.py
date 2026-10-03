@@ -95,7 +95,7 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
     streets.plot(ax=ax, color=STREET, linewidth=0.3, zorder=2)
 
     # bus loops / depot roads are bus-only but not street bus lanes — they only add blobs
-    bus = bus[~((bus.bus_only == 1) & (bus.highway == "service"))].reset_index(drop=True)
+    bus = bus[bus.loop == 0].reset_index(drop=True)
     m_per_pt = w / (0.94 * 10.8 * 72)
     lw_all = width(bus.per_h.to_numpy(), scale) * np.where(bus.status == "low", 0.6, 1.0)
     geom = offset_right(bus, (lw_all / 2 + 0.3) * m_per_pt)
@@ -126,7 +126,7 @@ def draw_map(bus, streets, river, boundary, date, extent, out, title, scale, lab
     fig.text(0.05, 0.895, "Liczba autobusów w godzinie szczytu, w jednym kierunku jazdy",
              fontsize=14, color=INK2, fontfamily=FONT, va="top")
 
-    c = bus[bus.in_city & ~((bus.bus_only == 1) & (bus.highway == "service"))]
+    c = bus[bus.in_city & (bus.loop == 0)]
     km = c.geometry.length / 1000
     hi = c.per_h >= NEED_HIGH
     hi_km, hi_lane = km[hi].sum(), km[hi & (c.bus_lane == 1)].sum()

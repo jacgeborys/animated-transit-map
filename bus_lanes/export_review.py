@@ -73,7 +73,7 @@ def chevrons(line: LineString):
 
 def build_lanes():
     bus = gpd.read_file(OUTPUT_DIR / "bus_lane_need.gpkg", layer="bus_dir")
-    bus = bus[bus.in_city & (bus.bus_lane == 1) & ~((bus.bus_only == 1) & (bus.highway == "service"))].copy()
+    bus = bus[bus.in_city & (bus.bus_lane == 1) & (bus.loop == 0)].copy()
     bus["name"] = bus["name"].fillna("(bez nazwy)")
     extra = gpd.read_file(DATA_DIR / "extra_lanes.gpkg", layer="lanes")
     extra_tree = shapely.STRtree(extra.geometry.values)
