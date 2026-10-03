@@ -118,7 +118,10 @@ How it works:
 - Each shape is sampled every 10 m and snapped to the nearest parallel OSM way (≤15 m, ±35°) whose `oneway`
   allows that direction → dual carriageways are separated correctly. Counts are summed per (way, direction).
 - Bus lanes parsed from `busway*`, `bus:lanes*`, `psv:lanes*`, `lanes:bus*`, `lanes:psv*`, `highway=busway`
-  and roads closed to cars but open to bus/psv. Bus loops/depot `service` roads are excluded from stats and drawing.
+  roads closed to cars but open to bus/psv, and `highway=service` with psv/bus=yes|designated.
+- Separate parallel bus lanes (bus-only ways alongside a street, within 35 m / 30°) count as that carriageway's
+  lane (`bl_osm_par`); bus-only service ways NOT parallel to a street are loops/depots (`loop=1`) and are excluded
+  from stats and drawing. The OSM fetch is tiled (4 queries) and refuses Overpass data older than 3 days.
 - Bus lane sources (a street-direction has a lane if ANY says so; columns `bl_osm`, `bl_city`, `bl_manual`):
   1. OSM tags. 2. City layer `K_BUSPASY_0_4` from mapa.um.warszawa.pl (Oracle MapViewer dataserver,
   `https://mapa.um.warszawa.pl/mapviewer/dataserver/DANE_WAWA?t=K_BUSPASY_0_4`, GeoJSON in EPSG:2178 with a flat
