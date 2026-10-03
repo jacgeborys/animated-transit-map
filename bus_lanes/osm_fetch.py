@@ -207,7 +207,10 @@ def bus_lane_flags(tags: dict) -> tuple[bool, bool, bool]:
     # roads, where psv=yes only restates the default.) Loops vs parallel lanes: see match_streets.
     bus_only = hw in ("busway", "bus_guideway") or (closed and bus_open) or (hw == "service" and bus_open)
     if bus_only:
-        fwd = bwd = True
+        # the whole roadway is for buses — but only in the directions buses may drive
+        contra = t.get("oneway:bus") == "no" or t.get("oneway:psv") == "no"
+        fwd = fwd or not oneway_rev or contra
+        bwd = bwd or not oneway or contra
 
     return fwd, bwd, bus_only
 

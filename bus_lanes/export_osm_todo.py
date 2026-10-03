@@ -115,6 +115,13 @@ def main():
     for f in feats:
         if f["cat"] == "osm" and any(n == f["name"] and d == f["dir"] and s == "osm" for n, d, s in REPORTED_MISSING):
             f["cat"] = "check"
+            f["why"] = "Ktoś zgłosił, że tego buspasu nie ma. Sprawdź i jeśli to prawda, usuń tagi pasa w tym kierunku."
+    # --- separate parallel bus lanes without a oneway tag: OSM says two-way, often a missing oneway=yes ---
+    for f in feats:
+        if f["cat"] == "osm" and f["way"] in par_ids and not f["oneway"] and "oneway" not in f["tags"]:
+            f["cat"] = "check"
+            f["why"] = ("Osobna jezdnia autobusowa bez tagu oneway, więc w OSM jest dwukierunkowa. "
+                        "Jeśli autobusy jeżdżą nią tylko w jedną stronę, dodaj oneway=yes (linia narysowana w kierunku jazdy).")
 
     # nearest existing OSM lane as a tagging example for each candidate
     model = [f for f in feats if f["cat"] == "osm" and not f["busOnly"]]

@@ -87,7 +87,7 @@ input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--lin
       <section class="pane" id="p-list">
         <div class="legend">
           <label><input type="checkbox" id="l-todo" checked><span class="sw" style="border-color:var(--todo)"></span>do dodania w OSM (wg mapy miasta / komunikatów)</label>
-          <label><input type="checkbox" id="l-check" checked><span class="sw" style="border-color:var(--check)"></span>jest w OSM, ale zgłoszono, że nie istnieje</label>
+          <label><input type="checkbox" id="l-check" checked><span class="sw" style="border-color:var(--check)"></span>jest w OSM, ale do sprawdzenia (zgłoszenie lub brak oneway)</label>
           <label><input type="checkbox" id="l-osm" checked><span class="sw" style="border-color:var(--osm)"></span>już w OSM (wzór do tagowania)</label>
         </div>
         <p class="muted small">Strzałki (widoczne po przybliżeniu) pokazują kierunek jazdy. Kliknij odcinek, żeby zobaczyć tagi i link do edycji.</p>
@@ -186,7 +186,7 @@ function popup(f) {
     }
   } else {
     box.append(el("pre", { class: "tags", text: tagText(f.tags) }));
-    if (f.cat === "check") box.append(el("p", { class: "small", text: "Ktoś zgłosił, że tego buspasu nie ma. Sprawdź i jeśli to prawda, usuń tagi pasa w tym kierunku." }));
+    if (f.cat === "check") box.append(el("p", { class: "small", text: f.why || "Do sprawdzenia." }));
   }
   box.append(el("div", { class: "links" },
     el("a", { href: `https://www.openstreetmap.org/edit?editor=id&way=${f.way}`, target: "_blank", rel: "noopener", text: "Edytuj w iD" }),
