@@ -29,7 +29,7 @@ the status PNG) and `export_review.py` (claude.ai review page — colleagues cou
 | `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png` | the MJN post (city, centre, top streets) |
 | `bus_lane_gaps_ranking.csv` | streets without lanes, ranked by bus-km/h |
 | `bus_lane_need.gpkg` | `bus_dir` (per way-direction), `tram_dir`, `boundary`, `osm_parallel_busways` — for QGIS |
-| `buspasy_mapa.png` | final bus-lane map: 76 km counted (blue), short bays/terminus bits dropped (red) |
+| `buspasy_mapa.png` | final bus-lane map: 81 km counted (blue), short bays/terminus bits dropped (red) |
 | `buspasy_osm_stan.png` | **share this**: lanes in OSM (blue) vs still missing (orange), progress since 1 Oct |
 | `osm/buspasy_osm.html`, `osm/buspasy_osm_do_dodania.geojson` | **share this**: OSM editing helper + overlay for iD |
 
@@ -46,7 +46,7 @@ the status PNG) and `export_review.py` (claude.ai review page — colleagues cou
   bus-stop bays / terminus bits (`lane_removed=1`). Stretches join across untagged junction areas (≤40 m, straight
   on); separate parallel bus roadways must themselves form ≥80 m to give the carriageway a lane.
 - **Status**: `lane` / `high` (≥30/h, no lane) / `medium` (15–30/h) / `low`. Thresholds in `bl_config.py`.
-- **Headline** (4 Oct 2026, OSM-only lanes): 120 km of street-direction carry ≥30 buses/h; 26 km (22%) have a lane. Km are counted
+- **Headline** (4 Oct 2026, OSM-only lanes): 120 km of street-direction carry ≥30 buses/h; 26.5 km (22%) have a lane. Km are counted
   per direction, the same way the city counts its "~70–80 km of bus lanes". Always say "of the busiest streets",
   never "Warsaw has only 39 km of bus lanes" — that contradicts the city's total and invites a rebuttal.
 
@@ -59,7 +59,9 @@ the status PNG) and `export_review.py` (claude.ai review page — colleagues cou
   `psv=designated|yes` / `bus=yes`, often **without** `access=no`. Any `highway=service` with psv/bus
   yes|designated is bus-only. Such a way running alongside a street (≤35 m, ≤30°, ≥50% of its length) counts as
   that carriageway's lane (`bl_osm_par`); a bus-only service way not parallel to any street is a loop/depot
-  (`loop=1`) and is excluded from stats and drawing. Do not drop all bus-only service roads; that removed
+  (`loop=1`) and is excluded from stats and drawing. Short bus-only connectors (< 40 m, e.g. a 13 m piece inside a
+  junction split off between nodes, way 1158012863 at Plac Bankowy) touching a separate bus lane belong to it —
+  without that they were classed as loops and broke the lane's continuity. Do not drop all bus-only service roads; that removed
   Trasa AK, Sobieskiego, Polski Walczącej, Plac Bankowy.
 - **Bus-only roads must respect `oneway`** (exception: `oneway:bus|psv=no`). Without it, 574 one-way bus
   roadways got a phantom reverse lane.

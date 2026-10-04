@@ -212,6 +212,15 @@ def parallel_busways(streets: gpd.GeoDataFrame, min_len=25, min_stretch=0):
     roads = streets[(streets.bus_only == 0) & ~streets.highway.isin(["service", "living_street"])]
     par = extra_lane_cover(bo, roads, dist=35, max_angle=30, directed=False)
     p = bo[par]
+    # short bus-only connectors (e.g. a 13 m piece inside a junction, split off between nodes) that touch
+    # a separate bus lane belong to it — otherwise they look like loops and break the lane's continuity
+    short = streets[(streets.bus_only == 1) & (streets.geometry.length < 40)]
+    for _ in range(3):  # connectors can chain
+        ends = shapely.union_all(shapely.boundary(p.geometry.values))
+        conn = short[~short.osm_id.isin(p.osm_id) & (short.geometry.distance(ends) <= 3)]
+        if conn.empty:
+            break
+        p = pd.concat([p, conn])
     ids, geoms = [], []
     for r in p.itertuples():
         if r.oneway != -1:
