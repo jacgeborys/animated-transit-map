@@ -4,7 +4,7 @@ Step A — Fetch Warsaw street network + bus lane tags from OpenStreetMap (Overp
 Outputs (bus_lanes/_data/):
     osm_raw.json          raw Overpass response (cache)
 Usage: osm_fetch.py            use the cache (download if missing)
-       osm_fetch.py --update   merge in only ways changed since the cached snapshot (fast)
+       osm_fetch.py --update   re-fetch only bus/psv-tagged ways and merge into the cache (fast)
        osm_fetch.py --refresh  full re-download (9 tiles, resumable)
     osm_streets.gpkg      layer 'streets'  — drivable ways with parsed bus-lane flags
                           layer 'trams'    — railway=tram tracks
@@ -12,6 +12,7 @@ Usage: osm_fetch.py            use the cache (download if missing)
                           layer 'river'    — river areas (Vistula), for the map background
 """
 import json
+import re
 import sys
 import time
 from datetime import datetime, timezone
@@ -37,9 +38,9 @@ HIGHWAYS = (
 )
 
 
-def build_query(bbox=BBOX, boundary=True, changed_since=None):
+def build_query(bbox=BBOX, boundary=True):
     s, w, n, e = bbox
-    ch = f'(changed:"{changed_since}")' if changed_since else ""
+    ch = ""
     q = f"""
 [out:json][timeout:180];
 (
@@ -97,12 +98,26 @@ def _post(query: str, rounds=4) -> dict:
                     print(f"    stale data ({ts}) — skipped", flush=True)
                     continue
                 return data
-            except Exception as ex:
-                print(f"    failed: {str(ex)[:120]}", flush=True)
+            except (requests.RequestException, ValueError) as ex:  # network/server/JSON only;
+                print(f"    failed: {str(ex)[:120]}", flush=True)      # anything else is a bug: fail fast
         wait = 30 * (rnd + 1)
         print(f"  all servers busy, waiting {wait}s (round {rnd + 1}/{rounds})", flush=True)
         time.sleep(wait)
     raise RuntimeError("No Overpass server returned fresh data")
+
+
+BUS_KEYS = {"bus", "psv", "busway", "busway:left", "busway:right", "busway:both", "bus:lanes", "psv:lanes",
+            "lanes:bus", "lanes:psv", "bus:lanes:forward", "bus:lanes:backward", "psv:lanes:forward",
+            "psv:lanes:backward", "lanes:bus:forward", "lanes:bus:backward", "lanes:psv:forward",
+            "lanes:psv:backward", "oneway:bus", "oneway:psv"}
+
+
+def _bus_key(k: str) -> bool:
+    return k.startswith(("bus", "psv", "lanes:bus", "lanes:psv")) and k != "bus_bay"
+
+
+def _bus_relevant(tags: dict) -> bool:
+    return any(_bus_key(k) for k in tags)
 
 
 def _merge(parts):
@@ -119,8 +134,8 @@ def _merge(parts):
 
 
 def fetch(cache: Path, query: str = None, mode: str = "cache") -> dict:
-    """mode: 'cache' (use cache if present), 'refresh' (full download), 'update' (only ways changed
-    since the cached snapshot, merged in — seconds instead of minutes; deleted ways are not removed)."""
+    """mode: 'cache' (use cache if present), 'refresh' (full download), 'update' (re-fetch only
+    bus/psv-tagged ways and merge them into the cached snapshot — small and fast)."""
     if query:  # small one-off query (river)
         if cache.exists():
             print(f"Using cached {cache.name}")
@@ -130,12 +145,36 @@ def fetch(cache: Path, query: str = None, mode: str = "cache") -> dict:
         print(f"Using cached {cache.name}")
         return json.loads(cache.read_text(encoding="utf-8"))
     elif cache.exists() and mode == "update":
+        # Bus-lane-focused refresh: re-download (1) every way that carries bus/psv tags NOW and (2) every way
+        # that carried them in the snapshot (by id, catches removed tags / changed geometry / deletions).
+        # Two small plain queries instead of an expensive history ('changed') search over all streets.
+        # Not covered: brand-new untagged ways (e.g. untagged remainder of a split) — use --refresh now and then.
         old = json.loads(cache.read_text(encoding="utf-8"))
-        since = old["osm3s"]["timestamp_osm_base"]
-        print(f"Update: ways changed since {since}")
-        new = _post(build_query(BBOX, boundary=False, changed_since=since))
-        print(f"  {len(new['elements'])} changed ways")
-        data = {"osm3s": new["osm3s"], "elements": _merge([old, new])}
+        s_, w_, n_, e_ = BBOX
+        print("Update: ways with bus/psv tags now ...")
+        # one key-existence clause per key: uses Overpass's tag index (a key *regex* scans every tag)
+        keys = sorted(BUS_KEYS | {k for el in old["elements"] for k in el.get("tags", {}) if _bus_key(k)})
+        clauses = "\n".join(f'  way["highway"]["{k}"]({s_},{w_},{n_},{e_});' for k in keys)  # cheap; non-roads dropped below
+        cur = _post(f"[out:json][timeout:180];\n(\n{clauses}\n);\nout tags geom qt;")
+        cur_ids = {el["id"] for el in cur["elements"]}
+        road = re.compile(f"^({HIGHWAYS})$")   # keep roads + tram tracks only
+        was_ids = {el["id"] for el in old["elements"] if el["type"] == "way" and _bus_relevant(el.get("tags", {}))
+                   and road.match(el.get("tags", {}).get("highway", ""))}
+        gone = sorted(was_ids - cur_ids)
+        print(f"  {len(cur_ids)} bus-tagged ways now; {len(gone)} lost their bus tags or were deleted — refetching by id")
+        parts, refetched = [old, cur], set()
+        for k in range(0, len(gone), 400):
+            chunk = gone[k:k + 400]
+            part = _post(f"[out:json][timeout:180];way(id:{','.join(map(str, chunk))});out tags geom;")
+            refetched |= {el["id"] for el in part["elements"]}
+            parts.append(part)
+        deleted = set(gone) - refetched
+        elements = [el for el in _merge(parts)
+                    if not (el["type"] == "way" and (el["id"] in deleted or not (
+                        road.match(el.get("tags", {}).get("highway", ""))
+                        or el.get("tags", {}).get("railway") == "tram")))]
+        print(f"  merged: {len(deleted)} deleted ways removed")
+        data = {"osm3s": cur["osm3s"], "elements": elements}
     else:
         # full download in 9 tiles, each saved on arrival so an interrupted run resumes
         tile_dir = cache.parent / "osm_tiles"

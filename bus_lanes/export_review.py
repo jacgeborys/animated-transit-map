@@ -226,7 +226,7 @@ def main():
     data = {"date": date, "sources": SOURCE_LABEL, "lanes": lanes.to_dict("records"), "base": base}
     js = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     (OUTPUT_DIR / "review_data.json").write_text(js, encoding="utf-8")
-    write_umap(lanes, date, OUTPUT_DIR / "buspasy_do_weryfikacji.geojson")
+    # uMap export retired (colleagues found uMap too complicated); call write_umap() manually if ever needed
     print(f"Lanes: {len(lanes)} stretches, {lanes.len.sum() / 1000:.1f} km; "
           f"by source: {pd.Series([s for l in lanes.src for s in l]).value_counts().to_dict()}")
     print(f"Base: {len(base['major'])} major + {len(base['minor'])} minor lines, {len(base['labels'])} labels")

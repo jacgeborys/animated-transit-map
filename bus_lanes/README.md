@@ -8,28 +8,27 @@ ZTM GTFS download (`core/gtfs_downloader.py`).
 
 ```bash
 python core/gtfs_downloader.py           # fresh ZTM GTFS (only when the feed is stale)
-python bus_lanes/osm_fetch.py --update   # OSM: merge only ways changed since the cache (seconds)
+python bus_lanes/osm_fetch.py --update   # OSM: re-fetch only bus/psv-tagged ways, merge into the cache
 python bus_lanes/official_lanes.py       # city layer + manual_bus_lanes.csv → _data/extra_lanes.gpkg
 python bus_lanes/transit_counts.py       # random regular Wednesday → per-shape passing counts
 python bus_lanes/match_streets.py        # shapes → OSM ways per direction, lanes, classification, ranking
 python bus_lanes/make_map.py             # social-media maps (dark, 4:5)
-python bus_lanes/make_review_png.py      # simple light maps for colleagues to verify lanes
-python bus_lanes/export_review.py        # review page data (+ republish the artifact) + uMap GeoJSON
 python bus_lanes/export_osm_todo.py      # OSM editing helper (standalone HTML) + iD overlay GeoJSON
+python bus_lanes/make_osm_status_png.py  # "bus lanes in OSM" status PNG for the community
 ```
 
 `transit_counts.py` only needs re-running for a new date/feed. After OSM edits, the refresh is:
-`osm_fetch.py --update` → `official_lanes.py` → `match_streets.py` → the four output scripts.
+`osm_fetch.py --update` → `official_lanes.py` → `match_streets.py` → `make_map.py`, `export_osm_todo.py`,
+`make_osm_status_png.py`. Retired (kept, not in the routine): `make_review_png.py` (verification PNGs, replaced by
+the status PNG) and `export_review.py` (claude.ai review page — colleagues could not log in).
 
 | Output (`_output/`) | What |
 |---|---|
 | `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png` | the MJN post (city, centre, top streets) |
 | `bus_lane_gaps_ranking.csv` | streets without lanes, ranked by bus-km/h |
 | `bus_lane_need.gpkg` | `bus_dir` (per way-direction), `tram_dir`, `boundary`, `osm_parallel_busways` — for QGIS |
-| `buspasy_weryfikacja_*.png` | light verification maps to send to colleagues |
-| `weryfikacja_buspasow.html` | review page, published as artifact `6wqUrGoJD67rcQPoWwsJL6` (needs claude.ai login) |
-| `buspasy_do_weryfikacji.geojson` | same stretches for uMap |
-| `osm/buspasy_osm.html`, `osm/buspasy_osm_do_dodania.geojson` | OSM editing helper + overlay for iD |
+| `buspasy_osm_stan.png` | **share this**: lanes in OSM (blue) vs still missing (orange), progress since 1 Oct |
+| `osm/buspasy_osm.html`, `osm/buspasy_osm_do_dodania.geojson` | **share this**: OSM editing helper + overlay for iD |
 
 ## How the analysis works
 
@@ -73,8 +72,9 @@ python bus_lanes/export_osm_todo.py      # OSM editing helper (standalone HTML) 
 - **Licence**: the city layer and announcements are hints only. Never trace them into OSM; verify on the ground
   or on imagery OSM may use (Geoportal orthophoto, Mapillary, Panoramax).
 - **Overpass**: some mirrors lag months (kumi.systems served May data in October), so `osm_fetch.py` rejects data
-  older than 3 days. The main server rate-limits (429) and times out (504) in the evening. Use `--update` (only
-  ways changed since the cached snapshot). Never delete `_data/osm_raw.json` to refresh: it is the update baseline,
+  older than 3 days. The main server rate-limits (429) and times out (504) in the evening. Use `--update`: one
+  index-friendly query for bus/psv-tagged roads (a clause per key; a key *regex* or a `changed` history search over
+  the whole city is too heavy) plus a by-id refetch of ways that lost their tags; non-road ways are dropped. Never delete `_data/osm_raw.json` to refresh: it is the update baseline,
   and a full `--refresh` (9 resumable tiles) can take 40 min when Overpass is busy.
 
 ### Cartography (make_map.py)
