@@ -28,8 +28,8 @@ from shapely.geometry import LineString
 from tqdm import tqdm
 
 sys.path.insert(0, str(Path(__file__).parent))
-from bl_config import (DATA_DIR, MATCH_MAX_ANGLE_DEG, MATCH_MAX_DIST_M, NEED_HIGH, NEED_MED,
-                       OUTPUT_DIR, POLAND_CRS, RAW_DIR, SAMPLE_STEP_M)
+from bl_config import (DATA_DIR, LANE_SOURCES, MATCH_MAX_ANGLE_DEG, MATCH_MAX_DIST_M, MIN_LANE_STRETCH_M,
+                       NEED_HIGH, NEED_MED, OUTPUT_DIR, POLAND_CRS, RAW_DIR, SAMPLE_STEP_M)
 
 # small distance penalty (m) so a parallel parking aisle doesn't steal a bus from the main road
 HIGHWAY_PENALTY = {"service": 6, "living_street": 6, "residential": 2, "unclassified": 1}
@@ -172,7 +172,39 @@ def extra_lane_cover(gdf: gpd.GeoDataFrame, lanes: gpd.GeoDataFrame, step=10, di
     return hit
 
 
-def parallel_busways(streets: gpd.GeoDataFrame, min_len=25):
+def stretch_lengths(geoms, snap=3.0, max_turn=60) -> np.ndarray:
+    """Total length of the connected stretch each directional line belongs to. Lines join when one ends
+    where the next starts (within `snap` m) and the direction continues (turn < max_turn) — so the two
+    directions of a two-way street stay separate stretches."""
+    geoms = list(geoms)
+    n = len(geoms)
+    if n == 0:
+        return np.zeros(0)
+    a = shapely.get_coordinates(shapely.get_point(geoms, 0))
+    b = shapely.get_coordinates(shapely.get_point(geoms, -1))
+    a2 = shapely.get_coordinates(shapely.line_interpolate_point(geoms, np.minimum(5, shapely.length(geoms))))
+    b2 = shapely.get_coordinates(shapely.line_interpolate_point(geoms, np.maximum(shapely.length(geoms) - 5, 0)))
+    h_start = np.degrees(np.arctan2(a2[:, 0] - a[:, 0], a2[:, 1] - a[:, 1]))
+    h_end = np.degrees(np.arctan2(b[:, 0] - b2[:, 0], b[:, 1] - b2[:, 1]))
+    parent = list(range(n))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    tree = shapely.STRtree(shapely.points(a))
+    ei, sj = tree.query(shapely.points(b), predicate="dwithin", distance=snap)
+    for i, j in zip(ei, sj):
+        if i != j and abs((h_end[i] - h_start[j] + 180) % 360 - 180) < max_turn:
+            parent[find(i)] = find(j)
+    roots = np.array([find(i) for i in range(n)])
+    lens = shapely.length(geoms)
+    total = pd.Series(lens).groupby(roots).sum()
+    return total.reindex(roots).to_numpy()
+
+
+def parallel_busways(streets: gpd.GeoDataFrame, min_len=25, min_stretch=0):
     """Bus-only ways (e.g. highway=service + access=no + psv=designated) that run alongside a normal
     street for most of their length: OSM's 'separate bus lane' mapping style. Bus-only ways that
     are not parallel to any street are loops/depots. Returns (osm_ids, directional lines)."""
@@ -186,7 +218,11 @@ def parallel_busways(streets: gpd.GeoDataFrame, min_len=25):
             ids.append(r.osm_id); geoms.append(r.geometry)
         if r.oneway != 1:
             ids.append(r.osm_id); geoms.append(r.geometry.reverse())
-    return set(p.osm_id), gpd.GeoDataFrame({"osm_id": ids}, geometry=geoms, crs=streets.crs)
+    lines = gpd.GeoDataFrame({"osm_id": ids}, geometry=geoms, crs=streets.crs)
+    all_ids = set(p.osm_id)
+    if min_stretch:  # bus-stop bays / terminus bits: connected separate roadway shorter than min_stretch
+        lines = lines[stretch_lengths(lines.geometry.values) >= min_stretch]
+    return set(lines.osm_id), all_ids, lines
 
 
 def compass(bearing: float) -> str:
@@ -281,27 +317,48 @@ def main():
         if mode == "bus":
             gdf["bl_osm"] = (np.where(gdf.dir == 1, gdf.bl_fwd, gdf.bl_bwd) == 1).astype(int)
             # separate parallel bus lanes in OSM count for the carriageway they run alongside
-            par_ids, busways = parallel_busways(ways)
+            par_ids, all_par_ids, busways = parallel_busways(ways, min_stretch=MIN_LANE_STRETCH_M)
+            _, _, busways_all = parallel_busways(ways)
             side = (gdf.bus_only == 0).to_numpy()
             par = np.zeros(len(gdf), bool)
+            par_any = np.zeros(len(gdf), bool)
             par[side] = extra_lane_cover(gdf[side], busways, dist=35)
+            par_any[side] = extra_lane_cover(gdf[side], busways_all, dist=35)
             gdf["bl_osm_par"] = par.astype(int)
             gdf.loc[par, "bl_osm"] = 1
             gdf["loop"] = ((gdf.bus_only == 1) & (gdf.highway == "service")
-                           & ~gdf.osm_id.isin(par_ids)).astype(int)
+                           & ~gdf.osm_id.isin(all_par_ids)).astype(int)
+            # dropped as too short (< MIN_LANE_STRETCH_M): carriageways covered only by a short separate
+            # roadway, and the short separate roadways themselves
+            removed = (par_any & ~par) | (gdf.osm_id.isin(all_par_ids - par_ids).to_numpy()
+                                          & (gdf.bus_only == 1).to_numpy())
+            gdf.loc[removed, "bl_osm"] = 0
             busways.to_file(out, layer="osm_parallel_busways", driver="GPKG")
             print(f"  parallel OSM busways: {len(par_ids)} ways; carriageway km covered: "
                   f"{gdf.geometry.length[par].sum() / 1000:.1f}")
-            has_lane = gdf.bl_osm.to_numpy() == 1
+            has_lane = (gdf.bl_osm.to_numpy() == 1) if "osm" in LANE_SOURCES else np.zeros(len(gdf), bool)
             extra = DATA_DIR / "extra_lanes.gpkg"   # city layer + manual list (official_lanes.py)
             if extra.exists():
                 flags = extra_lane_flags(gdf, gpd.read_file(extra, layer="lanes"))
                 for src, col in (("miasto", "bl_city"), ("reczne", "bl_manual")):
                     gdf[col] = flags.get(src, np.zeros(len(gdf), bool)).astype(int)
-                    has_lane = has_lane | (gdf[col].to_numpy() == 1)
+                    if {"bl_city": "city", "bl_manual": "manual"}[col] in LANE_SOURCES:
+                        has_lane = has_lane | (gdf[col].to_numpy() == 1)
                     km = gdf.geometry.length[gdf[col] == 1].sum() / 1000
                     new = gdf.geometry.length[(gdf[col] == 1) & (gdf.bl_osm == 0)].sum() / 1000
                     print(f"  {col}: {km:.1f} km of bus street-direction, {new:.1f} km not in OSM")
+            # lanes on their own: connected stretches (per direction) shorter than the minimum are dropped
+            real = has_lane & (gdf.loop.to_numpy() == 0)
+            stretch = np.zeros(len(gdf))
+            # bridge untagged junction areas (≤ 40 m, straight on) so a lane interrupted by a crossroads stays one stretch
+            stretch[real] = stretch_lengths(gdf.geometry.values[real], snap=40, max_turn=35)
+            short = real & (stretch < MIN_LANE_STRETCH_M)
+            removed = removed | short
+            has_lane = has_lane & ~short
+            gdf["lane_removed"] = (removed & (gdf.loop.to_numpy() == 0)).astype(int)
+            print(f"  lanes counted from {LANE_SOURCES}; dropped as < {MIN_LANE_STRETCH_M} m stretches: "
+                  f"{gdf.geometry.length[gdf.lane_removed == 1].sum() / 1000:.1f} km "
+                  f"({int(gdf.lane_removed.sum())} way-directions)")
             gdf["bus_lane"] = has_lane.astype(int)
             gdf["status"] = np.select(
                 [has_lane, gdf.per_h >= NEED_HIGH, gdf.per_h >= NEED_MED],

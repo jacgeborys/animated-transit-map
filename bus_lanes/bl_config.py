@@ -31,3 +31,9 @@ NEED_HIGH = 30                   # ≥ 30 buses/h (one every 2 min) — bus lane
 NEED_MED = 15                    # ≥ 15 buses/h (one every 4 min) — bus lane worth considering
 PM_START_H = 15                  # afternoon peak 15:00–16:59; buses/h = max(AM, PM) / 2
 PM_END_H = 17
+
+# Which bus-lane sources count (after the Oct 2026 community OSM edits, OSM is the verified source;
+# "city" = mapa.um.warszawa.pl 2021 layer, "manual" = manual_bus_lanes.csv — still computed for reference)
+LANE_SOURCES = ("osm",)
+# Lane stretches (connected, same direction) shorter than this are bus-stop bays / terminus bits, not bus lanes
+MIN_LANE_STRETCH_M = 80

@@ -16,6 +16,7 @@ python bus_lanes/match_streets.py        # shapes → OSM ways per direction, la
 python bus_lanes/make_map.py             # social-media maps (dark, 4:5)
 python bus_lanes/export_osm_todo.py      # OSM editing helper (standalone HTML) + iD overlay GeoJSON
 python bus_lanes/make_osm_status_png.py  # "bus lanes in OSM" status PNG for the community
+python bus_lanes/make_final_lanes_png.py # final map: counted lanes (blue) + dropped short pieces (red)
 ```
 
 `transit_counts.py` only needs re-running for a new date/feed. After OSM edits, the refresh is:
@@ -28,6 +29,7 @@ the status PNG) and `export_review.py` (claude.ai review page — colleagues cou
 | `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png` | the MJN post (city, centre, top streets) |
 | `bus_lane_gaps_ranking.csv` | streets without lanes, ranked by bus-km/h |
 | `bus_lane_need.gpkg` | `bus_dir` (per way-direction), `tram_dir`, `boundary`, `osm_parallel_busways` — for QGIS |
+| `buspasy_mapa.png` | final bus-lane map: 76 km counted (blue), short bays/terminus bits dropped (red) |
 | `buspasy_osm_stan.png` | **share this**: lanes in OSM (blue) vs still missing (orange), progress since 1 Oct |
 | `osm/buspasy_osm.html`, `osm/buspasy_osm_do_dodania.geojson` | **share this**: OSM editing helper + overlay for iD |
 
@@ -37,10 +39,14 @@ the status PNG) and `export_review.py` (claude.ai review page — colleagues cou
   direction. Bus = GTFS `route_type 3` (catches N/L/E/Z lines too; the 3-digit route-id rule does not).
 - **Matching**: each shape is sampled every 10 m and snapped to the nearest OSM way within 15 m and ±35° whose
   `oneway` allows that direction. That one rule separates dual carriageways. Counts are summed per (way, direction).
-- **Bus lane sources** (a street-direction has a lane if any says so; columns `bl_osm`, `bl_city`, `bl_manual`):
-  1. OSM tags (below). 2. The city layer. 3. `manual_bus_lanes.csv`.
+- **Bus lane sources**: since the community OSM verification (4 Oct 2026) only OSM counts
+  (`LANE_SOURCES = ("osm",)` in `bl_config.py`). City layer and manual list are still computed as `bl_city` /
+  `bl_manual` for reference. Before that, a lane from any of the three counted (that gave 39 km instead of 26 km).
+- **Short stretches don't count**: connected lane stretches per direction under `MIN_LANE_STRETCH_M` (80 m) are
+  bus-stop bays / terminus bits (`lane_removed=1`). Stretches join across untagged junction areas (≤40 m, straight
+  on); separate parallel bus roadways must themselves form ≥80 m to give the carriageway a lane.
 - **Status**: `lane` / `high` (≥30/h, no lane) / `medium` (15–30/h) / `low`. Thresholds in `bl_config.py`.
-- **Headline** (Oct 2026): 120 km of street-direction carry ≥30 buses/h; 39 km (32%) have a lane. Km are counted
+- **Headline** (4 Oct 2026, OSM-only lanes): 120 km of street-direction carry ≥30 buses/h; 26 km (22%) have a lane. Km are counted
   per direction, the same way the city counts its "~70–80 km of bus lanes". Always say "of the busiest streets",
   never "Warsaw has only 39 km of bus lanes" — that contradicts the city's total and invites a rebuttal.
 
