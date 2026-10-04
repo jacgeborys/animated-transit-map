@@ -117,8 +117,27 @@ def main():
             f["cat"] = "check"
             f["why"] = "Ktoś zgłosił, że tego buspasu nie ma. Sprawdź i jeśli to prawda, usuń tagi pasa w tym kierunku."
     # --- separate parallel bus lanes without a oneway tag: OSM says two-way, often a missing oneway=yes ---
+    # ...unless it is clearly two-way: 2+ lanes, or a shared tram-bus roadway (tram tracks along it)
+    trams = gpd.read_file(DATA_DIR / "osm_streets.gpkg", layer="trams")
+    ttree = shapely.STRtree(trams.geometry.values)
+    lane_geom = {r.osm_id: r.geometry for r in st.itertuples()}
+
+    def shared_with_tram(way_id):
+        g = lane_geom.get(way_id)
+        if g is None:
+            return False
+        near = trams.geometry.values[ttree.query(g, predicate="dwithin", distance=6)]
+        return len(near) > 0 and shapely.union_all(near).buffer(6).intersection(g).length >= 0.5 * g.length
+
+    def two_lanes(f):
+        try:
+            return int(str(f["tags"].get("lanes", "1")).split(";")[0]) >= 2
+        except ValueError:
+            return False
+
     for f in feats:
-        if f["cat"] == "osm" and f["way"] in par_ids and not f["oneway"] and "oneway" not in f["tags"]:
+        if (f["cat"] == "osm" and f["way"] in par_ids and not f["oneway"] and "oneway" not in f["tags"]
+                and not two_lanes(f) and not shared_with_tram(f["way"])):
             f["cat"] = "check"
             f["why"] = ("Osobna jezdnia autobusowa bez tagu oneway, więc w OSM jest dwukierunkowa. "
                         "Jeśli autobusy jeżdżą nią tylko w jedną stronę, dodaj oneway=yes (linia narysowana w kierunku jazdy).")

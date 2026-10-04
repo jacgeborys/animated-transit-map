@@ -101,55 +101,9 @@ gtfs_schedules_city/
 
 ## Bus Lane Need Map (`bus_lanes/`)
 
-Static maps for an activist post (Miasto Jest Nasze): where many buses run **without** a bus lane.
-Independent of the animation pipeline — only needs a fresh GTFS download (Step 1).
-
-```bash
-python core/gtfs_downloader.py        # fresh ZTM GTFS
-python bus_lanes/osm_fetch.py         # OSM streets + bus lane tags + Vistula (cached in bus_lanes/_data/)
-                                      #   --update : merge only ways changed since the cache (seconds) ← use this to refresh
-                                      #   --refresh: full re-download (9 resumable tiles; slow when Overpass is busy)
-                                      #   never delete _data/osm_raw.json just to refresh — it is the update baseline
-python bus_lanes/official_lanes.py    # city bus-lane layer + manual_bus_lanes.csv → _data/extra_lanes.gpkg
-python bus_lanes/transit_counts.py    # random regular Wednesday → per-shape passing counts
-python bus_lanes/match_streets.py     # shapes → OSM ways per direction, classify, ranking CSV
-python bus_lanes/make_map.py          # PNGs in bus_lanes/_output/
-```
-
-How it works:
-- Counts use the time a bus **passes each stop**, not trip start. `per_h` = max(AM 7–9, PM 15–17) / 2, per direction.
-- Each shape is sampled every 10 m and snapped to the nearest parallel OSM way (≤15 m, ±35°) whose `oneway`
-  allows that direction → dual carriageways are separated correctly. Counts are summed per (way, direction).
-- Bus lanes parsed from `busway*`, `bus:lanes*`, `psv:lanes*`, `lanes:bus*`, `lanes:psv*`, `highway=busway`
-  roads closed to cars but open to bus/psv, and `highway=service` with psv/bus=yes|designated.
-- Separate parallel bus lanes (bus-only ways alongside a street, within 35 m / 30°) count as that carriageway's
-  lane (`bl_osm_par`); bus-only service ways NOT parallel to a street are loops/depots (`loop=1`) and are excluded
-  from stats and drawing. The OSM fetch refuses Overpass data older than 3 days (some mirrors lag months).
-- Bus lane sources (a street-direction has a lane if ANY says so; columns `bl_osm`, `bl_city`, `bl_manual`):
-  1. OSM tags. 2. City layer `K_BUSPASY_0_4` from mapa.um.warszawa.pl (Oracle MapViewer dataserver,
-  `https://mapa.um.warszawa.pl/mapviewer/dataserver/DANE_WAWA?t=K_BUSPASY_0_4`, GeoJSON in EPSG:2178 with a flat
-  coordinate list; directional lines; has days/hours; all records dated "listopad 2021").
-  3. `bus_lanes/manual_bus_lanes.csv` — post-2021 lanes from warszawa19115.pl announcements, routed along OSM
-  between endpoints (`ulica:<name>`, `przystanek:<GTFS stop_id>`, `granica`). Rows marked DO WERYFIKACJI have
-  no direction in the source (assumed both). Add rows here for lanes missing from all sources.
-- Status: `lane` / `high` (≥30/h, no lane) / `medium` (15–30/h) / `low`. Thresholds in `bus_lanes/bl_config.py`.
-- Map draws each direction offset to the right of travel by half its drawn width, so one-sided lanes are visible.
-- Street labels are curved along a binned median centreline of the same-named OSM ways (sits between carriageways),
-  placed in ranking order with collision avoidance (slides along the street, else skipped).
-  Font: Liberation Sans Narrow + letter spacing. Per-street tweaks (side, southern anchor, extra labels)
-  in `LABEL_SIDE`, `LABEL_AT`, `CITY_EXTRA_LABELS` at the top of `make_map.py`.
-
-Outputs (`bus_lanes/_output/`): `buspasy_warszawa.png`, `buspasy_centrum.png`, `buspasy_ranking.png`,
-`bus_lane_gaps_ranking.csv`, `bus_lane_need.gpkg` (layers `bus_dir`, `tram_dir`, `boundary` — for QGIS).
-
-**Colleague review page** (own bus-lane database, to be uploaded to OSM later):
-`python bus_lanes/export_review.py` merges the current lane set into stretches and fills
-`bus_lanes/review/review_template.html` → `bus_lanes/_output/weryfikacja_buspasow.html`, published as the
-artifact https://claude.ai/artifact/6wqUrGoJD67rcQPoWwsJL6 (shared db: `reviews` — one doc per person per stretch,
-id `l:<stretch id>~<user id>` or `p:<proposal id>~<user id>`, verdict ok|missing|different + comment, with street/dir/mid
-so reviews survive re-exports; `proposals` — drawn missing lanes, `line` = [[lat,lng],...] in travel direction).
-
-Pin the date with `ANALYSIS_DATE` in `bl_config.py`; delete `bus_lanes/_data/osm_*.json` to refresh OSM.
+Maps of where many buses run **without** a bus lane (Miasto Jest Nasze post), plus tools that helped fix bus
+lanes in OpenStreetMap. Separate pipeline, only needs a fresh GTFS download (Step 1).
+**Run order, data sources and lessons learnt: [`bus_lanes/README.md`](bus_lanes/README.md).**
 
 ---
 
