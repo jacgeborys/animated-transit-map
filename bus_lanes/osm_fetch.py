@@ -356,10 +356,33 @@ def build_river(data: dict) -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(geometry=polys, crs="EPSG:4326").to_crs(POLAND_CRS)
 
 
+def refetch_ways(cache: Path, ids: list) -> dict:
+    """Re-download just these ways and merge them into the cached snapshot (ways no longer returned are
+    deleted in OSM and removed). The snapshot's base timestamp is kept — only these ways are newer."""
+    old = json.loads(cache.read_text(encoding="utf-8"))
+    print(f"Refetching {len(ids)} way(s): {', '.join(map(str, ids))}")
+    new = _post(f"[out:json][timeout:60];way(id:{','.join(map(str, ids))});out tags geom;")
+    got = {el["id"] for el in new["elements"]}
+    deleted = set(ids) - got
+    for el in new["elements"]:
+        print(f"  way {el['id']}: " + ", ".join(f"{k}={v}" for k, v in el.get("tags", {}).items()
+                                               if _bus_key(k) or k in ("highway", "name", "oneway")))
+    if deleted:
+        print(f"  deleted in OSM: {sorted(deleted)}")
+    elements = [el for el in _merge([old, new]) if not (el["type"] == "way" and el["id"] in deleted)]
+    data = {"osm3s": old["osm3s"], "elements": elements}
+    cache.write_text(json.dumps(data), encoding="utf-8")
+    return data
+
+
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    mode = "update" if "--update" in sys.argv else "refresh" if "--refresh" in sys.argv else "cache"
-    data = fetch(DATA_DIR / "osm_raw.json", mode=mode)
+    if "--ways" in sys.argv:  # refetch only the given way ids (e.g. after a known edit) — one tiny request
+        ids = [int(x) for x in sys.argv[sys.argv.index("--ways") + 1].split(",")]
+        data = refetch_ways(DATA_DIR / "osm_raw.json", ids)
+    else:
+        mode = "update" if "--update" in sys.argv else "refresh" if "--refresh" in sys.argv else "cache"
+        data = fetch(DATA_DIR / "osm_raw.json", mode=mode)
     streets, trams, boundary = build_layers(data)
     out = DATA_DIR / "osm_streets.gpkg"
     streets.to_file(out, layer="streets", driver="GPKG")

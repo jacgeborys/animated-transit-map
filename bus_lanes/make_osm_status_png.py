@@ -59,7 +59,7 @@ def main():
     river.plot(ax=ax, color=rp.RIVER, linewidth=0, zorder=1)
     streets.plot(ax=ax, color=rp.STREET, linewidth=0.45, zorder=2)
     lw = 1.9
-    for gdf, color, z in ((osm, OSM, 5), (todo, TODO, 6)):
+    for gdf, color, z in ((todo, TODO, 5), (osm, OSM, 6)):   # blue (in OSM) drawn on top
         geom = shapely.offset_curve(gdf.geometry.values, -(lw / 2 + 0.4) * m_per_pt)
         gpd.GeoSeries(geom, crs=gdf.crs).plot(ax=ax, color=color, linewidth=lw, zorder=z,
                                               capstyle="round", joinstyle="round")

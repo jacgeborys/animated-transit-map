@@ -9,6 +9,7 @@ ZTM GTFS download (`core/gtfs_downloader.py`).
 ```bash
 python core/gtfs_downloader.py           # fresh ZTM GTFS (only when the feed is stale)
 python bus_lanes/osm_fetch.py --update   # OSM: re-fetch only bus/psv-tagged ways, merge into the cache
+                                         #   after a known edit: --ways 1421092757[,id...] (one tiny request)
 python bus_lanes/official_lanes.py       # city layer + manual_bus_lanes.csv → _data/extra_lanes.gpkg
 python bus_lanes/transit_counts.py       # random regular Wednesday → per-shape passing counts
 python bus_lanes/match_streets.py        # shapes → OSM ways per direction, lanes, classification, ranking
