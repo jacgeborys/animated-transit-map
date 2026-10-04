@@ -35,7 +35,7 @@ INK = "#e8eaef"
 INK2 = "#a3a9b6"
 INK3 = "#6b7280"
 COL = {"lane": "#4c9bff", "high": "#ff3d54", "medium": "#ffb020", "low": "#5a6170"}
-ORDER = ["low", "lane", "medium", "high"]  # draw order (last on top)
+ORDER = ["low", "medium", "high", "lane"]  # draw order (last on top): bus lanes above the gaps
 FONT = "Segoe UI"
 # Street labels: condensed face (loaded from file — matplotlib's font cache may not list it)
 _NARROW = Path(r"C:\Windows\Fonts\LiberationSansNarrow-Regular.ttf")
