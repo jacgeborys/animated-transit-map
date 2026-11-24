@@ -147,6 +147,13 @@ python live/collect.py            # polls every 10 s, runs until Ctrl+C
 - Network-proof: 3 attempts per fetch (2 s / 5 s backoff), outages + recovery logged to `live/data/collect_errors.log`, auto-restart on unexpected crash.
 - No history on the API side — anything not collected is lost.
 
-Analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),
+Stuck points: `python live/stuck_points.py [--date YYYYMMDD]` — matches each fix to its own line's GTFS shapes
+(latest `data/raw/warsaw_gtfs_*`, must contain the collection day), keeps intervals < 5 km/h, drops time at served stops
+(bus 35 m / tram 50 m), near termini (150 m), stand-stills > 10 min (layovers) and fixes > 40 m off route.
+Output: `live/data/stuck_cells_<date>.gpkg` (50 m grid: tram_min, bus_min, vehicles, top_lines, near_stop) + `stuck_<date>.png`.
+Safe to run while the collector is writing. ~3 min for half a day of data.
+
+Other analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),
 `animate_live.py` (video). Status: collection day 2026-05-10 done; full-day scan started 2026-11-24 04:27.
-Next: stuck-point detection (dwell clusters away from stops) for buses + trams.
+First stuck-point pass done on 04:26–14:00 (top: Bitwy Warszawskiej, Pole Mokotowskie, Okopowa, Pl. Zawiszy — trams, all day,
+not depot pull-outs). Next: merge cells into junction clusters, normalise by vehicles passing, rush-hour split.
