@@ -166,6 +166,8 @@ platforms / stuck per bin, stop names on the x axis — the city-wide version of
 `D:/QGIS/gpx_tracker` (tram audit). Direction = progress along the shape over ±5 intervals. Bins CSV alongside.
 Checked against the 23 Nov GPX ride: Pl. Zawiszy, Okopowa, Bitwy Warszawskiej, Banacha exit and the 19 km/h
 Most Gdański–Wybrzeże Helskie restriction all show up as typical, not one-off.
+Compare: `python live/compare_lines.py [--mode] [--lines 2 31]` overlays route profiles (speed + cumulative minutes
+along the route, per direction); default = fastest vs slowest line from `line_speeds_<date>.csv`.
 
 Other analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),
 `animate_live.py` (video). Status: collection day 2026-05-10 done; full-day scan started 2026-11-24 04:27.
