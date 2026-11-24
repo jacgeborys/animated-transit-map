@@ -132,3 +132,20 @@ lanes in OpenStreetMap. Separate pipeline, only needs a fresh GTFS download (Ste
 ## Data Source
 
 Warsaw GTFS data from [mkuran.pl](https://mkuran.pl/gtfs/) (ZTM Warszawa).
+
+---
+
+## Live ZTM vehicle positions (`live/`) — separate sub-project
+
+Goal: find where trams and buses get stuck, from real GPS positions (dane.um.warszawa.pl API, key in `live/api_keys.py`, git-ignored).
+
+```bash
+python live/collect.py            # polls every 10 s, runs until Ctrl+C
+```
+- Writes `live/data/positions_YYYYMMDD.csv` (appends; new file at midnight).
+- Skips stale fixes (> 60 s old) and repeated identical fixes per vehicle.
+- No history on the API side — anything not collected is lost.
+
+Analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),
+`animate_live.py` (video). Status: collection day 2026-05-10 done; full-day scan started 2026-11-24 04:27.
+Next: stuck-point detection (dwell clusters away from stops) for buses + trams.

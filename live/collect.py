@@ -44,27 +44,37 @@ def fetch(vehicle_type: int) -> list[dict]:
 
 def collect(vehicle_types: list[int], stop_at: datetime | None, interval: int):
     DATA_DIR.mkdir(exist_ok=True)
-    date_str  = datetime.now().strftime("%Y%m%d")
-    csv_path  = DATA_DIR / f"positions_{date_str}.csv"
-    is_new    = not csv_path.exists()
+
+    def open_day(day: str):
+        path = DATA_DIR / f"positions_{day}.csv"
+        is_new = not path.exists()
+        fh = open(path, "a", newline="", encoding="utf-8")
+        w = csv.DictWriter(fh, fieldnames=FIELDNAMES)
+        if is_new:
+            w.writeheader()
+        print(f"Saving to: {path}", flush=True)
+        return fh, w, path
 
     total_rows = 0
     poll_count = 0
+    last_fix: dict[tuple, str] = {}   # (type, vehicle) -> last gps_time written (dedupe repeats)
 
-    with open(csv_path, "a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-        if is_new:
-            writer.writeheader()
+    date_str = datetime.now().strftime("%Y%m%d")
+    f, writer, csv_path = open_day(date_str)
+    print(f"Polling every {interval}s. Press Ctrl+C to stop.\n", flush=True)
 
-        print(f"Saving to: {csv_path}")
-        print(f"Polling every {interval}s. Press Ctrl+C to stop.\n")
-
+    with f:
         try:
             while True:
                 now = datetime.now()
                 if stop_at and now >= stop_at:
                     print(f"\nTime limit reached.")
                     break
+
+                if now.strftime("%Y%m%d") != date_str:   # midnight rollover
+                    f.close()
+                    date_str = now.strftime("%Y%m%d")
+                    f, writer, csv_path = open_day(date_str)
 
                 poll_str   = now.strftime("%Y-%m-%d %H:%M:%S")
                 fresh_rows = 0
@@ -84,6 +94,10 @@ def collect(vehicle_types: list[int], stop_at: datetime | None, interval: int):
                             continue
                         if (now - gps_time).total_seconds() > STALE:
                             continue  # skip stale/parked vehicles
+                        key = (label, v.get("VehicleNumber", ""))
+                        if last_fix.get(key) == v["Time"]:
+                            continue  # same GPS fix as last poll
+                        last_fix[key] = v["Time"]
 
                         writer.writerow({
                             "poll_time":    poll_str,
@@ -100,7 +114,7 @@ def collect(vehicle_types: list[int], stop_at: datetime | None, interval: int):
                 f.flush()
                 total_rows += fresh_rows
                 poll_count += 1
-                print(f"  [{poll_str}]  fresh vehicles: {fresh_rows:>4}  total rows so far: {total_rows}")
+                print(f"  [{poll_str}]  fresh vehicles: {fresh_rows:>4}  total rows so far: {total_rows}", flush=True)
 
                 next_poll = now + timedelta(seconds=interval)
                 sleep_secs = (next_poll - datetime.now()).total_seconds()
