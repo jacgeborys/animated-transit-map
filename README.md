@@ -152,8 +152,16 @@ Stuck points: `python live/stuck_points.py [--date YYYYMMDD]` — matches each f
 (bus 35 m / tram 50 m), near termini (150 m), stand-stills > 10 min (layovers) and fixes > 40 m off route.
 Output: `live/data/stuck_cells_<date>.gpkg` (50 m grid: tram_min, bus_min, vehicles, top_lines, near_stop) + `stuck_<date>.png`.
 Safe to run while the collector is writing. ~3 min for half a day of data.
+Also `passes_per_h` + `sec_per_pass` (stuck seconds per passing vehicle) and `stuck_per_vehicle_<date>.png`
+(cells with >= 12 vehicles/h only — lower cut-offs surface suburban layover spots). Caches intervals in `live/data/_cache/`.
+
+Line speeds: `python live/line_speeds.py [--date] [--fresh]` (uses the stuck_points cache) → `line_speeds_<date>.csv`,
+`line_speed_ranking_<date>.png` (all trams, 15 fastest/slowest buses; lines >= 5 vehicle-hours) and
+`line_charts_<date>/<mode>_<line>.png` (speed by hour vs mode average + moving/at stop/stuck split).
+Speed = distance / time in service, incl. stop dwell and stuck time, excl. terminus areas and layovers.
 
 Other analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),
 `animate_live.py` (video). Status: collection day 2026-05-10 done; full-day scan started 2026-11-24 04:27.
 First stuck-point pass done on 04:26–14:00 (top: Bitwy Warszawskiej, Pole Mokotowskie, Okopowa, Pl. Zawiszy — trams, all day,
-not depot pull-outs). Next: merge cells into junction clusters, normalise by vehicles passing, rush-hour split.
+not depot pull-outs). Per-vehicle loss and line speeds added (04:27–14:19: trams avg 18.7 km/h, fastest 2 / slowest 31; buses 20.0 km/h,
+slowest 106/128/356). Next: merge cells into junction clusters, full-day rerun, rush-hour split.

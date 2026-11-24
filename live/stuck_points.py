@@ -47,6 +47,9 @@ STOP_M      = {"Bus": 35, "Tram": 50}
 TERMINUS_M  = 150
 LAYOVER_MIN = 10
 GRID_M      = 50
+PASS_STEP_M = 20                 # sampling step when counting vehicles passing a cell
+MIN_PASSES_PER_H = 12            # per-vehicle map: only cells with >= 1 vehicle every 5 min
+CACHE_DIR   = DATA_DIR / "_cache"
 
 
 # ---------------------------------------------------------------- GTFS
@@ -134,8 +137,9 @@ def intervals(df: pd.DataFrame) -> pd.DataFrame:
     dist = np.hypot(df.x - df.x.shift(), df.y - df.y.shift())
     iv = pd.DataFrame({
         "vehicle_type": df.vehicle_type, "Lines": df.Lines, "VehicleNumber": df.VehicleNumber,
-        "t": df.gps_time, "dt": dt, "speed_kmh": dist / dt * 3.6,
+        "t": df.gps_time, "dt": dt, "dist": dist, "speed_kmh": dist / dt * 3.6,
         "x": (df.x + df.x.shift()) / 2, "y": (df.y + df.y.shift()) / 2,
+        "x0": df.x.shift(), "y0": df.y.shift(), "x1": df.x, "y1": df.y,
         # both ends must satisfy the filters -> use max distance to route, min to stop/terminus
         "d_route": np.maximum(df.d_route, df.d_route.shift()),
         "d_stop": np.minimum(df.d_stop, df.d_stop.shift()),
@@ -164,6 +168,24 @@ def classify(iv: pd.DataFrame) -> pd.DataFrame:
     return iv
 
 
+def passes(iv: pd.DataFrame) -> pd.Series:
+    """Vehicle passes per grid cell: each on-route interval is sampled every PASS_STEP_M
+    along its segment; a pass = a vehicle entering a cell (runs of the same cell count once)."""
+    v = iv[iv.why != "off_route"]
+    n = (np.ceil(v.dist.to_numpy() / PASS_STEP_M).astype(int) + 1)
+    rep = np.repeat(np.arange(len(v)), n)
+    frac = (np.arange(len(rep)) - np.repeat(np.cumsum(n) - n, n)) / np.repeat(np.maximum(n - 1, 1), n)
+    x = v.x0.to_numpy()[rep] + frac * (v.x1.to_numpy() - v.x0.to_numpy())[rep]
+    y = v.y0.to_numpy()[rep] + frac * (v.y1.to_numpy() - v.y0.to_numpy())[rep]
+    gx = (x // GRID_M).astype(np.int32); gy = (y // GRID_M).astype(np.int32)
+    veh = pd.factorize(v.vehicle_type + v.VehicleNumber)[0][rep]
+    # consecutive intervals of one vehicle are adjacent rows; a time gap (filtered interval) breaks a pass
+    t = v.t.to_numpy()[rep]
+    gap = np.r_[True, np.diff(t.astype("int64")) > (MAX_DT + 5) * 1e9]
+    new = np.r_[True, (gx[1:] != gx[:-1]) | (gy[1:] != gy[:-1]) | (veh[1:] != veh[:-1])] | gap
+    return pd.Series(1, index=pd.MultiIndex.from_arrays([gx[new], gy[new]], names=["gx", "gy"])).groupby(level=[0, 1]).sum()
+
+
 def grid(iv: pd.DataFrame, stops_g: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     st = iv[iv.why == "stuck"].copy()
     st["gx"] = (st.x // GRID_M).astype(int)
@@ -180,6 +202,10 @@ def grid(iv: pd.DataFrame, stops_g: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         "peak_hour": g.apply(lambda d: int(d.groupby("hour").dt.sum().idxmax()), include_groups=False),
     }).fillna({"tram_min": 0, "bus_min": 0}).reset_index()
     cells["min_per_veh"] = cells.total_min / cells.vehicles
+    hours = (iv.t.max() - iv.t.min()).total_seconds() / 3600
+    cells["passes"] = cells.set_index(["gx", "gy"]).index.map(passes(iv)).fillna(0).astype(int)
+    cells["passes_per_h"] = (cells.passes / hours).round(1)
+    cells["sec_per_pass"] = (cells.total_min * 60 / cells.passes.where(cells.passes > 0)).round(1)
     geom = [box(x * GRID_M, y * GRID_M, (x + 1) * GRID_M, (y + 1) * GRID_M) for x, y in zip(cells.gx, cells.gy)]
     cells = gpd.GeoDataFrame(cells, geometry=geom, crs=CRS)
     boarding = stops_g[stops_g.location_type.fillna(0).astype(int).eq(0) & ~stops_g.stop_name.str.fullmatch(r"\d+")]
@@ -215,6 +241,52 @@ def plot(cells: gpd.GeoDataFrame, out: Path, title: str):
     plt.close(fig)
 
 
+def plot_per_vehicle(cells: gpd.GeoDataFrame, out: Path, title: str):
+    """Seconds lost per passing vehicle, frequent cells only (sequential single hue)."""
+    from matplotlib.colors import LinearSegmentedColormap
+    c = cells[(cells.passes_per_h >= MIN_PASSES_PER_H) & (cells.sec_per_pass >= 5)].sort_values("sec_per_pass")
+    cmap = LinearSegmentedColormap.from_list("lost", ["#5a2a12", "#eb6834", "#ffd2b8"])
+    fig, ax = plt.subplots(figsize=(14, 14), facecolor="#111")
+    ax.set_facecolor("#111")
+    cx, cy = cells.geometry.centroid.x.median(), cells.geometry.centroid.y.median()
+    r = 12_000
+    if OSM_ROADS.exists():
+        roads = gpd.read_file(OSM_ROADS, bbox=tuple(gpd.GeoSeries([box(cx - r, cy - r, cx + r, cy + r)], crs=CRS).to_crs(4326).total_bounds))
+        roads.to_crs(CRS).plot(ax=ax, color="#333", linewidth=0.3)
+    p = c.geometry.centroid
+    sc = ax.scatter(p.x, p.y, s=np.clip(c.sec_per_pass, 0, 60) * 4, c=c.sec_per_pass.clip(upper=40),
+                    cmap=cmap, vmin=5, vmax=40, linewidths=0, alpha=0.9)
+    labelled = []
+    for _, row in c.sort_values("sec_per_pass", ascending=False).iterrows():
+        q = row.geometry.centroid
+        if any(np.hypot(q.x - a, q.y - b) < 600 for a, b in labelled):
+            continue   # one label per junction area
+        labelled.append((q.x, q.y))
+        ax.annotate(f"{row.near_stop} · {row.sec_per_pass:.0f} s ({row.passes_per_h:.0f}/h)", (q.x, q.y),
+                    color="white", fontsize=8, xytext=(6, 4), textcoords="offset points")
+        if len(labelled) == 15:
+            break
+    ax.set_xlim(cx - r, cx + r); ax.set_ylim(cy - r, cy + r); ax.set_axis_off()
+    cb = fig.colorbar(sc, ax=ax, shrink=0.4); cb.set_label("seconds stuck per passing vehicle", color="w")
+    cb.ax.tick_params(colors="w")
+    ax.set_title(title, color="white", fontsize=14)
+    fig.savefig(out, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
+def build(day: str) -> pd.DataFrame:
+    """Match positions to lines and classify intervals; caches result for line_speeds.py."""
+    csv = DATA_DIR / f"positions_{day}.csv"
+    routes, stops_g = load_gtfs(latest_gtfs(), day)
+    df = load_positions(csv)
+    print(f"{len(df):,} fixes, {df.gps_time.min():%H:%M}–{df.gps_time.max():%H:%M}")
+    df = match_routes(df, routes)
+    iv = classify(intervals(df))
+    CACHE_DIR.mkdir(exist_ok=True)
+    iv.to_pickle(CACHE_DIR / f"intervals_{day}.pkl")
+    return iv, stops_g
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", help="YYYYMMDD (default: latest positions_*.csv)")
@@ -222,11 +294,8 @@ def main():
     csv = DATA_DIR / f"positions_{a.date}.csv" if a.date else sorted(DATA_DIR.glob("positions_*.csv"))[-1]
     day = csv.stem.split("_")[1]
 
-    routes, stops_g = load_gtfs(latest_gtfs(), day)
-    df = load_positions(csv)
-    print(f"{len(df):,} fixes, {df.gps_time.min():%H:%M}–{df.gps_time.max():%H:%M}")
-    df = match_routes(df, routes)
-    iv = classify(intervals(df))
+    iv, stops_g = build(day)
+    df = iv.rename(columns={"t": "gps_time"})
 
     summ = iv.groupby(["vehicle_type", "why"]).dt.sum().div(3600).round(1).unstack(0)
     print("\nVehicle-hours by category:\n", summ.to_string())
@@ -237,8 +306,13 @@ def main():
     png = DATA_DIR / f"stuck_{day}.png"
     span = f"{df.gps_time.min():%H:%M}–{df.gps_time.max():%H:%M}"
     plot(cells, png, f"Warsaw ZTM — where vehicles stand still (excl. stops, termini) · {day} {span}")
-    print(f"\nTop 20 cells:\n{cells.drop(columns='geometry').head(20).to_string(index=False)}")
-    print(f"\nSaved {gpkg}\nSaved {png}")
+    png2 = DATA_DIR / f"stuck_per_vehicle_{day}.png"
+    plot_per_vehicle(cells, png2, f"Seconds lost per passing vehicle (≥ {MIN_PASSES_PER_H} vehicles/h) · {day} {span}")
+    cols = ["total_min", "tram_min", "bus_min", "passes_per_h", "sec_per_pass", "top_lines", "near_stop"]
+    print(f"\nTop 15 by total stuck time:\n{cells[cols].head(15).to_string(index=False)}")
+    freq = cells[cells.passes_per_h >= MIN_PASSES_PER_H].sort_values("sec_per_pass", ascending=False)
+    print(f"\nTop 15 by seconds per passing vehicle (≥ {MIN_PASSES_PER_H}/h):\n{freq[cols].head(15).to_string(index=False)}")
+    print(f"\nSaved {gpkg}\nSaved {png}\nSaved {png2}")
 
 
 if __name__ == "__main__":
