@@ -144,6 +144,7 @@ python live/collect.py            # polls every 10 s, runs until Ctrl+C
 ```
 - Writes `live/data/positions_YYYYMMDD.csv` (appends; new file at midnight).
 - Skips stale fixes (> 60 s old) and repeated identical fixes per vehicle.
+- Network-proof: 3 attempts per fetch (2 s / 5 s backoff), outages + recovery logged to `live/data/collect_errors.log`, auto-restart on unexpected crash.
 - No history on the API side — anything not collected is lost.
 
 Analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),

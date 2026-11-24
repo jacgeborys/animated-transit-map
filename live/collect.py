@@ -39,7 +39,36 @@ def fetch(vehicle_type: int) -> list[dict]:
     )
     resp.raise_for_status()
     data = resp.json()
-    return data if isinstance(data, list) else data.get("result", [])
+    result = data if isinstance(data, list) else data.get("result")
+    if not isinstance(result, list):
+        raise RuntimeError(f"API returned no vehicle list: {str(data)[:150]}")
+    return result
+
+
+RETRY_WAITS = [2, 5]   # seconds to wait before 2nd and 3rd attempt
+LOG_PATH = DATA_DIR / "collect_errors.log"
+
+
+def log(msg: str):
+    line = f"[{datetime.now():%Y-%m-%d %H:%M:%S}] {msg}"
+    print("  " + line, flush=True)
+    try:
+        with open(LOG_PATH, "a", encoding="utf-8") as lf:
+            lf.write(line + "\n")
+    except OSError:
+        pass
+
+
+def fetch_with_retry(vehicle_type: int) -> list[dict]:
+    """Try up to len(RETRY_WAITS)+1 times; raise the last error if all fail."""
+    for attempt, wait in enumerate(RETRY_WAITS + [None], start=1):
+        try:
+            return fetch(vehicle_type)
+        except Exception as e:
+            if wait is None:
+                raise
+            print(f"    attempt {attempt} failed ({type(e).__name__}), retrying in {wait}s", flush=True)
+            time.sleep(wait)
 
 
 def collect(vehicle_types: list[int], stop_at: datetime | None, interval: int):
@@ -58,6 +87,7 @@ def collect(vehicle_types: list[int], stop_at: datetime | None, interval: int):
     total_rows = 0
     poll_count = 0
     last_fix: dict[tuple, str] = {}   # (type, vehicle) -> last gps_time written (dedupe repeats)
+    down_since: dict[str, datetime] = {}   # label -> start of current outage
 
     date_str = datetime.now().strftime("%Y%m%d")
     f, writer, csv_path = open_day(date_str)
@@ -82,10 +112,15 @@ def collect(vehicle_types: list[int], stop_at: datetime | None, interval: int):
                 for vtype in vehicle_types:
                     label = "Tram" if vtype == 2 else "Bus"
                     try:
-                        vehicles = fetch(vtype)
+                        vehicles = fetch_with_retry(vtype)
                     except Exception as e:
-                        print(f"  [{poll_str}] {label} fetch error: {e}")
+                        if label not in down_since:
+                            down_since[label] = now
+                            log(f"{label} OUTAGE started: {type(e).__name__}: {e}")
                         continue
+                    if label in down_since:
+                        mins = (now - down_since.pop(label)).total_seconds() / 60
+                        log(f"{label} back online after {mins:.1f} min")
 
                     for v in vehicles:
                         try:
@@ -142,7 +177,13 @@ def main():
     print(f"Collecting {label}" + (f" for {args.minutes} minutes" if args.minutes else " until Ctrl+C"))
     print(f"Freshness threshold: positions older than {STALE}s are skipped\n")
 
-    collect(vtypes, stop_at, INTERVAL)
+    while True:   # restart on any unexpected crash; returns normally on Ctrl+C / time limit
+        try:
+            collect(vtypes, stop_at, INTERVAL)
+            break
+        except Exception as e:
+            log(f"Collector crashed ({type(e).__name__}: {e}), restarting in 10s")
+            time.sleep(10)
 
 
 if __name__ == "__main__":
