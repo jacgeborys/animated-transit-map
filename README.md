@@ -160,6 +160,13 @@ Line speeds: `python live/line_speeds.py [--date] [--fresh]` (uses the stuck_poi
 `line_charts_<date>/<mode>_<line>.png` (speed by hour vs mode average + moving/at stop/stuck split).
 Speed = distance / time in service, incl. stop dwell and stuck time, excl. terminus areas and layovers.
 
+Route profiles: `python live/route_profiles.py [--mode Bus] [--lines 1 14] [--hours 7 10]` → `route_profiles_<date>/`
+one PNG per line+direction: speed in 100 m bins along the main GTFS shape (all runs of the day) + seconds per run at
+platforms / stuck per bin, stop names on the x axis — the city-wide version of the speed strip in
+`D:/QGIS/gpx_tracker` (tram audit). Direction = progress along the shape over ±5 intervals. Bins CSV alongside.
+Checked against the 23 Nov GPX ride: Pl. Zawiszy, Okopowa, Bitwy Warszawskiej, Banacha exit and the 19 km/h
+Most Gdański–Wybrzeże Helskie restriction all show up as typical, not one-off.
+
 Other analysis: `delay_map.py` (tram slow-time per junction segment), `map_traces.py` (GPS traces PNG/GeoJSON),
 `animate_live.py` (video). Status: collection day 2026-05-10 done; full-day scan started 2026-11-24 04:27.
 First stuck-point pass done on 04:26–14:00 (top: Bitwy Warszawskiej, Pole Mokotowskie, Okopowa, Pl. Zawiszy — trams, all day,
