@@ -181,3 +181,6 @@ actual tram model are known per trip. Junction approaches per travel heading, si
 Wilanów corridor verdict (priority works on most of it; Goworka × Puławska N, Belwederska, Św. Bonifacego don't),
 priority scenario (≈ 192 tram-h/day, 13.8 trams of peak cycle time), timetable realism, headway regularity, dwell by model.
 Run with `py -3.11`. Report artifact: https://claude.ai/artifact/Wrj38hkTvnX8opgUAxGT7w. Next: buses, a full week.
+Part 2 (`network.py` → `corridors.py` → `report_corridors.py`): junction losses per movement (entry → exit arm, 505 junctions),
+street-corridor ranking and speed profiles from a common zero, hour × distance heatmaps, slow stretches, peak capacity,
+animated half-hourly speed map. Artifact: https://claude.ai/artifact/9zjp4u1NUADTCoFtG8784f.

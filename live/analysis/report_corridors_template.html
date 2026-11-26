@@ -1,0 +1,567 @@
+<meta charset="utf-8">
+<title>Warsaw Tram Corridors</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: companion to "Where Warsaw's trams wait" — same tokens; one reading column with wide figure blocks,
+   map first (where), then junction movements (which way), then corridors (along the street). */
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#15171a; --ink2:#4c5058; --muted:#7c818a; --rule:#e3e4e1; --grid:#eceeeb;
+  --tram:#b60000; --tram-ink:#ffffff;
+  --fast:#d3d7db; --s1:#fbd9c8; --s2:#f4a57f; --s3:#eb6834; --s4:#b9461b; --s5:#7c2a0c;
+  --net:#dadcd8; --move:#c4c8cd; --plat:#1baf7a; --lost:#eb6834;
+  --c-out:#c0262b; --c-in:#2b6cb0;
+  --f-head:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141518; --surface:#1c1e22; --ink:#eef0f2; --ink2:#b9bec6; --muted:#8a9099; --rule:#2c2f35; --grid:#25282d;
+  --tram:#d42a2a; --fast:#363a41; --s1:#5a2a14; --s2:#9a4219; --s3:#d95926; --s4:#f08a5c; --s5:#ffc4a6;
+  --net:#2b2e34; --move:#4a4f57; --plat:#199e70; --lost:#d95926; --c-out:#f25555; --c-in:#4f94e6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141518; --surface:#1c1e22; --ink:#eef0f2; --ink2:#b9bec6; --muted:#8a9099; --rule:#2c2f35; --grid:#25282d;
+  --tram:#d42a2a; --fast:#363a41; --s1:#5a2a14; --s2:#9a4219; --s3:#d95926; --s4:#f08a5c; --s5:#ffc4a6;
+  --net:#2b2e34; --move:#4a4f57; --plat:#199e70; --lost:#d95926; --c-out:#f25555; --c-in:#4f94e6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,5vw,3.1rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.65rem;font-weight:600}
+h3{font-size:1.1rem;font-weight:600}
+p{margin:0;max-width:72ch}
+a{color:inherit}
+.eyebrow{font:500 .78rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+.lede{font-size:1.12rem;color:var(--ink2)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.7em;height:1.45em;padding:0 .3em;background:var(--tram);color:var(--tram-ink);font:600 .82rem/1 var(--f-head);border-radius:2px;margin:1px 2px 1px 0}
+.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.answer{background:var(--surface);border:1px solid var(--rule);padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.answer b.big{font:600 1.9rem/1.1 var(--f-head)}
+.answer span{color:var(--ink2);font-size:.92rem}
+.fig{background:var(--surface);border:1px solid var(--rule);padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.fig .cap{color:var(--muted);font-size:.85rem;max-width:none}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{font:500 .7rem/1.2 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+td.r,th.r{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td .sub{display:block;color:var(--muted);font-size:.78rem}
+tr.hl td{background:var(--grid)}
+.meter{display:inline-block;height:8px;border-radius:0 4px 4px 0;background:var(--lost);vertical-align:middle;margin-left:6px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--ink2);align-items:center}
+.sw{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+.ramp{display:inline-block;width:140px;height:10px;border-radius:2px;vertical-align:-1px;margin:0 6px}
+svg text{fill:var(--ink2);font-family:var(--f-body)}
+svg .axis{stroke:var(--rule)}
+svg .gridl{stroke:var(--grid)}
+#tip{position:fixed;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--rule);box-shadow:0 4px 16px rgba(0,0,0,.14);padding:8px 10px;font-size:.82rem;line-height:1.4;max-width:320px;z-index:20}
+.note{border-left:3px solid var(--rule);padding:2px 0 2px 14px;color:var(--ink2);font-size:.92rem}
+ul{margin:0;padding-left:1.2em;max-width:72ch} li{margin:4px 0}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.seg button{font:500 .82rem/1 var(--f-body);background:var(--surface);color:var(--ink2);border:0;padding:8px 12px;cursor:pointer;border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.btn{font:500 .82rem/1 var(--f-body);background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:4px;padding:8px 12px;cursor:pointer}
+select{font:500 .85rem var(--f-body);background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:4px;padding:7px 8px;max-width:100%}
+input[type=range]{accent-color:var(--tram);flex:1;min-width:140px}
+.mapwrap{position:relative;border:1px solid var(--rule);background:var(--bg);touch-action:none}
+.mapwrap canvas{display:block;width:100%;cursor:grab}
+.mapwrap .clock{position:absolute;left:14px;top:10px;font:600 2rem/1 var(--f-head);color:var(--ink);pointer-events:none;text-shadow:0 0 6px var(--bg)}
+.mapwrap .zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:4px}
+.mapwrap .zoom button{width:34px;height:34px;font:600 1.1rem/1 var(--f-body);background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:4px;cursor:pointer}
+.jgrid{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:18px}
+@media (max-width:820px){.jgrid{grid-template-columns:1fr}}
+.jlist{display:flex;flex-direction:column;gap:2px;max-height:620px;overflow-y:auto}
+.jlist button{display:grid;grid-template-columns:1fr auto;gap:2px 8px;text-align:left;background:transparent;border:0;border-left:3px solid transparent;padding:7px 8px;cursor:pointer;color:var(--ink);font:inherit;font-size:.86rem}
+.jlist button:hover{background:var(--grid)}
+.jlist button[aria-pressed="true"]{border-left-color:var(--tram);background:var(--grid)}
+.jlist .bar{grid-column:1/3;height:5px;background:var(--lost);border-radius:0 3px 3px 0}
+.jlist .v{font-family:var(--f-mono);font-size:.78rem;color:var(--ink2)}
+.diag svg{width:100%;height:auto;display:block;max-height:600px}
+.diag path.mv{cursor:pointer;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.prof svg{width:100%;height:auto;display:block}
+:focus-visible{outline:2px solid var(--tram);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow" id="hdr-meta"></div>
+  <h1>Warsaw tram corridors: which way, which street, which hour</h1>
+  <p class="lede">The first report found <i>where</i> trams stand still. This one splits every signalised junction into its
+    movements (from which arm to which arm), ranks the street corridors by how fast trams really get along them, and
+    shows how the slow spots spread through the day. Same data: every tram GPS fix of one Tuesday tied to its scheduled trip.</p>
+  <p class="cap" style="color:var(--muted);font-size:.85rem">Companion to <a href="https://claude.ai/artifact/Wrj38hkTvnX8opgUAxGT7w">Where Warsaw's trams wait</a>.</p>
+</header>
+
+<section><div class="answers" id="answers"></div></section>
+
+<section id="sec-map">
+  <div class="eyebrow">Map</div>
+  <h2>The network through the day</h2>
+  <p>Every 80 m of track, in each travel direction (drawn on the right-hand side of the line), coloured by how fast trams
+    got through it in each half hour, platform dwell excluded. Arrows mark the 60 junction movements that lose the most
+    tram-hours: the bigger the arrow, the more time lost there in the day; the stronger the colour, the longer each tram waits. Drag to pan,
+    scroll or use + / − to zoom; click an arrow to open its junction below.</p>
+  <div class="fig">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Map layer" id="layer">
+        <button type="button" data-v="speed" aria-pressed="true">Speed by half hour</button>
+        <button type="button" data-v="cap" aria-pressed="false">Peak capacity</button>
+        <button type="button" data-v="lost" aria-pressed="false">Passenger-hours lost</button>
+      </div>
+      <label class="legend"><input type="checkbox" id="arrows-on" checked> junction arrows</label>
+    </div>
+    <div class="controls" id="timebar">
+      <button type="button" class="btn" id="play" aria-label="Play">▶ Play</button>
+      <input type="range" id="slot" min="0" max="35" value="6" aria-label="Time of day">
+      <span class="num" id="slot-label" style="min-width:7ch"></span>
+    </div>
+    <div class="mapwrap" id="mapwrap">
+      <canvas id="map" aria-label="Map of tram speeds and junction losses"></canvas>
+      <div class="clock" id="clock"></div>
+      <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button><button type="button" id="zreset" aria-label="Reset view" style="font-size:.8rem">⟲</button></div>
+    </div>
+    <div class="legend" id="map-legend"></div>
+  </div>
+</section>
+
+<section id="sec-junctions">
+  <div class="eyebrow">Junctions, movement by movement</div>
+  <h2>At a junction, it matters where you come from and where you go</h2>
+  <p id="j-intro"></p>
+  <div class="fig">
+    <div class="jgrid">
+      <div class="jlist" id="jlist" role="group" aria-label="Junctions"></div>
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+        <h3 id="j-title"></h3>
+        <div class="cap" id="j-sub"></div>
+        <div class="diag" id="diag"></div>
+        <div class="legend"><span>Waiting per tram</span><span class="ramp" id="ramp-wait"></span><span class="num">0 → 80+ s</span><span>· line width = trams per day</span><span>· grey = track</span></div>
+      </div>
+    </div>
+    <div class="scroll"><table id="j-table"></table></div>
+    <div class="cap">Stop rate = share of trams that stood still within 120 m before the junction (away from platforms). "Wait if stopped" is
+      the mean stand-still of those that did stop. ◐ = a platform lies inside the approach, so part of the red phase is hidden in the dwell and the figures are a lower bound.</div>
+  </div>
+  <div class="fig">
+    <h3>The 25 movements that cost the most, city-wide</h3>
+    <div class="scroll"><table id="mv-table"></table></div>
+  </div>
+</section>
+
+<section id="sec-corr">
+  <div class="eyebrow">Corridors</div>
+  <h2>Fast outskirts, slow centre: the street ranking</h2>
+  <p id="c-intro"></p>
+  <div class="fig">
+    <h3>Minutes per kilometre, split into moving, standing at platforms and standing elsewhere</h3>
+    <div class="legend" id="eff-legend"></div>
+    <div class="scroll"><svg id="eff" role="img" aria-label="Minutes per kilometre by corridor"></svg></div>
+    <div class="cap">Each street gets two bars: away from the city centre (top) and towards it (bottom). The number on the right is the
+      average speed including stops, 04:30–23:00. Only the part of the street that carries trams, ≥ 1.2 km, counts.</div>
+  </div>
+  <div class="fig">
+    <h3>Where would priority pay off most? Capacity against speed</h3>
+    <svg id="scatter" viewBox="0 0 1000 440" role="img" aria-label="Peak capacity against average speed per corridor and direction"></svg>
+    <div class="cap">Each dot is one corridor in one direction. Further right = more places per hour in the morning peak (07–09), lower = slower,
+      bigger = more passenger-hours a day spent standing away from platforms (load-factor assumption: 50 % peak / 25 % off-peak).
+      The lower right corner is where priority and better signal plans serve the most people.</div>
+  </div>
+</section>
+
+<section id="sec-prof">
+  <div class="eyebrow">Along the street</div>
+  <h2>Speed profiles from the same point zero</h2>
+  <p>Every panel starts at the end of the corridor nearest the city centre (Palace of Culture), so distance means the same thing in each one.
+    Red = trams heading out of town, blue = heading in, both drawn at their physical position. Dips are stops and junctions; a flat high line is a tram that is left alone.</p>
+  <div class="fig">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Which corridors" id="pf-set">
+        <button type="button" data-v="slow" aria-pressed="true">Slowest 8</button>
+        <button type="button" data-v="fast" aria-pressed="false">Fastest 8</button>
+        <button type="button" data-v="all" aria-pressed="false">All</button>
+      </div>
+      <div class="seg" role="group" aria-label="Period" id="pf-per">
+        <button type="button" data-v="day" aria-pressed="true">06–21</button>
+        <button type="button" data-v="peak" aria-pressed="false">Peaks</button>
+      </div>
+    </div>
+    <div class="legend"><span><span class="sw" style="background:var(--c-out)"></span>away from centre</span><span><span class="sw" style="background:var(--c-in)"></span>towards centre</span><span>│ stop</span><span>◆ signalised junction</span><span>km/h, 50 m bins, smoothed</span></div>
+    <div class="prof" id="prof"></div>
+  </div>
+</section>
+
+<section id="sec-heat">
+  <div class="eyebrow">Hour by hour</div>
+  <h2>When a corridor clogs</h2>
+  <p>The same corridor, every hour of the day: each cell is 100 m of track in one hour. The stronger the orange, the slower (stops included).
+    Vertical stripes are fixed obstacles (a junction or stop that is slow all day); a patch that spreads in the peak is congestion or a signal plan that cannot cope.</p>
+  <div class="fig">
+    <div class="controls"><label for="hm-c" class="legend">Corridor</label><select id="hm-c"></select></div>
+    <svg id="heat" role="img" aria-label="Speed by hour and distance along the corridor"></svg>
+    <div class="legend"><span>Speed</span><span class="ramp" id="ramp-speed"></span><span class="num">≤ 6 → 35+ km/h</span></div>
+  </div>
+</section>
+
+<section id="sec-slow">
+  <div class="eyebrow">Lingering</div>
+  <h2>Where trams crawl even when nothing stops them</h2>
+  <p>Stretches away from stops where even the faster trams (85th percentile of moving speed) stay under 25 km/h: tight curves,
+    switches through junctions, slow orders on worn track. Lost time is counted against 35 km/h.</p>
+  <div class="fig"><div class="scroll"><table id="slow-table"></table></div></div>
+</section>
+
+<section>
+  <div class="eyebrow">Method</div>
+  <h2>How the movements and corridors were built</h2>
+  <ul id="method"></ul>
+</section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D = /*__DATA__*/{};
+const $ = s => document.querySelector(s);
+const fmt = (v, d = 0) => v == null || isNaN(v) ? "–" : Number(v).toLocaleString("en-GB", {minimumFractionDigits: d, maximumFractionDigits: d});
+const pct = v => v == null ? "–" : Math.round(v * 100) + " %";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const badges = ls => ls.map(l => `<span class="badge">${esc(l)}</span>`).join("");
+const NS = "http://www.w3.org/2000/svg";
+const tip = $("#tip");
+function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + 14, y = e.clientY + 14; if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + h > innerHeight - 8) y = e.clientY - h - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px"; }
+function hideTip() { tip.hidden = true; }
+
+// ---------- colour ramps from tokens
+let C = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ["fast", "s1", "s2", "s3", "s4", "s5", "net", "ink", "ink2", "muted", "surface", "bg", "rule", "grid", "c-out", "c-in", "move", "plat", "lost", "tram"])
+    C[k] = cs.getPropertyValue("--" + k).trim();
+}
+const hex2 = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+function mix(stops, t) { t = Math.max(0, Math.min(1, t)); const n = stops.length - 1, i = Math.min(n - 1, Math.floor(t * n)), f = t * n - i;
+  const a = hex2(stops[i]), b = hex2(stops[i + 1]); return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * f)).join(",")})`; }
+const speedCol = v => mix([C.fast, C.s1, C.s2, C.s3, C.s4, C.s5], (35 - v) / 29);
+const waitCol = s => mix([C.fast, C.s1, C.s2, C.s3, C.s4, C.s5], Math.sqrt(Math.max(0, s) / 80));
+function paintRamps() {
+  $("#ramp-wait").style.background = `linear-gradient(90deg,${[0, .2, .4, .6, .8, 1].map(t => waitCol(t * t * 80)).join(",")})`;
+  $("#ramp-speed").style.background = `linear-gradient(90deg,${[6, 12, 18, 24, 30, 35].map(speedCol).join(",")})`;
+}
+
+// ---------- header + answers
+const T = D.totals;
+const dstr = `${D.date.slice(6)}.${D.date.slice(4, 6)}.${D.date.slice(0, 4)}`;
+$("#hdr-meta").textContent = `Trams · Tuesday ${dstr} · ${fmt(T.n_junctions)} signalised junctions · ${fmt(T.n_movements)} movements · ${D.corridors.length} corridors`;
+const CD = [];
+D.corridors.forEach(c => ["out", "in"].forEach(k => { if (c.dirs[k]) CD.push({c, k, d: c.dirs[k]}); }));
+const avgOf = c => { const ds = Object.values(c.dirs); return ds.reduce((a, d) => a + d.avg_kmh * d.runs, 0) / ds.reduce((a, d) => a + d.runs, 0); };
+const corrSorted = [...D.corridors].sort((a, b) => avgOf(b) - avgOf(a));
+const topMv = D.movements[0], fast = corrSorted[0], slow = corrSorted[corrSorted.length - 1];
+const jt = D.diagrams[0];
+$("#answers").innerHTML = [
+  [`${Math.round(T.junction_h / T.line_h * 100)} %`, `of the ${fmt(T.line_h)} tram-hours spent standing away from platforms happen within 120 m before a traffic signal (${fmt(T.junction_h)} h).`],
+  [`${pct(topMv.stop_rate)} · ${fmt(topMv.stand_s)} s`, `The single worst movement: ${esc(topMv.name)}, ${esc(topMv.movement)} (${topMv.lines.join(", ")}): share of trams that stop, and the average wait per tram.`],
+  [`${fmt(jt.tram_h, 0)} tram-h`, `${esc(jt.name)} is the costliest junction: every movement stops most trams. About ${fmt(Math.round(jt.pax_h / 100) * 100)} passenger-hours a day (estimate).`],
+  [`${fmt(avgOf(slow), 0)} vs ${fmt(avgOf(fast), 0)} km/h`, `Slowest corridor ${esc(slow.street)} against the fastest, ${esc(fast.street)}: average speed including stops.`],
+].map(([b, t]) => `<div class="answer"><b class="big num">${b}</b><span>${t}</span></div>`).join("");
+
+// ======================================================================= MAP
+const cv = $("#map"), ctx = cv.getContext("2d"), mw = $("#mapwrap");
+let W = 0, H = 0, view = null, layer = "speed", slotI = 6, arrowsOn = true;
+const bounds = (() => { let a = [1e9, 1e9, -1e9, -1e9]; for (const l of D.net) for (const [x, y] of l) { a[0] = Math.min(a[0], x); a[1] = Math.min(a[1], y); a[2] = Math.max(a[2], x); a[3] = Math.max(a[3], y); } return a; })();
+function fitView() { const s = Math.min(W / (bounds[2] - bounds[0]), H / (bounds[3] - bounds[1])) * 0.96;
+  view = {cx: (bounds[0] + bounds[2]) / 2, cy: (bounds[1] + bounds[3]) / 2, s}; }
+const px = (x, y) => [W / 2 + (x - view.cx) * view.s, H / 2 - (y - view.cy) * view.s];
+function resize() { W = mw.clientWidth; H = Math.round(Math.min(760, Math.max(380, W * 1.0)));
+  const r = devicePixelRatio || 1; cv.width = W * r; cv.height = H * r; cv.style.height = H + "px"; ctx.setTransform(r, 0, 0, r, 0, 0);
+  if (!view) fitView(); draw(); }
+const SPEED_MID = [4, 7.5, 10.5, 13.5, 16.5, 19.5, 23, 27.5, 33, 40];
+const lostVals = D.anim.map(a => a[6]).filter(v => v > 0).sort((a, b) => a - b);
+const lost98 = lostVals[Math.floor(lostVals.length * .98)] || 1;
+const capW = p => 0.6 + Math.sqrt(p) / 13;
+const slotTxt = i => { const s = D.slots[i] * D.slot_s; const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
+  const e = s + D.slot_s; return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}–${String(Math.floor(e / 3600)).padStart(2, "0")}:${String(Math.floor(e % 3600 / 60)).padStart(2, "0")}`; };
+const HD = [...Array(8)].map((_, i) => [Math.sin(i * Math.PI / 4), Math.cos(i * Math.PI / 4)]);
+function draw() {
+  if (!view) return;
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = C.net; ctx.lineWidth = 1; ctx.lineCap = "round";
+  for (const l of D.net) { ctx.beginPath(); l.forEach(([x, y], i) => { const [a, b] = px(x, y); i ? ctx.lineTo(a, b) : ctx.moveTo(a, b); }); ctx.stroke(); }
+  const half = D.cell * 0.5 * view.s, off = Math.max(1.2, Math.min(4, view.s * 4));
+  const order = layer === "speed" ? D.anim : [...D.anim].sort((a, b) => layer === "lost" ? a[6] - b[6] : a[4] - b[4]);
+  for (const a of order) {
+    let col, w;
+    if (layer === "speed") { const ch = a[3][slotI]; if (ch === "-" || ch === undefined) continue; const v = SPEED_MID[+ch]; col = speedCol(v); w = v < 13 ? 3 : 2.2; }
+    else if (layer === "cap") { if (!a[4]) continue; col = speedCol(a[7]); w = capW(a[4]); }
+    else { col = a[6] > 0 ? waitCol(Math.sqrt(a[6] / lost98) * 80) : C.fast; w = capW(a[4] || 100); }
+    const [hx, hy] = HD[a[2]];
+    let [cx, cy] = px((a[0] + .5) * D.cell, (a[1] + .5) * D.cell);
+    const o = layer === "speed" ? off : off + w / 2;
+    cx += hy * o; cy += hx * o;                    // right-hand side of the travel direction (screen y is down)
+    ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = "butt";
+    ctx.beginPath(); ctx.moveTo(cx - hx * half, cy + hy * half); ctx.lineTo(cx + hx * half, cy - hy * half); ctx.stroke();
+  }
+  ctx.lineCap = "round";
+  if (arrowsOn) for (const r of [...D.arrows].sort((a, b) => a.tram_h - b.tram_h)) drawArrow(r);
+  $("#clock").textContent = layer === "speed" ? slotTxt(slotI) : (layer === "cap" ? "07–09" : "whole day");
+}
+function arrowGeom(r) { const [x1, y1] = px(r.x1, r.y1), [x0, y0] = px(r.x0, r.y0); let dx = x1 - x0, dy = y1 - y0; const n = Math.hypot(dx, dy) || 1; dx /= n; dy /= n;
+  const L = 10 + 7 * Math.sqrt(r.tram_h), w = 2 + 1.9 * Math.sqrt(r.tram_h); return {x1, y1, dx, dy, L, w}; }
+function drawArrow(r) { const {x1, y1, dx, dy, L, w} = arrowGeom(r); const bx = x1 - dx * L, by = y1 - dy * L, hx = x1 - dx * w * 1.6, hy = y1 - dy * w * 1.6, nx = -dy, ny = dx;
+  ctx.beginPath(); ctx.moveTo(bx + nx * w / 2, by + ny * w / 2); ctx.lineTo(hx + nx * w / 2, hy + ny * w / 2); ctx.lineTo(hx + nx * w * 1.25, hy + ny * w * 1.25);
+  ctx.lineTo(x1, y1); ctx.lineTo(hx - nx * w * 1.25, hy - ny * w * 1.25); ctx.lineTo(hx - nx * w / 2, hy - ny * w / 2); ctx.lineTo(bx - nx * w / 2, by - ny * w / 2); ctx.closePath();
+  ctx.fillStyle = waitCol(r.stand_s); ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = C.surface; ctx.stroke(); }
+function hitArrow(mx, my) { let best = null, bd = 1e9; if (!arrowsOn) return null;
+  for (const r of D.arrows) { const {x1, y1, dx, dy, L, w} = arrowGeom(r); const t = Math.max(0, Math.min(L, (x1 - mx) * dx + (y1 - my) * dy));
+    const qx = x1 - dx * t, qy = y1 - dy * t, d = Math.hypot(mx - qx, my - qy); if (d < Math.max(7, w) && d < bd) { bd = d; best = r; } } return best; }
+function hitCell(mx, my) { let best = null, bd = 64; for (const a of D.anim) { const [cx, cy] = px((a[0] + .5) * D.cell, (a[1] + .5) * D.cell); const d = (cx - mx) ** 2 + (cy - my) ** 2; if (d < bd) { bd = d; best = a; } } return best; }
+const DIRN = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+let drag = null;
+cv.addEventListener("pointerdown", e => { drag = {x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy, moved: false}; cv.setPointerCapture(e.pointerId); cv.style.cursor = "grabbing"; });
+cv.addEventListener("pointermove", e => {
+  const rc = cv.getBoundingClientRect(), mx = e.clientX - rc.left, my = e.clientY - rc.top;
+  if (drag) { const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+    view.cx = drag.cx - dx / view.s; view.cy = drag.cy + dy / view.s; draw(); hideTip(); return; }
+  const r = hitArrow(mx, my);
+  if (r) { cv.style.cursor = "pointer"; showTip(e, `<b>${esc(r.name)}</b><br>${esc(r.label)}<br>${badges(r.lines)}<br>${fmt(r.trams)} trams/day · ${pct(r.stop_rate)} stop · ${fmt(r.stand_s)} s per tram<br><b>${fmt(r.tram_h, 1)} tram-h</b> · ~${fmt(r.pax_h)} passenger-h a day`); return; }
+  cv.style.cursor = "grab";
+  const a = hitCell(mx, my);
+  if (a) { const sp = layer === "speed" ? (a[3][slotI] === "-" ? "no trams" : `~${SPEED_MID[+a[3][slotI]]} km/h at ${slotTxt(slotI)}`) : `${fmt(a[7], 1)} km/h all day`;
+    showTip(e, `Heading ${DIRN[a[2]]} · ${sp}<br>Peak: ${fmt(a[5])} trams/h, ${fmt(a[4])} places/h<br>Standing away from platforms: ~${fmt(a[6], 1)} passenger-h/day`); }
+  else hideTip();
+});
+cv.addEventListener("pointerup", e => { const rc = cv.getBoundingClientRect(); cv.style.cursor = "grab";
+  if (drag && !drag.moved) { const r = hitArrow(e.clientX - rc.left, e.clientY - rc.top); if (r && D.diagrams.some(d => d.j === r.j)) { selectJ(r.j); $("#sec-junctions").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); } }
+  drag = null; });
+cv.addEventListener("pointerleave", hideTip);
+function zoomAt(f, mx = W / 2, my = H / 2) { const wx = view.cx + (mx - W / 2) / view.s, wy = view.cy - (my - H / 2) / view.s;
+  view.s = Math.max(0.01, Math.min(2, view.s * f)); view.cx = wx - (mx - W / 2) / view.s; view.cy = wy + (my - H / 2) / view.s; draw(); }
+cv.addEventListener("wheel", e => { e.preventDefault(); const rc = cv.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.25 : 0.8, e.clientX - rc.left, e.clientY - rc.top); }, {passive: false});
+cv.addEventListener("dblclick", e => { const rc = cv.getBoundingClientRect(); zoomAt(2, e.clientX - rc.left, e.clientY - rc.top); });
+$("#zin").onclick = () => zoomAt(1.6); $("#zout").onclick = () => zoomAt(1 / 1.6); $("#zreset").onclick = () => { fitView(); draw(); };
+const slotEl = $("#slot"); slotEl.max = D.slots.length - 1;
+slotI = Math.max(0, D.slots.indexOf(15)); slotEl.value = slotI;
+const setSlot = i => { slotI = i; slotEl.value = i; $("#slot-label").textContent = slotTxt(i); draw(); };
+slotEl.oninput = () => setSlot(+slotEl.value);
+let timer = null;
+$("#play").onclick = () => { if (timer) { clearInterval(timer); timer = null; $("#play").textContent = "▶ Play"; return; }
+  if (layer !== "speed") setLayer("speed"); $("#play").textContent = "❚❚ Pause";
+  timer = setInterval(() => setSlot((slotI + 1) % D.slots.length), 650); };
+function setLayer(v) { layer = v; document.querySelectorAll("#layer button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v));
+  $("#timebar").style.visibility = v === "speed" ? "visible" : "hidden"; mapLegend(); draw(); }
+document.querySelectorAll("#layer button").forEach(b => b.onclick = () => setLayer(b.dataset.v));
+$("#arrows-on").onchange = e => { arrowsOn = e.target.checked; draw(); };
+function mapLegend() {
+  const ar = `<span>Arrow: size = tram-hours lost, colour = wait per tram</span>`;
+  if (layer === "speed") $("#map-legend").innerHTML = `<span>Speed (platform dwell excluded)</span><span class="ramp" style="background:linear-gradient(90deg,${[6, 12, 18, 24, 30, 35].map(speedCol).join(",")})"></span><span class="num">≤ 6 → 35+ km/h</span>${ar}`;
+  else if (layer === "cap") $("#map-legend").innerHTML = `<span>Width = places per hour 07–09 (${[1000, 3000, 6000].map(p => `<span style="display:inline-block;width:26px;height:${capW(p).toFixed(1)}px;background:var(--ink2);vertical-align:middle;margin:0 4px"></span>${fmt(p)}`).join(" ")}), colour = all-day speed</span>`;
+  else $("#map-legend").innerHTML = `<span>Passenger-hours standing away from platforms per 80 m (estimate)</span><span class="ramp" style="background:linear-gradient(90deg,${[0, .2, .4, .6, .8, 1].map(t => waitCol(t * 80)).join(",")})"></span><span class="num">0 → ${fmt(lost98)}+</span><span>· width = peak capacity</span>`;
+}
+
+// ======================================================================= JUNCTIONS
+const maxJ = Math.max(...D.diagrams.map(d => d.tram_h));
+$("#jlist").innerHTML = D.diagrams.map(d => `<button type="button" data-j="${d.j}" aria-pressed="false"><span>${esc(d.name)}</span><span class="v">${fmt(d.tram_h, 1)} h</span><span class="bar" style="width:${(d.tram_h / maxJ * 100).toFixed(0)}%"></span></button>`).join("");
+document.querySelectorAll("#jlist button").forEach(b => b.onclick = () => selectJ(+b.dataset.j));
+$("#j-intro").innerHTML = `A junction is not one number. Below, each of the ${D.diagrams.length} costliest signalised junctions is split into the movements trams make through it:
+  where they come from, where they go, and how often and how long they wait. Arm names are the street (and compass side) the track runs on 100 m before and after the junction.`;
+let curJ = null;
+function offsetPath(p, o) {          // shift a polyline to its right-hand side (screen y down), trams keep right
+  return p.map((q, i) => { const a = p[Math.max(0, i - 1)], b = p[Math.min(p.length - 1, i + 1)];
+    let dx = b[0] - a[0], dy = b[1] - a[1]; const n = Math.hypot(dx, dy) || 1; return [+(q[0] - dy / n * o).toFixed(1), +(q[1] + dx / n * o).toFixed(1)]; });
+}
+function armNames(label) {
+  if (label.includes(" → ")) return label.split(" → ").map(x => x.replace(/ \(([A-Z]+)\)$/, " $1"));
+  const w = label.split(" "), [a, b] = w.pop().split("→"), st = w.join(" "); return [st + " " + a, st + " " + b];
+}
+function selectJ(j) {
+  curJ = j; const d = D.diagrams.find(x => x.j === j);
+  document.querySelectorAll("#jlist button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.j === j));
+  $("#j-title").textContent = d.name;
+  $("#j-sub").textContent = `${fmt(d.trams)} tram passages a day · ${fmt(d.tram_h, 1)} tram-hours standing · ~${fmt(d.pax_h)} passenger-hours (estimate)`;
+  const R = 300, s = [];
+  s.push(`<svg viewBox="${-R} ${-R} ${2 * R} ${2 * R}" role="img" aria-label="Movements at ${esc(d.name)}">`);
+  s.push(`<circle cx="0" cy="0" r="230" fill="none" stroke="${C.grid}" stroke-dasharray="3 5"/>`);
+  for (const t of d.tracks) s.push(`<polyline points="${t.map(p => p.join(",")).join(" ")}" fill="none" stroke="${C.net}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>`);
+  const mv = d.moves.map((m, i) => ({...m, i})).sort((a, b) => b.trams - a.trams);
+  for (const m of mv) {
+    if (m.path.length < 2) continue;
+    const w = 2.5 + m.trams / 70, col = waitCol(m.stand_s);
+    const p = offsetPath(m.path, 5 + w / 2);
+    const [ax, ay] = p[p.length - 1], [bx, by] = p[Math.max(0, p.length - 3)];
+    let dx = ax - bx, dy = ay - by; const n = Math.hypot(dx, dy) || 1; dx /= n; dy /= n;
+    const hl = w * 2.2 + 6, hw = w * 1.4 + 4;
+    const body = p.slice(0, -1).map(q => q.join(",")).join(" ") + ` ${ax - dx * hl * .6},${ay - dy * hl * .6}`;
+    s.push(`<g data-i="${m.i}" class="mvg"><polyline class="mvb" points="${body}" fill="none" stroke="${C.surface}" stroke-width="${w + 3}" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline class="mv" points="${body}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer"/>
+      <polygon points="${ax},${ay} ${ax - dx * hl - dy * hw},${ay - dy * hl + dx * hw} ${ax - dx * hl + dy * hw},${ay - dy * hl - dx * hw}" fill="${col}" stroke="${C.surface}" stroke-width="1.5"/></g>`);
+  }
+  // arm labels
+  const arms = [];
+  for (const m of d.moves) { const [a, b] = armNames(m.label);
+    [[m.path[0], a], [m.path[m.path.length - 1], b]].forEach(([pt, name]) => { if (!pt) return; if (!arms.some(q => Math.hypot(q.pt[0] - pt[0], q.pt[1] - pt[1]) < 70)) arms.push({pt, name}); }); }
+  for (const a of arms) { const [x, y] = a.pt, r = Math.hypot(x, y) || 1, k = Math.min(1, 252 / r);
+    const tx = x * k + (x / r) * 8, ty = y * k + (y / r) * 14; const anc = Math.abs(tx) < 60 ? "middle" : (tx > 0 ? "end" : "start");
+    const cx = Math.max(-R + 6, Math.min(R - 6, tx));
+    s.push(`<text x="${anc === "end" ? Math.min(cx, R - 6) : cx}" y="${Math.max(-R + 16, Math.min(R - 6, ty))}" text-anchor="${anc === "end" ? "end" : anc === "start" ? "start" : "middle"}" font-size="15" font-weight="600" style="fill:${C.ink}">${esc(a.name)}</text>`); }
+  s.push(`<g transform="translate(${R - 70},${R - 20})"><line x1="0" y1="0" x2="50" y2="0" stroke="${C.muted}" stroke-width="2"/><text x="25" y="-6" text-anchor="middle" font-size="12">50 m</text></g>`);
+  s.push(`<text x="${-R + 8}" y="${-R + 18}" font-size="12">N ↑</text></svg>`);
+  $("#diag").innerHTML = s.join("");
+  const rows = [...d.moves].map((m, i) => ({...m, i})).sort((a, b) => b.tram_h - a.tram_h);
+  $("#j-table").innerHTML = `<tr><th>Movement</th><th>Lines → destinations</th><th class="r">Trams</th><th class="r">Stop rate</th><th class="r">Per tram</th><th class="r">Wait if stopped</th><th class="r">Tram-h</th><th class="r">Pax-h</th></tr>` +
+    rows.map(m => `<tr data-i="${m.i}"><td>${esc(m.label)}${m.plat ? " ◐" : ""}</td><td>${badges(m.lines)}<span class="sub">${esc(m.dest.slice(0, 5).join(" · "))}</span></td><td class="r">${fmt(m.trams)}</td>
+      <td class="r">${pct(m.stop_rate)}<span class="meter" style="width:${Math.round(m.stop_rate * 40)}px"></span>${m.peak_stop_rate != null ? `<span class="sub">peak ${pct(m.peak_stop_rate)}</span>` : ""}</td>
+      <td class="r">${fmt(m.stand_s)} s</td><td class="r">${fmt(m.wait_s)} s</td><td class="r">${fmt(m.tram_h, 1)}</td><td class="r">${fmt(m.pax_h)}</td></tr>`).join("");
+  const hl = i => { document.querySelectorAll("#diag .mvg").forEach(g => g.style.opacity = i == null || +g.dataset.i === i ? 1 : .18);
+    document.querySelectorAll("#j-table tr[data-i]").forEach(t => t.classList.toggle("hl", +t.dataset.i === i)); };
+  document.querySelectorAll("#diag .mvg").forEach(g => { const m = d.moves[+g.dataset.i];
+    g.onmouseenter = e => { hl(m && +g.dataset.i); }; g.onmousemove = e => showTip(e, `<b>${esc(m.label)}</b><br>${badges(m.lines)}<br>${fmt(m.trams)} trams · ${pct(m.stop_rate)} stop · ${fmt(m.stand_s)} s per tram · ${fmt(m.tram_h, 1)} tram-h`);
+    g.onmouseleave = () => { hl(null); hideTip(); }; });
+  document.querySelectorAll("#j-table tr[data-i]").forEach(t => { t.onmouseenter = () => hl(+t.dataset.i); t.onmouseleave = () => hl(null); });
+}
+$("#mv-table").innerHTML = `<tr><th>#</th><th>Junction</th><th>Movement</th><th>Lines</th><th class="r">Trams</th><th class="r">Stop rate</th><th class="r">Per tram</th><th class="r">Tram-h</th><th class="r">Pax-h</th></tr>` +
+  D.movements.slice(0, 25).map((m, i) => `<tr><td class="r">${i + 1}</td><td>${esc(m.name)}</td><td>${esc(m.movement)}${m.plat ? " ◐" : ""}</td><td>${badges(m.lines)}</td><td class="r">${fmt(m.trams)}</td>
+    <td class="r">${pct(m.stop_rate)}</td><td class="r">${fmt(m.stand_s)} s</td><td class="r">${fmt(m.tram_h, 1)}</td><td class="r">${fmt(m.pax_h)}</td></tr>`).join("");
+
+// ======================================================================= CORRIDOR EFFICIENCY
+function effChart() {
+  const cs = corrSorted, rowH = 30, top = 26, L = 230, Rr = 70, Wd = 1000, H2 = top + cs.length * rowH + 10;
+  const maxM = Math.max(...CD.map(o => o.d.min_per_km.moving + o.d.min_per_km.platform + o.d.min_per_km.line));
+  const sx = v => L + v / Math.ceil(maxM) * (Wd - L - Rr);
+  const svg = $("#eff"); svg.setAttribute("viewBox", `0 0 ${Wd} ${H2}`); svg.style.minWidth = "640px";
+  const s = [];
+  for (let v = 0; v <= Math.ceil(maxM); v++) s.push(`<line class="gridl" x1="${sx(v)}" x2="${sx(v)}" y1="${top - 6}" y2="${H2 - 6}"/><text x="${sx(v)}" y="${top - 12}" text-anchor="middle" font-size="12" class="num">${v} min/km</text>`);
+  cs.forEach((c, i) => {
+    const y = top + i * rowH, lines = [...new Set(Object.values(c.dirs).flatMap(d => d.lines))].sort((a, b) => a.length - b.length || a.localeCompare(b));
+    s.push(`<text x="${L - 10}" y="${y + 12}" text-anchor="end" font-size="13.5" font-weight="600" style="fill:${C.ink}">${esc(c.street)}</text>`);
+    s.push(`<text x="${L - 10}" y="${y + 25}" text-anchor="end" font-size="10.5">${esc(lines.join(" "))}</text>`);
+    ["out", "in"].forEach((k, j) => { const d = c.dirs[k]; if (!d) return; const yy = y + 2 + j * 12; let x = L;
+      [["moving", C.move], ["platform", C.plat], ["line", C.lost]].forEach(([part, col], q) => { const w = sx(d.min_per_km[part]) - L;
+        s.push(`<rect x="${x}" y="${yy}" width="${Math.max(0, w - 2)}" height="10" rx="${q === 2 ? 3 : 0}" fill="${col}" data-c="${c.cid}" data-k="${k}"/>`); x += w; });
+      s.push(`<text x="${x + 6}" y="${yy + 9}" font-size="11" class="num">${fmt(d.avg_kmh, 1)} km/h ${k === "out" ? "↗" : "↙"}</text>`); });
+  });
+  svg.innerHTML = s.join("");
+  svg.querySelectorAll("rect").forEach(r => { const c = D.corridors.find(x => x.cid === +r.dataset.c), d = c.dirs[r.dataset.k];
+    r.onmousemove = e => showTip(e, `<b>${esc(c.street)}</b> · ${r.dataset.k === "out" ? "away from centre (towards " + c.out_compass + ")" : "towards centre"}<br>${fmt(c.len_m / 1000, 1)} km · ${fmt(d.runs)} trams/day · ${badges(d.lines)}<br>
+      moving ${fmt(d.min_per_km.moving, 2)} · platforms ${fmt(d.min_per_km.platform, 2)} · standing elsewhere <b>${fmt(d.min_per_km.line, 2)}</b> min/km<br>average ${fmt(d.avg_kmh, 1)} km/h · ${fmt(d.tram_h_line, 1)} tram-h/day standing elsewhere`);
+    r.onmouseleave = hideTip; });
+  $("#eff-legend").innerHTML = `<span><span class="sw" style="background:var(--move)"></span>moving</span><span><span class="sw" style="background:var(--plat)"></span>standing at platforms</span><span><span class="sw" style="background:var(--lost)"></span>standing elsewhere (signals, queues)</span>`;
+}
+const p = id => CD.find(o => o.c.street === id);
+{
+  const g = n => D.corridors.find(c => c.street.startsWith(n));
+  const pul = g("Puławska"), gro = g("Grójecka"), swi = g("Światowida"), sob = g("Sobieskiego");
+  const sp = c => c ? `${fmt(c.dirs.out?.avg_kmh, 0)}/${fmt(c.dirs.in?.avg_kmh, 0)} km/h` : "";
+  const ln = c => c ? `${fmt(c.dirs.out?.min_per_km.line, 2)}/${fmt(c.dirs.in?.min_per_km.line, 2)}` : "";
+  $("#c-intro").innerHTML = `Each street that carries trams for at least 1.2 km is one corridor, all lines on it pooled. Your guess holds:
+    ${swi ? `Światowida (${sp(swi)} out/in)` : ""} and ${sob ? `Sobieskiego (${sp(sob)})` : ""} are among the fastest, ${pul ? `Puławska (${sp(pul)})` : ""} and ${gro ? `Grójecka (${sp(gro)})` : ""}
+    among the slowest; only Targowa, Marszałkowska, Woronicza and Towarowa are worse. Part of the gap is built in (stops are closer together in the centre, curves and switches), but
+    standing away from platforms is the part signal plans could fix: ${pul ? ln(pul) : ""} min per km on Puławska against ${swi ? ln(swi) : ""} on Światowida.`;
+}
+function scatter() {
+  const svg = $("#scatter"), L = 70, B = 390, Rr = 980, Tp = 20;
+  const maxX = Math.ceil(Math.max(...CD.map(o => o.d.peak_places_h)) / 1000) * 1000, minY = 10, maxY = 27;
+  const sx = v => L + v / maxX * (Rr - L), sy = v => B - (v - minY) / (maxY - minY) * (B - Tp);
+  const s = [];
+  for (let v = 0; v <= maxX; v += 2000) s.push(`<line class="gridl" x1="${sx(v)}" x2="${sx(v)}" y1="${Tp}" y2="${B}"/><text x="${sx(v)}" y="${B + 18}" text-anchor="middle" font-size="12" class="num">${fmt(v)}</text>`);
+  for (let v = 10; v <= maxY; v += 5) s.push(`<line class="gridl" x1="${L}" x2="${Rr}" y1="${sy(v)}" y2="${sy(v)}"/><text x="${L - 8}" y="${sy(v) + 4}" text-anchor="end" font-size="12" class="num">${v}</text>`);
+  s.push(`<text x="${(L + Rr) / 2}" y="${B + 40}" text-anchor="middle" font-size="12.5">places per hour, morning peak 07–09 →</text><text x="16" y="${(Tp + B) / 2}" transform="rotate(-90 16 ${(Tp + B) / 2})" text-anchor="middle" font-size="12.5">average km/h →</text>`);
+  const pts = CD.map(o => ({...o, x: sx(o.d.peak_places_h), y: sy(Math.max(minY, Math.min(maxY, o.d.avg_kmh))), r: 3 + Math.sqrt(o.d.pax_h_line) / 3.2})).sort((a, b) => b.r - a.r);
+  pts.forEach((o, i) => s.push(`<circle cx="${o.x}" cy="${o.y}" r="${o.r}" fill="${C.lost}" fill-opacity=".75" stroke="${C.surface}" stroke-width="2" data-i="${i}"/>`));
+  const lab = [...pts].sort((a, b) => b.d.pax_h_line - a.d.pax_h_line).slice(0, 9).concat(pts.filter(o => /Światowida|Sobieskiego/.test(o.c.street) && o.k === "in"));
+  const placed = [];
+  lab.forEach(o => { let ty = o.y - o.r - 5; while (placed.some(q => Math.abs(q.x - o.x) < 110 && Math.abs(q.y - ty) < 13)) ty -= 13;
+    placed.push({x: o.x, y: ty}); s.push(`<text x="${o.x}" y="${ty}" text-anchor="middle" font-size="12" style="fill:${C.ink}">${esc(o.c.street)} ${o.k === "out" ? "↗" : "↙"}</text>`); });
+  svg.innerHTML = s.join("");
+  svg.querySelectorAll("circle").forEach(cn => { const o = pts[+cn.dataset.i];
+    cn.onmousemove = e => showTip(e, `<b>${esc(o.c.street)}</b> ${o.k === "out" ? "away from centre" : "towards centre"}<br>${fmt(o.d.peak_places_h)} places/h (${fmt(o.d.peak_tph, 0)} trams/h) in the peak<br>${fmt(o.d.avg_kmh, 1)} km/h · ~${fmt(o.d.pax_h_line)} passenger-h/day standing elsewhere`);
+    cn.onmouseleave = hideTip; });
+}
+
+// ======================================================================= PROFILES
+let pfSet = "slow", pfPer = "day";
+const smooth = a => a.map((v, i) => { const w = [a[i - 1], v, a[i + 1]].filter(x => x != null); return v == null ? null : w.reduce((p, q) => p + q, 0) / w.length; });
+function profiles() {
+  const cs = pfSet === "all" ? corrSorted : pfSet === "fast" ? corrSorted.slice(0, 8) : corrSorted.slice(-8).reverse();
+  const maxL = Math.max(...D.corridors.map(c => c.len_m)), Lp = 170, Rp = 990, Wd = 1000, ph = 92, yMax = 45;
+  const sx = m => Lp + m / maxL * (Rp - Lp);
+  const box = $("#prof"); box.innerHTML = "";
+  const axis = document.createElementNS(NS, "svg"); axis.setAttribute("viewBox", `0 0 ${Wd} 24`);
+  let ax = ""; for (let k = 0; k <= maxL / 1000; k++) ax += `<text x="${sx(k * 1000)}" y="16" text-anchor="middle" font-size="12" class="num">${k} km</text>`;
+  axis.innerHTML = ax; box.appendChild(axis);
+  for (const c of cs) {
+    const svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", `0 0 ${Wd} ${ph}`);
+    const sy = v => ph - 14 - Math.min(v, yMax) / yMax * (ph - 26);
+    const s = [`<rect x="${Lp}" y="0" width="${sx(c.len_m) - Lp}" height="${ph - 12}" fill="${C.bg}"/>`];
+    [15, 30, 45].forEach(v => s.push(`<line class="gridl" x1="${Lp}" x2="${sx(c.len_m)}" y1="${sy(v)}" y2="${sy(v)}"/><text x="${Lp - 4}" y="${sy(v) + 4}" text-anchor="end" font-size="10" class="num">${v}</text>`));
+    s.push(`<text x="0" y="22" font-size="14" font-weight="600" style="fill:${C.ink}">${esc(c.street)}</text><text x="0" y="40" font-size="11.5" class="num">${fmt(avgOf(c), 1)} km/h avg</text><text x="0" y="56" font-size="11">${fmt(c.len_m / 1000, 1)} km, out = ${c.out_compass}</text>`);
+    (c.signals || []).forEach(m => s.push(`<path d="M${sx(m)} 2 l4 4 l-4 4 l-4 -4z" fill="${C.muted}"/>`));
+    const stops = (c.dirs.out || c.dirs.in).stops;
+    stops.forEach(([n, m]) => s.push(`<line x1="${sx(m)}" x2="${sx(m)}" y1="${ph - 12}" y2="${ph - 4}" stroke="${C.ink2}"/>`));
+    ["in", "out"].forEach(k => { const d = c.dirs[k]; if (!d) return; const a = smooth(pfPer === "peak" ? d.speed_peak : d.speed); let path = "", pen = false;
+      a.forEach((v, i) => { if (v == null) { pen = false; return; } const x = sx((i + .5) * 50), y = sy(v); path += (pen ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1); pen = true; });
+      s.push(`<path d="${path}" fill="none" stroke="${k === "out" ? C["c-out"] : C["c-in"]}" stroke-width="2" stroke-linejoin="round"/>`); });
+    s.push(`<line class="xh" x1="0" x2="0" y1="0" y2="${ph - 12}" stroke="${C.ink2}" stroke-dasharray="2 3" visibility="hidden"/><rect class="hit" x="${Lp}" y="0" width="${sx(c.len_m) - Lp}" height="${ph}" fill="transparent"/>`);
+    svg.innerHTML = s.join(""); box.appendChild(svg);
+    const xh = svg.querySelector(".xh");
+    svg.querySelector(".hit").onmousemove = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const q = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const m = (q.x - Lp) / (Rp - Lp) * maxL, b = Math.floor(m / 50); xh.setAttribute("x1", q.x); xh.setAttribute("x2", q.x); xh.setAttribute("visibility", "visible");
+      const v = k => { const d = c.dirs[k]; if (!d) return null; const a = smooth(pfPer === "peak" ? d.speed_peak : d.speed); return a[b]; };
+      const ns = stops.reduce((best, s2) => Math.abs(s2[1] - m) < Math.abs(best[1] - m) ? s2 : best, stops[0] || ["", 1e9]);
+      showTip(e, `<b>${esc(c.street)}</b> · ${fmt(m / 1000, 2)} km<br><span style="color:var(--c-out)">■</span> out ${fmt(v("out"), 0)} km/h &nbsp; <span style="color:var(--c-in)">■</span> in ${fmt(v("in"), 0)} km/h<br>nearest stop: ${esc(ns[0])} (${fmt(Math.abs(ns[1] - m))} m)`); };
+    svg.querySelector(".hit").onmouseleave = () => { xh.setAttribute("visibility", "hidden"); hideTip(); };
+  }
+}
+document.querySelectorAll("#pf-set button").forEach(b => b.onclick = () => { pfSet = b.dataset.v; document.querySelectorAll("#pf-set button").forEach(x => x.setAttribute("aria-pressed", x === b)); profiles(); });
+document.querySelectorAll("#pf-per button").forEach(b => b.onclick = () => { pfPer = b.dataset.v; document.querySelectorAll("#pf-per button").forEach(x => x.setAttribute("aria-pressed", x === b)); profiles(); });
+
+// ======================================================================= HEATMAP
+$("#hm-c").innerHTML = [...corrSorted].reverse().map(c => `<option value="${c.cid}">${esc(c.street)} (${fmt(avgOf(c), 1)} km/h)</option>`).join("");
+{ const pl = D.corridors.find(c => c.street.startsWith("Puławska")); if (pl) $("#hm-c").value = pl.cid; }
+$("#hm-c").onchange = heat;
+function heat() {
+  const c = D.corridors.find(x => x.cid === +$("#hm-c").value), svg = $("#heat");
+  const ks = ["out", "in"].filter(k => c.dirs[k]), nb = Math.ceil(c.len_m / 100), Lh = 110, Rh = 990, rowH = 11, hours = c.dirs[ks[0]].hours;
+  const cw = (Rh - Lh) / nb, blockH = hours.length * rowH, gap = 92;
+  const H2 = 30 + ks.length * (blockH + gap);
+  svg.setAttribute("viewBox", `0 0 1000 ${H2}`);
+  const s = [];
+  ks.forEach((k, bi) => { const d = c.dirs[k], y0 = 24 + bi * (blockH + gap);
+    s.push(`<text x="0" y="${y0 - 8}" font-size="13" font-weight="600" style="fill:${C.ink}">${k === "out" ? "Away from centre ↗ (towards " + c.out_compass + ")" : "Towards centre ↙"} · lines ${d.lines.join(" ")}</text>`);
+    d.grid.forEach((row, hi) => { const y = y0 + hi * rowH; if (hours[hi] % 2 === 0) s.push(`<text x="${Lh - 8}" y="${y + 9}" text-anchor="end" font-size="10.5" class="num">${String(hours[hi]).padStart(2, "0")}:00</text>`);
+      row.forEach((v, b) => { if (v == null) return; s.push(`<rect x="${(Lh + b * cw).toFixed(1)}" y="${y}" width="${Math.max(.5, cw - 1).toFixed(1)}" height="${rowH - 1}" fill="${speedCol(v)}" data-k="${k}" data-h="${hours[hi]}" data-b="${b}" data-v="${v}"/>`); }); });
+    const yb = y0 + blockH + 4; let lastX = -99;
+    d.stops.forEach(([n, m]) => { const x = Lh + m / 100 * cw; s.push(`<line x1="${x}" x2="${x}" y1="${y0}" y2="${yb}" stroke="${C.ink}" stroke-opacity=".25"/>`);
+      if (x - lastX > 14) { s.push(`<text transform="translate(${x + 3},${yb + 6}) rotate(50)" font-size="10">${esc(n)}</text>`); lastX = x; } });
+  });
+  svg.innerHTML = s.join("");
+  svg.querySelectorAll("rect").forEach(r => { r.onmousemove = e => showTip(e, `${esc(c.street)} · ${r.dataset.k === "out" ? "out" : "in"}<br>${r.dataset.h}:00–${+r.dataset.h + 1}:00 · ${fmt(+r.dataset.b / 10, 1)}–${fmt((+r.dataset.b + 1) / 10, 1)} km<br><b>${fmt(+r.dataset.v, 0)} km/h</b>`); r.onmouseleave = hideTip; });
+}
+
+// ======================================================================= SLOW + METHOD
+$("#slow-table").innerHTML = `<tr><th>Street</th><th>Heading</th><th>Lines</th><th class="r">Length</th><th class="r">p85 moving speed</th><th class="r">Trams/day</th><th class="r">Lost per tram</th><th class="r">Tram-h/day</th></tr>` +
+  D.slow.slice(0, 15).map(r => `<tr><td>${esc(r.street)}</td><td>${esc(r.dir)}</td><td>${badges(String(r.lines).split(" "))}</td><td class="r">${fmt(r.len_m)} m</td><td class="r">${fmt(r.p85, 0)} km/h</td><td class="r">${fmt(r.trips)}</td><td class="r">${fmt(r.lost_s_per_tram, 0)} s</td><td class="r">${fmt(r.tram_h, 2)}</td></tr>`).join("");
+$("#method").innerHTML = [
+  `Junctions: OSM traffic-signal nodes within 18 m of a tram route, clustered within 45 m (${fmt(T.n_junctions)} junctions). For each route through a junction, the entry arm is the street the track runs on 100 m before the first signal, the exit arm 100 m after the last.`,
+  `A stand-still away from a platform is charged to the first junction downstream within 120 m, so nothing is counted twice. Movements with fewer than 30 trams a day are left out.`,
+  `Corridors: the street name of the nearest OSM road (smoothed over ±120 m), split into separate stretches; reference line = the longest observed run of one route; every interval of every line is placed on it by its position. Speed = distance ÷ time over all trams in a 50 m bin (stops included).`,
+  `Map: 80 m cells per travel direction and half hour, platform dwell excluded; capacity = places of trams passing 07–09 ÷ 2, from each tram's fleet number.`,
+  `Passenger-hours use an assumed load factor (${Math.round(D.load_factor.peak * 100)} % of places in the peaks, ${Math.round(D.load_factor.offpeak * 100)} % otherwise). Everything else is measured. One Tuesday only; termini and incidents over 8 min excluded.`,
+  `Scripts: live/analysis/network.py → corridors.py → report_corridors.py (Python 3.11).`,
+].map(t => `<li>${t}</li>`).join("");
+
+// ---------- boot
+function renderAll() { readTokens(); paintRamps(); mapLegend(); draw(); effChart(); scatter(); profiles(); heat(); if (curJ != null) selectJ(curJ); }
+readTokens(); paintRamps(); setSlot(slotI); setLayer("speed");
+new ResizeObserver(() => resize()).observe(mw);
+selectJ(D.diagrams[0].j); effChart(); scatter(); profiles(); heat();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
+new MutationObserver(renderAll).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
+</script>

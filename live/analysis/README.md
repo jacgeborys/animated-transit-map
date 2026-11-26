@@ -52,6 +52,26 @@ GTFS `fleet_type` is the *planned* type; actual type comes from the vehicle numb
 
 Report: https://claude.ai/artifact/Wrj38hkTvnX8opgUAxGT7w (private artifact) — standalone copy `_output/tram_report_<date>.html`.
 
+## Part 2 — junction movements, corridors, animated map (`network.py` → `corridors.py` → `report_corridors.py`)
+| # | Script | Output | Time |
+|---|--------|--------|------|
+| 7a | `network.py` | `_cache/net_samples_<date>.parquet`: every shape every 10 m with the OSM street it runs on (±120 m mode) | ~10 s |
+| 7b | `corridors.py` | `_output/corridors_<date>.json`, `movements_<date>.csv`, `corridors_<date>.csv`, `slow_<date>.csv` | ~1 min |
+| 7c | `report_corridors.py` | `_output/tram_corridors_<date>.html` (from `report_corridors_template.html`) | <1 s |
+
+- **Movements**: OSM signals ≤ 18 m from tram tracks, DBSCAN 45 m → 505 junctions. Entry/exit arm = street + compass 100 m before/after.
+  A line stand-still is charged to the first junction downstream within 120 m (no double counting). 410 of 467 line-standing h fall there.
+- **Corridors**: streets with > 600 tram-km/day, parts ≥ 1.2 km; 0 = end nearer PKiN; speed in 50 m bins, hour × 100 m grid.
+  Peak capacity = busiest 50 m section, distinct trams 07–09 ÷ 2 × places.
+- **Slow stretches**: 40 m directional cells, p85 moving speed < 25 km/h, > 70 m from stops; lost time vs 35 km/h.
+- **Map**: 80 m directional cells × 30 min, speed without platform dwell; arrows = top 60 movements.
+
+Findings: costliest junction Rondo Kercelak (Okopowa × Solidarności, 21 tram-h/day, all movements 76–95 % stop); worst movement
+Rakowiecka (W) → Al. Niepodległości (N) 97 % stop, 89 s/tram; at Rakowiecka × Puławska only Puławska northbound matters (84 %, 79 s) —
+trams from Goworka/Spacerowa lose another 41 s just before at Goworka × Puławska. Corridors: Światowida 24–25 km/h, Sobieskiego 21–23,
+Puławska 15–16, Grójecka 14–15, Targowa 12 (slowest). Puławska's slow spots are the same all day (signals, not traffic).
+Report: https://claude.ai/artifact/9zjp4u1NUADTCoFtG8784f (private) — standalone `_output/tram_corridors_<date>.html`.
+
 ## Next
 Buses through the same pipeline; a full week incl. Saturday; before/after around a junction retune; ZTM stop-level
 boardings instead of the load-factor assumption.
