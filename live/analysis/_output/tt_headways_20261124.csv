@@ -1,0 +1,53 @@
+line,dir,headsign,stop,deps_observed,deps_sched,sched_headway_min,awt_sched_min,awt_act_min,bunched_pct,gaps_pct,cv,ewt_min
+19,0,Stegny,Hala Mirowska,73,76,10.0,6.2,8.01,9.72,16.67,0.64,1.81
+19,1,Nowe Bemowo,Hala Mirowska,80,84,8.0,5.41,6.55,7.59,34.18,0.5,1.14
+23,1,Nowe Bemowo,Długosza,86,87,8.0,5.05,6.07,9.41,27.06,0.48,1.02
+20,1,Żerań FSO,Młynarska,87,88,8.0,5.04,6.0,11.63,30.23,0.49,0.96
+33,0,Metro Młociny,Rondo „Radosława”,80,83,10.0,5.28,6.2,6.33,5.06,0.43,0.92
+17,1,Winnica,Stawki,169,171,4.0,2.63,3.44,13.69,29.17,0.62,0.81
+15,0,P+R Al. Krakowska,Pl. Politechniki,84,85,8.0,5.34,6.09,8.43,28.92,0.46,0.75
+11,0,Sielce,Dw. Centralny,45,47,12.0,14.32,15.06,4.55,36.36,0.78,0.74
+16,1,Piaski,Hoża,151,156,5.0,2.87,3.56,9.33,22.0,0.53,0.69
+33,1,Kielecka,Rondo „Radosława”,77,78,11.0,5.88,6.55,14.47,9.21,0.45,0.67
+23,0,Czynszowa,Długosza,84,86,8.0,5.11,5.77,6.02,27.71,0.42,0.66
+2,1,Winnica,Myśliborska,131,132,6.0,4.71,5.31,32.31,26.92,0.82,0.6
+22,0,Wiatraczna,Pl. Zawiszy,79,80,11.0,5.49,6.06,5.13,3.85,0.4,0.57
+17,0,PKP Służewiec,Stawki,85,86,9.0,5.08,5.64,9.52,21.43,0.38,0.56
+18,0,PKP Służewiec,Hoża,86,87,8.0,5.03,5.59,7.06,25.88,0.38,0.56
+4,1,Żerań Wschodni,Metro Ratusz Arsenał,86,87,8.0,5.02,5.57,5.88,29.41,0.41,0.55
+24,0,Gocławek,Pl. Zawiszy,80,82,8.0,5.7,6.21,5.06,32.91,0.45,0.51
+6,1,Metro Młociny,Rondo Starzyńskiego,71,75,9.0,6.21,6.68,0.0,28.57,0.4,0.47
+2,0,Metro Młociny,Tarchomin,169,171,4.0,2.58,3.01,2.98,25.0,0.46,0.44
+6,0,Gocławek,Rondo Starzyńskiego,74,77,8.0,6.49,6.91,1.37,36.99,0.46,0.42
+20,0,Boernerowo,Zajezdnia Wola,84,85,9.0,5.16,5.54,1.2,15.66,0.33,0.39
+28,1,Os. Górczewska,Włościańska,84,84,8.0,5.38,5.76,8.43,34.94,0.39,0.38
+14,1,Banacha,Goworka,83,85,9.0,5.15,5.53,1.22,10.98,0.31,0.37
+26,1,Metro Młociny,Sowińskiego,83,83,9.0,5.26,5.62,6.1,15.85,0.35,0.37
+10,1,Os. Górczewska,Rondo ONZ,82,82,8.0,5.64,6.0,3.7,32.1,0.41,0.36
+4,0,Al. Lotników,Pl. Bankowy,88,90,8.0,4.9,5.26,2.3,25.29,0.32,0.35
+3,0,Gocławek,Kijowska,86,88,8.0,4.95,5.3,1.18,17.65,0.31,0.35
+16,0,Miasteczko Wilanów,Centrum,76,77,12.0,5.87,6.19,14.67,5.33,0.37,0.31
+9,1,Gocławek,Pl. Starynkiewicza,170,171,4.0,2.58,2.87,7.69,26.63,0.4,0.29
+26,0,Wiatraczna,Fort Wola,85,85,8.0,5.41,5.69,7.14,32.14,0.39,0.28
+15,1,Marymont-Potok,Pl. Politechniki,90,90,8.0,4.92,5.2,5.62,19.1,0.34,0.27
+3,1,Annopol,Al. Zieleniecka,88,90,8.0,4.92,5.19,3.45,20.69,0.3,0.27
+28,0,Dw. Wschodni (Kijowska),Pl. Grunwaldzki,87,87,8.0,5.06,5.31,2.33,22.09,0.32,0.25
+22,1,Piaski,Pl. Zawiszy,86,86,8.0,5.04,5.29,1.18,21.18,0.32,0.25
+18,1,Żerań FSO,Pl. Konstytucji,90,90,8.0,4.92,5.16,2.25,22.47,0.32,0.24
+11,1,Nowe Bemowo,Dw. Centralny,95,95,8.0,4.92,5.15,14.89,21.28,0.41,0.23
+1,1,Annopol,Dzielna,89,89,8.0,5.01,5.22,5.68,23.86,0.33,0.21
+7,1,Banacha,Muzeum Narodowe,85,86,8.0,5.07,5.28,0.0,25.0,0.27,0.2
+1,0,P+R Al. Krakowska,Cm. Żydowski,89,89,8.0,5.12,5.31,4.55,19.32,0.36,0.19
+10,0,Al. Lotników,Dw. Centralny,81,81,8.0,5.61,5.8,5.0,25.0,0.37,0.19
+25,1,Pl. Narutowicza,Ząbkowska,84,85,10.0,5.17,5.35,1.2,1.2,0.25,0.17
+13,0,Cm. Wolski,Metro Ratusz Arsenał,85,85,8.0,5.13,5.29,1.19,22.62,0.27,0.16
+27,0,Cm. Wolski,Żytnia,85,86,8.0,5.09,5.24,0.0,23.81,0.25,0.15
+13,1,Kawęczyńska - Bazylika,Kino Femina,86,86,8.0,5.13,5.26,2.35,22.35,0.28,0.13
+31,0,PKP Służewiec,Samochodowa,84,84,8.0,5.25,5.38,2.41,25.3,0.3,0.13
+24,1,Nowe Bemowo,Pl. Zawiszy,85,85,8.0,5.33,5.46,1.19,27.38,0.32,0.13
+9,0,P+R Al. Krakowska,Dw. Centralny,87,87,8.0,5.11,5.23,2.33,22.09,0.29,0.12
+7,0,Kawęczyńska - Bazylika,Centrum,89,89,8.0,4.96,5.06,0.0,20.45,0.27,0.1
+27,1,Metro Marymont,Żytnia,85,85,8.0,5.14,5.24,0.0,25.0,0.26,0.1
+14,0,Miasteczko Wilanów,Pl. Unii Lubelskiej,84,84,9.0,5.21,5.3,0.0,10.84,0.25,0.08
+31,1,Metro Wilanowska,Woronicza,85,85,8.0,5.2,5.27,0.0,21.43,0.26,0.07
+25,0,Annopol,Ząbkowska,83,83,9.5,5.2,5.26,1.22,1.22,0.24,0.06

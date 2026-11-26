@@ -1,0 +1,432 @@
+loc,name,save_h_day,pax_h_day,passes,stop_prob,lines,towards,x,y
+12761_9690_h2,Puławska × Rakowiecka,8.561,620.805,337,0.92,"4,10,11,18",Cm. Wolski / Os. Górczewska / Sielce,638061.0,484544.0
+12742_9685_h1,Rakowiecka × Aleja Niepodległości,7.446,513.893,305,0.974,"17,33",Metro Młociny / Winnica,637144.0,484283.0
+12699_9691_h1,Grójecka × Stefana Banacha,7.434,504.359,421,0.843,"1,9,15",Annopol / Gocławek / Marymont-Potok,634985.0,484584.0
+12776_9792_h7,Targowa × Aleja „Solidarności”,7.171,479.706,711,0.677,"3,4,6,20,23,25,28",Al. Lotników / Boernerowo / Dw. Wschodni (Kijowska),638828.0,489611.0
+12715_9722_h1,Plac Artura Zawiszy × Grójecka,6.563,461.463,616,0.805,"1,7,9,25",Annopol / Gocławek / Kawęczyńska - Bazylika,635787.0,486136.0
+12733_9729_h2,Rondo Czterdziestolatka × Tytusa Chałubińskiego,5.378,392.747,631,0.528,"10,11,17,19,33",Cm. Wolski / Metro Młociny / Nowe Bemowo,636697.0,486491.0
+12761_9693_h4,Goworka × Puławska,4.511,379.755,391,0.79,"11,14,16",Banacha / Cm. Wolski / Piaski,638061.0,484685.0
+12761_9698_h2,Puławska × Plac Unii Lubelskiej,3.774,294.02,723,0.607,"4,10,11,14,16,18",Banacha / Cm. Wolski / Os. Górczewska,638055.0,484934.0
+12775_9793_h7,Targowa × Świętych Cyryla i Metodego,4.165,271.579,713,0.504,"3,4,6,20,23,25,28",Al. Lotników / Boernerowo / Dw. Wschodni (Kijowska),638784.0,489678.0
+12728_9741_h3,Rondo ONZ × Aleja Jana Pawła II,3.668,266.445,412,0.65,"17,19,33",Metro Młociny / Nowe Bemowo / Winnica,636445.0,487068.0
+12700_9692_h3,Stefana Banacha × Grójecka,3.273,265.06,313,0.958,"1,7,14",Kawęczyńska - Bazylika / Miasteczko Wilanów / Żerań Wschodni,635044.0,484601.0
+12716_9723_h1,Plac Artura Zawiszy × Aleje Jerozolimskie,3.225,231.06,397,0.73,"7,9,25",Annopol / Gocławek / Kawęczyńska - Bazylika,635848.0,486183.0
+12730_9766_h1,Aleja „Solidarności” × Generała Władysława Andersa,3.46,218.025,403,0.866,"13,20,23,26",Czynszowa / Kawęczyńska - Bazylika / Wiatraczna,636545.0,488345.0
+12732_9730_h1,Aleje Jerozolimskie × Rondo Czterdziestolatka,2.891,199.242,613,0.351,"7,9,22,24,25",Annopol / Gocławek / Kawęczyńska - Bazylika,636646.0,486504.0
+12754_9717_h7,Plac Konstytucji × Marszałkowska,2.712,197.94,501,0.739,"4,15,16,18",Al. Lotników / Miasteczko Wilanów / P+R Al. Krakowska,637716.0,485882.0
+12703_9749_h2,Okopowa × Rondo Kercelak,2.765,189.193,301,0.837,"1,22",Annopol / Piaski,635185.0,487467.0
+12727_9741_h0,Rondo ONZ × Prosta,2.266,184.296,218,0.885,"10,11",Al. Lotników / Sielce,636376.0,487094.0
+12775_9796_h5,11 Listopada × Targowa,2.574,183.383,425,0.821,"3,4,18,23,25",Al. Lotników / Gocławek / Nowe Bemowo,638750.0,489833.0
+12638_9886_h5,Książąt Mazowieckich × Zgrupowania AK „Kampinos”,2.199,177.496,234,0.748,"2,6",Metro Młociny,631922.0,494346.0
+12754_9717_h2,Marszałkowska × Plac Konstytucji,2.322,173.273,507,0.531,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,637726.0,485857.0
+12751_9723_h3,Marszałkowska,2.333,173.03,507,0.657,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,637582.0,486189.0
+12750_9727_h6,Marszałkowska,2.286,171.858,502,0.448,"4,15,16,18",Al. Lotników / Miasteczko Wilanów / P+R Al. Krakowska,637505.0,486383.0
+12702_9691_h4,Stefana Banacha,2.41,171.012,313,0.888,"1,7,14",Kawęczyńska - Bazylika / Miasteczko Wilanów / Żerań Wschodni,635138.0,484563.0
+12760_9694_h7,Puławska × Goworka,2.004,167.453,258,0.671,"14,16",Miasteczko Wilanów,638015.0,484702.0
+12704_9788_h1,Okopowa × Rondo Zgrupowania AK „Radosław”,2.476,161.633,410,0.673,"1,22,27",Annopol / Metro Marymont / Piaski,635227.0,489421.0
+12749_9729_h2,Marszałkowska,2.049,161.295,508,0.396,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,637476.0,486455.0
+12840_9772_h0,Grochowska,2.311,152.145,420,0.914,"3,6,22,26",Gocławek / Wiatraczna,642016.0,488648.0
+12693_9746_h7,Młynarska × Wolska,2.32,149.078,300,0.643,"20,23,24",Czynszowa / Gocławek / Żerań FSO,634667.0,487305.0
+12736_9642_h2,Wołoska,2.181,148.962,399,0.584,"17,18,31",Metro Wilanowska / Winnica / Żerań FSO,636815.0,482140.0
+12763_9620_h2,Puławska,1.961,147.276,210,0.867,"4,10",Os. Górczewska / Żerań Wschodni,638175.0,481029.0
+12835_9773_h0,Grochowska × Grenadierów,2.221,145.829,420,0.893,"3,6,22,26",Gocławek / Wiatraczna,641755.0,488666.0
+12775_9684_h3,Belwederska × Jurija Gagarina,1.854,145.401,393,0.542,"14,16,19",Banacha / Nowe Bemowo / Piaski,638750.0,484213.0
+12764_9624_h6,Aleja Wilanowska × Puławska,1.934,140.448,210,0.9,"4,10",Al. Lotników,638211.0,481210.0
+12611_9752_h0,Górczewska × Powstańców Śląskich,2.079,139.458,210,0.771,"10,28",Al. Lotników / Dw. Wschodni (Kijowska),630554.0,487614.0
+12746_9735_h5,Rondo Romana Dmowskiego × Aleje Jerozolimskie,1.909,134.0,217,0.668,"9,24,25",Nowe Bemowo / P+R Al. Krakowska / Pl. Narutowicza,637320.0,486760.0
+12773_9685_h0,Spacerowa × Belwederska,1.766,133.596,393,0.547,"11,14,16,19",Miasteczko Wilanów / Sielce / Stegny,638682.0,484252.0
+12766_9646_h3,Puławska × Jana Pawła Woronicza,2.061,133.333,307,0.658,"4,10,31",Os. Górczewska / PKP Służewiec / Żerań Wschodni,638346.0,482332.0
+12703_9750_h7,Okopowa × Rondo Kercelak,2.205,133.3,194,0.809,"22,27",Cm. Wolski / Wiatraczna,635154.0,487533.0
+12707_9790_h4,Zygmunta Słomińskiego × Rondo Zgrupowania AK „Radosław”,1.931,131.868,312,0.66,"1,28",Os. Górczewska / P+R Al. Krakowska,635350.0,489507.0
+12777_9791_h3,Targowa × Aleja „Solidarności”,2.196,130.91,206,0.699,"3,6,13,25,26,28",Annopol / Cm. Wolski / Metro Młociny,638861.0,489559.0
+12671_9729_h0,Marcina Kasprzaka × Rondo Tybetu,1.455,118.141,220,0.523,"10,11",Al. Lotników / Sielce,633593.0,486456.0
+12715_9724_h7,Plac Artura Zawiszy × Towarowa,1.741,117.312,200,0.825,1,P+R Al. Krakowska,635799.0,486209.0
+12760_9695_h6,Puławska × Ludwika Waryńskiego,1.357,108.691,711,0.387,"4,10,11,14,16,18",Al. Lotników / Miasteczko Wilanów / PKP Służewiec,638011.0,484798.0
+12726_9749_h6,Aleja Jana Pawła II × Grzybowska,1.481,103.806,410,0.378,"17,19,33",Kielecka / PKP Służewiec / Stegny,636326.0,487455.0
+12792_9777_h7,Jana Zamoyskiego × Targowa,1.395,92.764,509,0.462,"3,6,7,25,26",Banacha / Gocławek / Pl. Narutowicza,639617.0,488897.0
+12704_9788_h5,Rondo Zgrupowania AK „Radosław” × Okopowa,1.539,86.229,206,0.898,"22,27",Cm. Wolski / Wiatraczna,635238.0,489445.0
+12704_9750_h5,Aleja „Solidarności” × Rondo Kercelak,1.216,84.088,107,0.925,"13,23,26",Cm. Wolski / Metro Młociny / Nowe Bemowo,635207.0,487534.0
+12682_9657_h5,Aleja Krakowska × 1 Sierpnia,1.283,83.35,426,0.404,"1,9,15",P+R Al. Krakowska,634129.0,482887.0
+12794_9775_h2,Aleja Zieleniecka × Jana Zamoyskiego,1.177,80.917,199,0.678,"7,22,25",Annopol / Kawęczyńska - Bazylika / Wiatraczna,639707.0,488787.0
+12809_9630_h7,Jana III Sobieskiego × Świętego Bonifacego,1.16,78.7,93,0.699,19,Stegny,640488.0,481543.0
+12611_9782_h5,Powstańców Śląskich × Radiowa,1.092,76.251,260,0.577,"11,23,24",Czynszowa / Gocławek / Sielce,630599.0,489103.0
+12674_9817_h3,Aleja Armii Krajowej × Władysława Broniewskiego,1.077,75.604,503,0.362,"16,19,22,28,33",Metro Młociny / Nowe Bemowo / Os. Górczewska,633704.0,490867.0
+12761_9693_h5,Goworka × Puławska,0.986,70.246,99,0.737,19,Nowe Bemowo,638061.0,484685.0
+12732_9766_h3,Plac Bankowy × Aleja „Solidarności”,0.935,68.616,110,0.809,4,Żerań Wschodni,636619.0,488332.0
+12726_9747_h2,Aleja Jana Pawła II × Grzybowska,1.057,68.314,408,0.471,"17,19,33",Metro Młociny / Nowe Bemowo / Winnica,636346.0,487382.0
+12711_9714_h1,Grójecka × Juliana Ursyna Niemcewicza,0.928,68.165,616,0.268,"1,7,9,25",Annopol / Gocławek / Kawęczyńska - Bazylika,635563.0,485724.0
+12758_9706_h7,Marszałkowska,0.813,67.7,634,0.293,"4,10,11,14,16,18",Al. Lotników / Miasteczko Wilanów / PKP Służewiec,637938.0,485322.0
+12692_9744_h1,Wolska × Młynarska,1.266,65.068,293,0.526,"13,26,27",Kawęczyńska - Bazylika / Metro Marymont / Wiatraczna,634641.0,487247.0
+12794_9776_h4,Aleja Zieleniecka × Targowa,0.923,63.14,214,0.528,"22,26",Metro Młociny / Piaski,639746.0,488830.0
+12837_9579_h7,Aleja Rzeczypospolitej,0.734,62.257,179,0.38,16,Miasteczko Wilanów,641852.0,478972.0
+12702_9749_h1,Aleja „Solidarności” × Rondo Kercelak,1.331,62.192,105,0.848,"13,20,27",Kawęczyńska - Bazylika / Metro Marymont / Żerań FSO,635142.0,487486.0
+12762_9646_h0,Jana Pawła Woronicza × Ignacego Krasickiego,0.849,59.701,223,0.543,"11,18,31",Cm. Wolski / Metro Wilanowska / Sielce,638144.0,482314.0
+12692_9825_h3,Księdza Jerzego Popiełuszki × Juliusza Słowackiego,0.975,57.934,307,0.482,"17,27",Metro Marymont / Winnica,634648.0,491289.0
+12642_9770_h4,Dywizjonu 303,0.869,57.716,313,0.546,"20,23,24",Boernerowo / Nowe Bemowo,632147.0,488515.0
+12724_9754_h6,Aleja Jana Pawła II,0.768,56.801,409,0.279,"17,19,33",Kielecka / PKP Służewiec / Stegny,636244.0,487745.0
+12796_9649_h7,Jana III Sobieskiego × Aleja Wincentego Witosa,0.69,54.81,390,0.223,"14,16,19",Miasteczko Wilanów / Stegny,639835.0,482492.0
+12642_9770_h0,Dywizjonu 303,0.825,53.86,312,0.407,"20,23,24",Czynszowa / Gocławek / Żerań FSO,632127.0,488515.0
+12710_9781_h5,Stawki × Aleja Jana Pawła II,0.664,53.112,103,0.718,16,Piaski,635536.0,489093.0
+12739_9753_h3,Marszałkowska × Królewska,0.684,52.855,507,0.282,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,636993.0,487664.0
+12737_9626_h6,Wołoska,0.731,50.725,422,0.322,"17,18,31",PKP Służewiec,636851.0,481331.0
+12776_9791_h1,Aleja „Solidarności” × Targowa,0.995,48.121,95,0.726,"13,26",Kawęczyńska - Bazylika / Wiatraczna,638814.0,489558.0
+12728_9741_h6,Rondo ONZ × Aleja Jana Pawła II,0.665,47.467,409,0.181,"17,19,33",Kielecka / PKP Służewiec / Stegny,636438.0,487084.0
+12724_9756_h7,Aleja Jana Pawła II,0.781,46.084,409,0.274,"17,19,33",Kielecka / PKP Służewiec / Stegny,636210.0,487838.0
+12741_9691_h2,Aleja Niepodległości × Stefana Batorego,0.632,44.161,411,0.292,"17,19,33",Metro Młociny / Nowe Bemowo / Winnica,637097.0,484587.0
+12611_9753_h6,Powstańców Śląskich × Górczewska,0.431,43.87,50,0.76,11,Sielce,630586.0,487663.0
+12701_9805_h3,Aleja Jana Pawła II × Władysława Broniewskiego,0.639,43.301,106,0.708,"19,33",Metro Młociny / Nowe Bemowo,635065.0,490297.0
+12755_9713_h0,Nowowiejska × Plac Zbawiciela,0.524,41.276,423,0.296,"10,11,14,15",Al. Lotników / Marymont-Potok / Miasteczko Wilanów,637759.0,485677.0
+12833_9767_h0,Aleja Jerzego Waszyngtona × Międzyborska,0.583,40.475,308,0.312,"9,24",Gocławek,641666.0,488358.0
+12801_9755_h4,Rondo Jerzego Waszyngtona × Aleja Jerzego Waszyngtona,0.539,40.224,300,0.253,"9,24",Nowe Bemowo / P+R Al. Krakowska,640098.0,487793.0
+12775_9685_h4,Jurija Gagarina × Belwederska,0.422,39.33,116,0.466,11,Cm. Wolski,638770.0,484264.0
+12613_9784_h5,Powstańców Śląskich,0.551,39.225,485,0.313,"11,23,24,26,28",Czynszowa / Gocławek / Os. Górczewska,630695.0,489227.0
+12794_9776_h6,Targowa × Aleja Zieleniecka,0.535,37.989,199,0.347,"7,25",Banacha / Pl. Narutowicza,639708.0,488838.0
+12613_9747_h2,Powstańców Śląskich,0.43,37.778,262,0.286,"10,11,26",Metro Młociny / Nowe Bemowo / Os. Górczewska,630653.0,487353.0
+12688_9743_h4,Wolska × Skierniewicka,0.679,37.506,312,0.301,"9,13,26,27",Cm. Wolski / Metro Młociny / Zjazd do zajezdni Wola,634402.0,487150.0
+12765_9632_h2,Puławska × Domaniewska,0.58,37.427,305,0.275,"4,10,31",Os. Górczewska / PKP Służewiec / Żerań Wschodni,638296.0,481602.0
+12676_9816_h7,Władysława Broniewskiego,0.384,37.042,183,0.295,"16,22",Miasteczko Wilanów / Wiatraczna,633849.0,490807.0
+12721_9788_h4,Stawki,0.422,35.734,103,0.563,16,Piaski,636064.0,489410.0
+12720_9788_h0,Stawki,0.383,35.373,103,0.485,16,Miasteczko Wilanów,636030.0,489411.0
+12728_9743_h6,Rondo ONZ × Aleja Jana Pawła II,0.476,34.605,409,0.159,"17,19,33",Kielecka / PKP Służewiec / Stegny,636411.0,487154.0
+12706_9788_h7,Rondo Zgrupowania AK „Radosław” × Aleja Jana Pawła II,0.421,30.298,169,0.503,"16,17",Miasteczko Wilanów / PKP Służewiec,635303.0,489435.0
+12756_9814_h6,Zatylna × Jagiellońska,0.397,29.564,217,0.433,"18,20",Boernerowo / PKP Służewiec,637841.0,490730.0
+12727_9781_h2,Generała Władysława Andersa,0.403,29.492,395,0.246,"15,16,18",Marymont-Potok / Piaski / Żerań FSO,636384.0,489067.0
+12736_9621_h5,Wołoska × Rondo Unii Europejskiej,0.448,28.911,182,0.445,"17,18,31",PKP Służewiec,636843.0,481058.0
+12670_9635_h1,Aleja Krakowska × Komitetu Obrony Robotników,0.485,27.878,424,0.226,"1,9,15",Annopol / Gocławek / Marymont-Potok,633549.0,481752.0
+12737_9626_h2,Wołoska,0.399,27.855,419,0.236,"17,18,31",Metro Wilanowska / Winnica / Żerań FSO,636853.0,481300.0
+12770_9686_h7,Spacerowa,0.336,25.837,507,0.193,"11,14,16,19",Miasteczko Wilanów / Sielce / Stegny,638540.0,484328.0
+12611_9780_h1,Powstańców Śląskich × Radiowa,0.355,25.183,108,0.389,28,Dw. Wschodni (Kijowska),630556.0,489049.0
+12690_9731_h4,Marcina Kasprzaka,0.321,24.862,215,0.326,"10,11",Cm. Wolski / Os. Górczewska,634513.0,486571.0
+12643_9722_h1,Wolska,0.363,24.4,407,0.214,"10,11,13,27",Al. Lotników / Kawęczyńska - Bazylika / Metro Marymont,632196.0,486121.0
+12711_9715_h5,Grójecka × Juliana Ursyna Niemcewicza,0.314,23.981,617,0.162,"1,7,9,25",Banacha / P+R Al. Krakowska / Pl. Narutowicza,635587.0,485771.0
+12798_9647_h3,Jana III Sobieskiego × Aleja Generała Władysława Sikorskiego,0.364,23.931,394,0.234,"14,16,19",Banacha / Nowe Bemowo / Piaski,639905.0,482391.0
+12794_9776_h7,Targowa × Aleja Zieleniecka,0.37,22.964,213,0.338,"3,6,26",Gocławek / Wiatraczna,639706.0,488848.0
+12639_9828_h1,Aleja Władysława Reymonta,0.355,22.185,305,0.275,"19,26,28",Dw. Wschodni (Kijowska) / Metro Młociny / Stegny,631983.0,491421.0
+12831_9588_h6,Aleja Rzeczypospolitej,0.254,20.857,292,0.226,"14,16",Miasteczko Wilanów,641587.0,479410.0
+12762_9686_h6,Puławska,0.293,20.704,327,0.208,"4,10,11,18",Al. Lotników / PKP Służewiec / Zjazd do zajezdni Mokotów,638122.0,484323.0
+12773_9797_h3,Targowa × Ratuszowa,0.313,20.135,128,0.453,"6,18,20,28",Metro Młociny / Os. Górczewska / Żerań FSO,638652.0,489875.0
+12705_9790_h2,Rondo Zgrupowania AK „Radosław” × Aleja Jana Pawła II,0.323,19.88,119,0.361,"17,19,27,33",Metro Marymont / Metro Młociny / Nowe Bemowo,635260.0,489538.0
+12780_9818_h2,11 Listopada × Szwedzka,0.277,18.69,307,0.221,"3,4,25",Annopol / Żerań Wschodni,639015.0,490938.0
+12766_9633_h6,Puławska × Domaniewska,0.243,17.092,306,0.144,"4,10,31",Al. Lotników / Metro Wilanowska,638305.0,481651.0
+12831_9588_h2,Aleja Rzeczypospolitej,0.2,16.471,292,0.216,"14,16",Banacha / Piaski,641590.0,479400.0
+12744_9686_h4,Rakowiecka × Aleja Niepodległości,0.237,16.029,96,0.375,19,Nowe Bemowo,637207.0,484304.0
+12738_9707_h6,Aleja Niepodległości × Aleja Armii Ludowej,0.225,15.465,403,0.174,"17,19,33",Kielecka / PKP Służewiec / Stegny,636930.0,485385.0
+12730_9769_h7,Generała Władysława Andersa × Aleja „Solidarności”,0.204,15.228,277,0.231,"15,16,18",Miasteczko Wilanów / P+R Al. Krakowska / PKP Służewiec,636544.0,488450.0
+12630_9770_h4,Dywizjonu 303 × Aleja Obrońców Grodna,0.229,14.996,315,0.232,"20,23,24",Boernerowo / Nowe Bemowo,631524.0,488541.0
+12610_9758_h2,Powstańców Śląskich,0.217,14.541,108,0.454,28,Dw. Wschodni (Kijowska),630546.0,487929.0
+12727_9781_h6,Generała Władysława Andersa,0.177,14.275,392,0.168,"15,16,18",Miasteczko Wilanów / P+R Al. Krakowska / PKP Służewiec,636381.0,489090.0
+12741_9693_h6,Aleja Niepodległości × Stefana Batorego,0.204,14.033,410,0.166,"17,19,33",Kielecka / PKP Służewiec / Stegny,637082.0,484652.0
+12683_9660_h1,Aleja Krakowska × Grójecka,0.199,13.613,422,0.159,"1,9,15",Annopol / Gocławek / Marymont-Potok,634193.0,483009.0
+12676_9729_h4,Marcina Kasprzaka × Józefa Bema,0.14,13.242,220,0.195,"10,11",Cm. Wolski / Os. Górczewska,633801.0,486483.0
+12682_9657_h1,Aleja Krakowska × 1 Sierpnia,0.184,13.206,422,0.149,"1,9,15",Annopol / Gocławek / Marymont-Potok,634114.0,482858.0
+12773_9789_h1,Aleja „Solidarności” × Jagiellońska,0.2,12.746,513,0.156,"4,13,20,23,26",Czynszowa / Kawęczyńska - Bazylika / Wiatraczna,638684.0,489467.0
+12700_9732_h0,Marcina Kasprzaka × Karolkowa,0.181,12.573,64,0.359,"10,11",Al. Lotników / Sielce,635046.0,486648.0
+12734_9728_h6,Tytusa Chałubińskiego,0.15,12.279,628,0.11,"10,11,17,19,33",Al. Lotników / Kielecka / PKP Służewiec,636729.0,486419.0
+12703_9749_h3,Okopowa × Rondo Kercelak,0.18,12.224,16,0.75,"9,24",Nowe Bemowo / Zjazd do zajezdni Wola,635185.0,487467.0
+12720_9725_h0,Aleje Jerozolimskie,0.164,11.727,613,0.139,"7,9,22,24,25",Annopol / Gocławek / Kawęczyńska - Bazylika,636048.0,486278.0
+12847_9772_h0,Rondo Wiatraczna × Grochowska,0.178,11.556,204,0.216,"3,6",Gocławek,642351.0,488624.0
+12617_9712_h6,Powstańców Śląskich × Połczyńska,0.129,11.531,151,0.225,"10,11",Al. Lotników / Sielce,630895.0,485606.0
+12804_9775_h0,Grochowska,0.164,11.483,401,0.167,"3,6,22,26",Gocławek / Wiatraczna,640224.0,488780.0
+12702_9823_h4,Juliusza Słowackiego,0.175,11.283,88,0.409,6,Metro Młociny,635146.0,491186.0
+12743_9744_h6,Marszałkowska,0.127,10.58,504,0.137,"4,15,16,18",Al. Lotników / Miasteczko Wilanów / P+R Al. Krakowska,637179.0,487200.0
+12676_9928_h3,Trakt Nadwiślański × Światowida,0.123,10.503,387,0.15,"2,17",Winnica,633810.0,496441.0
+12733_9768_h5,Aleja „Solidarności”,0.142,10.307,411,0.131,"4,13,20,23,26",Al. Lotników / Boernerowo / Cm. Wolski,636690.0,488423.0
+12765_9670_h6,Puławska × Dolna,0.13,10.142,326,0.153,"4,10,11,18",Al. Lotników / PKP Służewiec / Zjazd do zajezdni Mokotów,638261.0,483513.0
+12709_9821_h4,Plac Thomasa Woodrowa Wilsona × Juliusza Słowackiego,0.168,9.803,92,0.348,6,Metro Młociny,635450.0,491089.0
+12758_9706_h2,Marszałkowska,0.128,9.78,723,0.119,"4,10,11,14,16,18",Banacha / Cm. Wolski / Os. Górczewska,637940.0,485317.0
+12827_9603_h2,Aleja Rzeczypospolitej × Aleja Wilanowska,0.1,9.776,293,0.14,"14,16",Banacha / Piaski,641395.0,480156.0
+12825_9608_h7,Jana III Sobieskiego,0.121,9.762,292,0.192,"14,16",Miasteczko Wilanów,641250.0,480441.0
+12745_9737_h7,Marszałkowska,0.124,9.733,174,0.161,"15,16",Miasteczko Wilanów / P+R Al. Krakowska,637299.0,486898.0
+12774_9854_h6,Rembielińska × Matki Teresy z Kalkuty,0.13,9.68,513,0.142,"1,3,4,25",Al. Lotników / Gocławek / P+R Al. Krakowska,638705.0,492749.0
+12886_9761_h4,Grochowska,0.144,9.203,409,0.139,"3,6,9,24",Annopol / Metro Młociny / Nowe Bemowo,644336.0,488087.0
+12741_9848_h7,Jagiellońska,0.138,9.041,217,0.175,"18,20",Boernerowo / PKP Służewiec,637082.0,492437.0
+12675_9929_h0,Światowida × Trakt Nadwiślański,0.106,8.748,386,0.145,"2,17",Metro Młociny / PKP Służewiec,633783.0,496452.0
+12715_9722_h5,Plac Artura Zawiszy × Grójecka,0.121,8.694,99,0.202,9,P+R Al. Krakowska,635799.0,486146.0
+12757_9709_h3,Aleja Armii Ludowej × Marszałkowska,0.105,8.642,722,0.122,"4,10,11,14,16,18",Banacha / Cm. Wolski / Os. Górczewska,637884.0,485461.0
+12847_9772_h4,Grochowska × Rondo Wiatraczna,0.135,8.592,410,0.134,"3,6,9,24",Annopol / Metro Młociny / Nowe Bemowo,642374.0,488622.0
+12756_9892_h7,Annopol,0.123,8.463,207,0.174,"1,4",Al. Lotników / Banacha,637823.0,494636.0
+12784_9782_h3,Targowa,0.12,8.229,594,0.116,"3,6,13,25,26,28",Annopol / Cm. Wolski / Metro Młociny,639240.0,489135.0
+12710_9734_h7,Rondo Ignacego Daszyńskiego × Towarowa,0.123,8.152,213,0.164,"1,22",P+R Al. Krakowska / Wiatraczna,635501.0,486747.0
+12638_9719_h1,Wolska,0.099,7.921,266,0.154,"10,11,26",Al. Lotników / Sielce / Wiatraczna,631925.0,485987.0
+12735_9763_h7,Senatorska × Plac Bankowy,0.113,7.909,505,0.103,"4,15,16,18",Al. Lotników / Miasteczko Wilanów / P+R Al. Krakowska,636758.0,488166.0
+12668_9728_h0,Marcina Kasprzaka,0.096,7.88,220,0.164,"10,11",Al. Lotników / Sielce,633419.0,486430.0
+12766_9658_h6,Puławska × Antoniego Malczewskiego,0.096,7.458,105,0.19,"10,18",Al. Lotników / PKP Służewiec,638314.0,482906.0
+12771_9861_h3,Rembielińska,0.104,7.44,511,0.139,"1,3,4,25",Annopol / Żerań Wschodni,638556.0,493086.0
+12709_9736_h3,Rondo Ignacego Daszyńskiego × Towarowa,0.108,7.404,100,0.22,24,Nowe Bemowo,635470.0,486802.0
+12742_9847_h2,Jagiellońska,0.105,7.345,218,0.188,"18,20",Żerań FSO,637100.0,492394.0
+12736_9632_h6,Wołoska × Domaniewska,0.117,7.316,182,0.17,"17,18,31",PKP Służewiec,636838.0,481617.0
+12763_9694_h4,Goworka,0.094,7.29,509,0.132,"11,14,16,19",Banacha / Cm. Wolski / Nowe Bemowo,638167.0,484729.0
+12760_9703_h6,Marszałkowska,0.083,7.135,711,0.113,"4,10,11,14,16,18",Al. Lotników / Miasteczko Wilanów / PKP Służewiec,638006.0,485152.0
+12751_9724_h6,Marszałkowska,0.093,7.13,502,0.127,"4,15,16,18",Al. Lotników / Miasteczko Wilanów / P+R Al. Krakowska,637566.0,486229.0
+12765_9667_h2,Puławska × Dolna,0.091,6.701,338,0.139,"4,10,11,18",Cm. Wolski / Os. Górczewska / Sielce,638276.0,483377.0
+12635_9841_h7,Wólczyńska,0.103,6.632,232,0.177,"16,22,26,33",Kielecka / Miasteczko Wilanów / Wiatraczna,631759.0,492078.0
+12820_9615_h3,Jana III Sobieskiego × Nałęczowska,0.076,6.435,294,0.085,"14,16",Banacha / Piaski,641012.0,480784.0
+12757_9813_h2,Zatylna × Jagiellońska,0.083,5.909,219,0.164,"18,20",Żerań FSO,637852.0,490698.0
+12644_9892_h5,Marymoncka × Pułkowa,0.088,5.564,349,0.143,"2,6,17",Metro Młociny / Zjazd do zajezdni Żoliborz,632203.0,494608.0
+12638_9719_h5,Wolska,0.057,5.463,264,0.129,"10,11,26",Metro Młociny / Nowe Bemowo / Os. Górczewska,631937.0,485993.0
+12786_9684_h4,Jurija Gagarina,0.072,5.368,115,0.183,11,Cm. Wolski,639313.0,484247.0
+12732_9713_h0,Nowowiejska × Ludwika Krzywickiego,0.057,5.268,210,0.11,"14,15",Marymont-Potok / Miasteczko Wilanów,636621.0,485695.0
+12774_9795_h3,Targowa × 11 Listopada,0.079,5.144,301,0.136,"6,20,28",Metro Młociny / Os. Górczewska / Żerań FSO,638721.0,489784.0
+12774_9795_h2,Targowa × 11 Listopada,0.063,4.973,409,0.115,"3,4,23,25",Annopol / Czynszowa / Żerań Wschodni,638725.0,489789.0
+12688_9828_h7,Juliusza Słowackiego × Włościańska,0.067,4.455,231,0.16,"6,17",Gocławek / PKP Służewiec,634405.0,491430.0
+12760_9691_h1,Rakowiecka × Puławska,0.085,4.179,9,0.667,19,Stegny,638019.0,484563.0
+12624_9772_h4,Radiowa × Aleja Obrońców Grodna,0.07,4.147,104,0.231,20,Boernerowo,631211.0,488606.0
+12708_9708_h0,Grójecka × Plac Gabriela Narutowicza,0.05,4.144,209,0.12,"14,15",Marymont-Potok / Miasteczko Wilanów,635419.0,485417.0
+12636_9841_h3,Wólczyńska,0.061,4.084,98,0.194,26,Metro Młociny,631802.0,492055.0
+12714_9783_h5,Stawki,0.039,4.026,103,0.146,16,Piaski,635707.0,489189.0
+12738_9771_h4,Aleja „Solidarności”,0.052,3.955,516,0.079,"4,13,20,23,26",Al. Lotników / Boernerowo / Cm. Wolski,636922.0,488554.0
+12707_9786_h3,Aleja Jana Pawła II × Dzika,0.037,3.842,504,0.071,"16,17,19,33",Metro Młociny / Nowe Bemowo / Piaski,635362.0,489330.0
+12700_9753_h7,Okopowa × Leszno,0.054,3.692,412,0.117,"1,22,27",Cm. Wolski / P+R Al. Krakowska / Wiatraczna,635049.0,487665.0
+12780_9819_h6,11 Listopada × Szwedzka,0.049,3.679,318,0.104,"3,4,18,25",Al. Lotników / Gocławek / Pl. Narutowicza,639017.0,490978.0
+12803_9791_h2,Kijowska,0.041,3.388,199,0.116,"7,13",Kawęczyńska - Bazylika,640161.0,489562.0
+12739_9643_h4,Jana Pawła Woronicza,0.059,3.346,215,0.084,"11,18,31",PKP Służewiec / Zjazd do zajezdni Mokotów,636975.0,482196.0
+12608_9772_h6,Powstańców Śląskich × Wrocławska,0.036,3.126,173,0.127,"11,26,28",Os. Górczewska / Sielce / Wiatraczna,630426.0,488600.0
+12672_9736_h5,Wolska × Rondo Zdzisława Lubomirskiego,0.054,2.977,107,0.15,"13,26,27",Cm. Wolski / Metro Młociny,633618.0,486836.0
+12631_9872_h2,Zgrupowania AK „Kampinos”,0.033,2.86,81,0.16,2,Winnica,631554.0,493606.0
+12789_9779_h3,Targowa × Sokola,0.05,2.814,3,1.0,"25,26",Annopol / Metro Młociny,639480.0,488971.0
+12762_9686_h2,Puławska,0.041,2.748,337,0.104,"4,10,11,18",Cm. Wolski / Os. Górczewska / Sielce,638127.0,484303.0
+12735_9762_h3,Marszałkowska × Senatorska,0.032,2.658,507,0.069,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,636783.0,488128.0
+12612_9747_h6,Powstańców Śląskich,0.022,2.524,266,0.079,"10,11,26",Al. Lotników / Sielce / Wiatraczna,630646.0,487386.0
+12659_9823_h0,Władysława Broniewskiego × Generała Klemensa Stanisława Rudnickiego,0.034,2.504,510,0.108,"16,19,22,28,33",Dw. Wschodni (Kijowska) / Kielecka / Miasteczko Wilanów,632981.0,491170.0
+12702_9749_h0,Aleja „Solidarności” × Rondo Kercelak,0.046,2.255,3,1.0,24,Gocławek,635145.0,487486.0
+12730_9710_h4,Filtrowa × Ludwika Krzywickiego,0.028,2.183,213,0.08,"14,15",Banacha / P+R Al. Krakowska,636532.0,485536.0
+12788_9662_h3,Jana III Sobieskiego,0.027,2.167,394,0.104,"14,16,19",Banacha / Nowe Bemowo / Piaski,639406.0,483116.0
+12803_9756_h0,Aleja Jerzego Waszyngtona,0.033,2.088,310,0.103,"9,24",Gocławek,640157.0,487811.0
+12781_9685_h0,Jurija Gagarina,0.023,1.936,117,0.128,11,Sielce,639079.0,484258.0
+12722_9787_h0,Stawki,0.022,1.912,103,0.136,16,Miasteczko Wilanów,636134.0,489392.0
+12734_9769_h5,Aleja „Solidarności” × Bielańska,0.021,1.665,516,0.099,"4,13,20,23,26",Al. Lotników / Boernerowo / Cm. Wolski,636738.0,488473.0
+12731_9798_h2,Zygmunta Słomińskiego × Międzyparkowa,0.019,1.35,198,0.106,"6,18",Gocławek / Żerań FSO,636578.0,489926.0
+12710_9820_h7,Plac Thomasa Woodrowa Wilsona × Juliusza Słowackiego,0.024,1.328,198,0.111,"6,15",Gocławek / P+R Al. Krakowska,635540.0,491017.0
+12596_9752_h4,Górczewska,0.022,1.307,211,0.118,"10,28",Os. Górczewska,629842.0,487613.0
+12734_9728_h3,Tytusa Chałubińskiego,0.014,1.247,631,0.055,"10,11,17,19,33",Cm. Wolski / Metro Młociny / Nowe Bemowo,636735.0,486404.0
+12612_9751_h2,Powstańców Śląskich × Górczewska,0.025,1.207,4,0.5,26,Metro Młociny,630601.0,487584.0
+12723_9787_h4,Stawki,0.013,1.153,103,0.126,16,Piaski,636190.0,489378.0
+12702_9780_h6,Okopowa × Stawki,0.03,1.129,413,0.107,"1,22,27",Cm. Wolski / P+R Al. Krakowska / Wiatraczna,635114.0,489001.0
+12787_9780_h0,Targowa × Kijowska,0.025,1.127,3,1.0,"13,28",Dw. Wschodni (Kijowska) / Kawęczyńska - Bazylika,639377.0,489029.0
+12777_9685_h4,Jurija Gagarina × Belwederska,0.015,1.089,116,0.121,11,Cm. Wolski,638856.0,484274.0
+12773_9853_h1,Matki Teresy z Kalkuty,0.013,1.082,511,0.07,"1,3,4,25",Annopol / Żerań Wschodni,638673.0,492698.0
+12817_9619_h7,Jana III Sobieskiego,0.01,0.898,291,0.103,"14,16",Miasteczko Wilanów,640864.0,480998.0
+12657_9726_h0,Wolska × Marcina Kasprzaka,0.01,0.765,220,0.077,"10,11",Al. Lotników / Sielce,632865.0,486318.0
+12778_9788_h3,Targowa,0.008,0.647,594,0.056,"3,6,13,25,26,28",Annopol / Cm. Wolski / Metro Młociny,638949.0,489430.0
+12644_9770_h4,Dywizjonu 303,0.008,0.642,313,0.048,"20,23,24",Boernerowo / Nowe Bemowo,632238.0,488510.0
+12614_9735_h6,Powstańców Śląskich × Plac Kasztelański,0.005,0.422,266,0.045,"10,11,26",Al. Lotników / Sielce / Wiatraczna,630735.0,486791.0
+12643_9891_h1,Pułkowa × Marymoncka,0.004,0.381,334,0.081,"2,6",Gocławek / Winnica,632165.0,494575.0
+12713_9783_h1,Stawki,0.006,0.38,103,0.107,16,Miasteczko Wilanów,635676.0,489171.0
+12743_9743_h3,Marszałkowska,0.003,0.277,509,0.086,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,637181.0,487195.0
+12701_9806_h3,Aleja Jana Pawła II × Władysława Broniewskiego,0.007,0.236,4,0.25,27,Metro Marymont,635080.0,490308.0
+12763_9848_h2,Świętego Jacka Odrowąża × Budowlana,0.004,0.203,3,0.333,"3,25",Annopol,638167.0,492441.0
+12702_9779_h2,Okopowa × Stawki,0.003,0.2,411,0.085,"1,22,27",Annopol / Metro Marymont / Piaski,635112.0,488992.0
+12834_9582_h3,Aleja Rzeczypospolitej,0.002,0.162,292,0.089,"14,16",Banacha / Piaski,641725.0,479129.0
+12692_9827_h3,Plac Jacka Kuronia × Juliusza Słowackiego,0.004,0.143,4,0.25,27,Metro Marymont,634617.0,491359.0
+12789_9660_h7,Ludwiga van Beethovena × Jana III Sobieskiego,0.002,0.077,21,0.095,"16,19",Miasteczko Wilanów / Stegny,639453.0,483046.0
+12758_9889_h7,Annopol × Toruńska,0.001,0.073,205,0.054,"1,4",Al. Lotników / Banacha,637909.0,494461.0
+12758_9889_h3,Annopol × Toruńska,0.001,0.037,511,0.043,"1,3,4,25",Annopol / Żerań Wschodni,637909.0,494461.0
+12716_9737_h4,Prosta,0.0,0.0,218,0.028,"10,11",Cm. Wolski / Os. Górczewska,635823.0,486893.0
+12716_9737_h0,Prosta,0.0,0.0,218,0.018,"10,11",Al. Lotników / Sielce,635812.0,486889.0
+12727_9623_h4,Marynarska,0.0,0.0,420,0.007,"17,18,31",PKP Służewiec,636390.0,481184.0
+12726_9791_h2,Generała Władysława Andersa × Alka Dawidowskiego,0.0,0.0,104,0.058,15,Marymont-Potok,636301.0,489563.0
+12725_9798_h4,Zygmunta Słomińskiego,0.0,0.0,311,0.019,"1,28",Os. Górczewska / P+R Al. Krakowska,636262.0,489928.0
+12725_9798_h0,Zygmunta Słomińskiego,0.0,0.0,310,0.029,"1,28",Annopol / Dw. Wschodni (Kijowska),636252.0,489926.0
+12725_9792_h6,Generała Władysława Andersa × Alka Dawidowskiego,0.0,0.0,105,0.019,15,P+R Al. Krakowska,636294.0,489607.0
+12724_9740_h0,Prosta,0.0,0.0,218,0.023,"10,11",Al. Lotników / Sielce,636229.0,487041.0
+12723_9758_h3,Aleja Jana Pawła II,0.0,0.0,407,0.015,"17,19,33",Metro Młociny / Nowe Bemowo / Winnica,636155.0,487936.0
+12722_9759_h7,Aleja Jana Pawła II,0.0,0.0,409,0.051,"17,19,33",Kielecka / PKP Służewiec / Stegny,636139.0,487965.0
+12733_9682_h4,Rakowiecka,0.0,0.0,209,0.0,17,PKP Służewiec,636663.0,484128.0
+12733_9682_h0,Rakowiecka,0.0,0.0,208,0.014,17,Winnica,636653.0,484125.0
+12733_9671_h2,Wołoska × Antoniego Józefa Madalińskiego,0.0,0.0,208,0.034,17,Winnica,636670.0,483594.0
+12673_9843_h7,Marymoncka,0.0,0.0,231,0.009,"6,17",Gocławek / PKP Służewiec,633689.0,492175.0
+12673_9843_h3,Marymoncka,0.0,0.0,228,0.009,"6,17",Metro Młociny / Winnica,633692.0,492171.0
+12673_9640_h5,Aleja Krakowska,0.0,0.0,426,0.012,"1,9,15",P+R Al. Krakowska,633682.0,482013.0
+12673_9640_h1,Aleja Krakowska,0.0,0.0,424,0.017,"1,9,15",Annopol / Gocławek / Marymont-Potok,633682.0,482013.0
+12671_9913_h5,Świderska × Aleja Pułkownika Ryszarda Kuklińskiego,0.0,0.0,386,0.008,"2,17",Metro Młociny / PKP Służewiec,633579.0,495696.0
+12670_9913_h1,Aleja Pułkownika Ryszarda Kuklińskiego,0.0,0.0,388,0.01,"2,17",Winnica,633508.0,495651.0
+12669_9772_h0,Obozowa × Aleja Prymasa Tysiąclecia,0.0,0.0,309,0.003,"20,23,24",Czynszowa / Gocławek / Żerań FSO,633473.0,488614.0
+12668_9728_h4,Marcina Kasprzaka,0.0,0.0,220,0.05,"10,11",Cm. Wolski / Os. Górczewska,633434.0,486432.0
+12665_9857_h7,Marymoncka,0.0,0.0,230,0.013,"6,17",Gocławek / PKP Służewiec,633272.0,492878.0
+12687_9667_h5,Grójecka,0.0,0.0,427,0.084,"1,9,15",P+R Al. Krakowska,634367.0,483351.0
+12686_9763_h3,Obozowa × Jana Ostroroga,0.0,0.0,311,0.006,"20,23,24",Boernerowo / Nowe Bemowo,634345.0,488179.0
+12730_9796_h5,Międzyparkowa,0.0,0.0,200,0.01,"6,18",Metro Młociny / PKP Służewiec,636542.0,489834.0
+12730_9796_h1,Międzyparkowa,0.0,0.0,198,0.005,"6,18",Gocławek / Żerań FSO,636539.0,489830.0
+12735_9713_h4,Nowowiejska,0.0,0.0,213,0.042,"14,15",Banacha / P+R Al. Krakowska,636772.0,485692.0
+12735_9713_h0,Nowowiejska,0.0,0.0,210,0.019,"14,15",Marymont-Potok / Miasteczko Wilanów,636772.0,485692.0
+12735_9683_h0,Rakowiecka,0.0,0.0,208,0.0,17,Winnica,636761.0,484159.0
+12735_9651_h6,Wołoska,0.0,0.0,209,0.024,17,PKP Służewiec,636788.0,482567.0
+12735_9651_h2,Wołoska,0.0,0.0,207,0.082,17,Winnica,636788.0,482567.0
+12734_9713_h4,Nowowiejska,0.0,0.0,213,0.042,"14,15",Banacha / P+R Al. Krakowska,636711.0,485693.0
+12657_9933_h7,Światowida,0.0,0.0,384,0.01,"2,17",Metro Młociny / PKP Służewiec,632865.0,496664.0
+12657_9932_h3,Światowida,0.0,0.0,387,0.008,"2,17",Winnica,632890.0,496645.0
+12657_9727_h5,Wolska × Marcina Kasprzaka,0.0,0.0,303,0.003,"13,26,27",Cm. Wolski / Metro Młociny,632887.0,486369.0
+12657_9726_h4,Wolska × Marcina Kasprzaka,0.0,0.0,220,0.036,"10,11",Cm. Wolski / Os. Górczewska,632865.0,486318.0
+12657_9726_h1,Marcina Kasprzaka × Wolska,0.0,0.0,303,0.04,"13,26,27",Kawęczyńska - Bazylika / Metro Marymont / Wiatraczna,632853.0,486342.0
+12654_9935_h3,Światowida × Myśliborska,0.0,0.0,387,0.072,"2,17",Winnica,632729.0,496767.0
+12654_9875_h3,Marymoncka,0.0,0.0,229,0.004,"6,17",Metro Młociny / Winnica,632730.0,493750.0
+12653_9935_h7,Światowida × Myśliborska,0.0,0.0,384,0.047,"2,17",Metro Młociny / PKP Służewiec,632692.0,496795.0
+12653_9770_h0,Obozowa,0.0,0.0,310,0.013,"20,23,24",Czynszowa / Gocławek / Żerań FSO,632680.0,488540.0
+12653_9725_h4,Redutowa × Wolska,0.0,0.0,114,0.0,"10,13,26,27",Cm. Wolski / Metro Młociny / Os. Górczewska,632654.0,486267.0
+12652_9878_h7,Marymoncka × Przy Agorze,0.0,0.0,230,0.009,"6,17",Gocławek / PKP Służewiec,632629.0,493915.0
+12650_9770_h4,Obozowa,0.0,0.0,313,0.019,"20,23,24",Boernerowo / Nowe Bemowo,632517.0,488523.0
+12675_9840_h7,Marymoncka × Andrieja Sacharowa,0.0,0.0,231,0.03,"6,17",Gocławek / PKP Służewiec,633768.0,492046.0
+12675_9840_h3,Marymoncka × Andrieja Sacharowa,0.0,0.0,228,0.044,"6,17",Metro Młociny / Winnica,633797.0,492000.0
+12740_9684_h0,Rakowiecka,0.0,0.0,208,0.019,17,Winnica,637038.0,484248.0
+12739_9732_h4,Aleje Jerozolimskie × Emilii Plater,0.0,0.0,611,0.005,"7,9,22,24,25",Banacha / Nowe Bemowo / P+R Al. Krakowska,636960.0,486623.0
+12738_9771_h0,Aleja „Solidarności”,0.0,0.0,513,0.016,"4,13,20,23,26",Czynszowa / Kawęczyńska - Bazylika / Wiatraczna,636921.0,488554.0
+12736_9769_h1,Aleja „Solidarności” × Bielańska,0.0,0.0,513,0.027,"4,13,20,23,26",Czynszowa / Kawęczyńska - Bazylika / Wiatraczna,636844.0,488499.0
+12749_9736_h0,Aleje Jerozolimskie,0.0,0.0,612,0.007,"7,9,22,24,25",Annopol / Gocławek / Kawęczyńska - Bazylika,637465.0,486814.0
+12749_9687_h0,Rakowiecka,0.0,0.0,93,0.011,19,Stegny,637457.0,484384.0
+12698_9825_h4,Juliusza Słowackiego,0.0,0.0,92,0.022,6,Metro Młociny,634939.0,491255.0
+12747_9911_h3,Annopol,0.0,0.0,207,0.01,"1,4",Żerań Wschodni,637362.0,495564.0
+12747_9733_h6,Marszałkowska,0.0,0.0,503,0.028,"4,15,16,18",Al. Lotników / Miasteczko Wilanów / P+R Al. Krakowska,637389.0,486673.0
+12746_9737_h2,Marszałkowska,0.0,0.0,509,0.037,"4,15,16,18",Marymont-Potok / Piaski / Żerań FSO,637306.0,486880.0
+12745_9915_h3,,0.0,0.0,209,0.005,"1,4",Żerań Wschodni,637255.0,495781.0
+12589_9792_h6,Generała Sylwestra Kaliskiego,0.0,0.0,100,0.02,20,Żerań FSO,629479.0,489639.0
+12744_9842_h2,Jagiellońska,0.0,0.0,121,0.008,"18,20",Żerań FSO,637217.0,492107.0
+12744_9734_h4,Aleje Jerozolimskie,0.0,0.0,611,0.01,"7,9,22,24,25",Banacha / Nowe Bemowo / P+R Al. Krakowska,637225.0,486723.0
+12744_9734_h0,Aleje Jerozolimskie,0.0,0.0,613,0.021,"7,9,22,24,25",Annopol / Gocławek / Kawęczyńska - Bazylika,637207.0,486717.0
+12743_9916_h4,,0.0,0.0,209,0.033,"1,4",Żerań Wschodni,637192.0,495825.0
+12590_9783_h2,Generała Sylwestra Kaliskiego,0.0,0.0,97,0.031,20,Boernerowo,629523.0,489188.0
+12755_9689_h4,Rakowiecka,0.0,0.0,99,0.0,19,Nowe Bemowo,637753.0,484476.0
+12755_9689_h0,Rakowiecka,0.0,0.0,100,0.0,19,Stegny,637753.0,484476.0
+12754_9896_h7,Annopol,0.0,0.0,207,0.01,"1,4",Al. Lotników / Banacha,637730.0,494821.0
+12754_9896_h3,Annopol,0.0,0.0,203,0.0,"1,4",Żerań Wschodni,637733.0,494814.0
+12753_9897_h7,Annopol,0.0,0.0,207,0.0,"1,4",Al. Lotników / Banacha,637696.0,494890.0
+12753_9897_h3,Annopol,0.0,0.0,203,0.0,"1,4",Żerań Wschodni,637696.0,494890.0
+12752_9901_h3,Annopol,0.0,0.0,203,0.01,"1,4",Żerań Wschodni,637607.0,495068.0
+12752_9644_h4,Jana Pawła Woronicza,0.0,0.0,215,0.0,"11,18,31",PKP Służewiec / Zjazd do zajezdni Mokotów,637622.0,482226.0
+12752_9644_h0,Jana Pawła Woronicza,0.0,0.0,223,0.0,"11,18,31",Cm. Wolski / Metro Wilanowska / Sielce,637622.0,482226.0
+12590_9783_h6,Generała Sylwestra Kaliskiego,0.0,0.0,102,0.0,20,Żerań FSO,629522.0,489197.0
+12590_9786_h2,Generała Sylwestra Kaliskiego,0.0,0.0,103,0.01,20,Boernerowo,629509.0,489325.0
+12645_9970_h2,Światowida,0.0,0.0,307,0.02,"2,17",Winnica,632299.0,498539.0
+12645_9967_h6,Światowida,0.0,0.0,302,0.023,"2,17",Metro Młociny / PKP Służewiec,632280.0,498392.0
+12645_9966_h2,Światowida,0.0,0.0,307,0.036,"2,17",Winnica,632277.0,498346.0
+12645_9963_h6,Światowida,0.0,0.0,302,0.01,"2,17",Metro Młociny / PKP Służewiec,632267.0,498165.0
+12645_9963_h2,Światowida,0.0,0.0,307,0.01,"2,17",Winnica,632267.0,498163.0
+12644_9953_h6,Światowida,0.0,0.0,302,0.017,"2,17",Metro Młociny / PKP Służewiec,632240.0,497682.0
+12644_9953_h2,Światowida,0.0,0.0,306,0.029,"2,17",Winnica,632239.0,497654.0
+12591_9777_h6,Generała Sylwestra Kaliskiego,0.0,0.0,103,0.0,20,Żerań FSO,629555.0,488862.0
+12609_9769_h2,Powstańców Śląskich × Aleja Obrońców Grodna,0.0,0.0,112,0.071,"26,28",Dw. Wschodni (Kijowska) / Metro Młociny,630465.0,488461.0
+12624_9772_h0,Radiowa × Aleja Obrońców Grodna,0.0,0.0,103,0.029,20,Żerań FSO,631208.0,488605.0
+12665_9856_h3,Marymoncka,0.0,0.0,228,0.031,"6,17",Metro Młociny / Winnica,633292.0,492829.0
+12660_9823_h3,Władysława Broniewskiego × Generała Klemensa Stanisława Rudnickiego,0.0,0.0,502,0.034,"16,19,22,28,33",Metro Młociny / Nowe Bemowo / Os. Górczewska,633020.0,491154.0
+12617_9788_h5,Powstańców Śląskich,0.0,0.0,484,0.006,"11,23,24,26,28",Czynszowa / Gocławek / Os. Górczewska,630853.0,489429.0
+12617_9777_h3,Radiowa,0.0,0.0,211,0.014,"23,24",Nowe Bemowo,630852.0,488879.0
+12616_9788_h1,Powstańców Śląskich,0.0,0.0,480,0.004,"11,23,24,26,28",Dw. Wschodni (Kijowska) / Metro Młociny / Nowe Bemowo,630847.0,489420.0
+12616_9787_h5,Powstańców Śląskich,0.0,0.0,485,0.006,"11,23,24,26,28",Czynszowa / Gocławek / Os. Górczewska,630804.0,489360.0
+12758_9808_h3,Jagiellońska × Most Gdański,0.0,0.0,317,0.019,"6,18,20,28",Metro Młociny / Os. Górczewska / Żerań FSO,637914.0,490418.0
+12748_9908_h3,Annopol,0.0,0.0,207,0.01,"1,4",Żerań Wschodni,637430.0,495429.0
+12616_9787_h1,Powstańców Śląskich,0.0,0.0,480,0.023,"11,23,24,26,28",Dw. Wschodni (Kijowska) / Metro Młociny / Nowe Bemowo,630804.0,489360.0
+12757_9812_h6,Jagiellońska × Rondo Stefana Starzyńskiego,0.0,0.0,216,0.079,"18,20",Boernerowo / PKP Służewiec,637875.0,490616.0
+12757_9810_h4,Rondo Stefana Starzyńskiego × Stefana Starzyńskiego,0.0,0.0,207,0.039,1,P+R Al. Krakowska,637872.0,490543.0
+12616_9777_h7,Radiowa,0.0,0.0,210,0.014,"23,24",Czynszowa / Gocławek,630839.0,488888.0
+12589_9792_h2,Generała Sylwestra Kaliskiego,0.0,0.0,103,0.0,20,Boernerowo,629479.0,489639.0
+12764_9627_h2,Puławska,0.0,0.0,211,0.057,"4,10",Os. Górczewska / Żerań Wschodni,638242.0,481363.0
+12764_9625_h6,Puławska × Aleja Niepodległości,0.0,0.0,198,0.071,"4,10",Al. Lotników,638226.0,481283.0
+12764_9625_h2,Puławska × Aleja Niepodległości,0.0,0.0,211,0.043,"4,10",Os. Górczewska / Żerań Wschodni,638226.0,481283.0
+12613_9784_h1,Powstańców Śląskich,0.0,0.0,362,0.033,"11,23,24,26",Metro Młociny / Nowe Bemowo,630695.0,489227.0
+12695_9820_h3,Księdza Jerzego Popiełuszki,0.0,0.0,307,0.029,"17,27",Metro Marymont / Winnica,634774.0,491003.0
+12763_9622_h2,Puławska × Aleja Wilanowska,0.0,0.0,211,0.071,"4,10",Os. Górczewska / Żerań Wschodni,638196.0,481136.0
+12763_9621_h6,Puławska,0.0,0.0,210,0.062,"4,10",Al. Lotników,638180.0,481056.0
+12694_9823_h6,Księdza Jerzego Popiełuszki,0.0,0.0,308,0.003,"17,27",Cm. Wolski / PKP Służewiec,634704.0,491162.0
+12761_9894_h1,,0.0,0.0,26,0.038,"1,25",Zjazd do zajezdni Annopol,638056.0,494728.0
+12694_9823_h3,Księdza Jerzego Popiełuszki,0.0,0.0,307,0.003,"17,27",Metro Marymont / Winnica,634704.0,491162.0
+12771_9859_h7,Rembielińska,0.0,0.0,512,0.014,"1,3,4,25",Al. Lotników / Gocławek / P+R Al. Krakowska,638596.0,492997.0
+12771_9787_h5,Aleja „Solidarności”,0.0,0.0,516,0.012,"4,13,20,23,26",Al. Lotników / Boernerowo / Cm. Wolski,638557.0,489374.0
+12767_9851_h4,Matki Teresy z Kalkuty,0.0,0.0,514,0.0,"1,3,4,25",Al. Lotników / Gocławek / P+R Al. Krakowska,638361.0,492556.0
+12767_9851_h0,Matki Teresy z Kalkuty,0.0,0.0,513,0.021,"1,3,4,25",Annopol / Żerań Wschodni,638356.0,492555.0
+12767_9690_h7,Spacerowa,0.0,0.0,507,0.028,"11,14,16,19",Miasteczko Wilanów / Sielce / Stegny,638362.0,484537.0
+12767_9690_h3,Spacerowa,0.0,0.0,510,0.012,"11,14,16,19",Banacha / Cm. Wolski / Nowe Bemowo,638365.0,484532.0
+12766_9797_h7,Jagiellońska,0.0,0.0,305,0.01,"6,20,28",Boernerowo / Dw. Wschodni (Kijowska) / Gocławek,638347.0,489857.0
+12691_9754_h6,Młynarska,0.0,0.0,309,0.023,"20,23,24",Czynszowa / Gocławek / Żerań FSO,634553.0,487744.0
+12766_9652_h6,Puławska,0.0,0.0,325,0.022,"4,10,11,18",Al. Lotników / PKP Służewiec / Zjazd do zajezdni Mokotów,638333.0,482608.0
+12766_9651_h2,Puławska,0.0,0.0,337,0.056,"4,10,11,18",Cm. Wolski / Os. Górczewska / Sielce,638334.0,482595.0
+12691_9754_h2,Młynarska,0.0,0.0,308,0.016,"20,23,24",Boernerowo / Nowe Bemowo,634562.0,487706.0
+12700_9824_h4,Juliusza Słowackiego,0.0,0.0,92,0.011,6,Metro Młociny,635049.0,491218.0
+12776_9682_h3,Belwederska,0.0,0.0,393,0.025,"14,16,19",Banacha / Nowe Bemowo / Piaski,638811.0,484107.0
+12775_9797_h1,11 Listopada,0.0,0.0,410,0.024,"3,4,23,25",Annopol / Czynszowa / Żerań Wschodni,638788.0,489891.0
+12700_9824_h0,Juliusza Słowackiego,0.0,0.0,93,0.043,6,Gocławek,635017.0,491229.0
+12700_9761_h6,Okopowa,0.0,0.0,412,0.015,"1,22,27",Cm. Wolski / P+R Al. Krakowska / Wiatraczna,635006.0,488059.0
+12698_9825_h0,Juliusza Słowackiego,0.0,0.0,93,0.011,6,Gocławek,634935.0,491256.0
+12705_9822_h0,Juliusza Słowackiego,0.0,0.0,93,0.0,6,Gocławek,635278.0,491145.0
+12631_9872_h5,Zgrupowania AK „Kampinos”,0.0,0.0,10,0.1,22,Wiatraczna,631560.0,493632.0
+12704_9794_h6,Aleja Jana Pawła II × Parysowska,0.0,0.0,819,0.012,"16,17,19,22,27,28,33",Cm. Wolski / Dw. Wschodni (Kijowska) / Kielecka,635211.0,489716.0
+12630_9716_h4,Połczyńska,0.0,0.0,264,0.008,"10,11,26",Metro Młociny / Nowe Bemowo / Os. Górczewska,631526.0,485823.0
+12630_9716_h0,Połczyńska,0.0,0.0,266,0.019,"10,11,26",Al. Lotników / Sielce / Wiatraczna,631515.0,485819.0
+12629_9864_h1,Tomasza Nocznickiego,0.0,0.0,204,0.025,"26,33",Metro Młociny,631495.0,493239.0
+12704_9794_h2,Aleja Jana Pawła II × Parysowska,0.0,0.0,692,0.025,"16,17,19,22,27,28",Metro Marymont / Nowe Bemowo / Os. Górczewska,635211.0,489716.0
+12628_9715_h1,Połczyńska,0.0,0.0,266,0.015,"10,11,26",Al. Lotników / Sielce / Wiatraczna,631402.0,485771.0
+12626_9771_h0,Dywizjonu 303 × Radiowa,0.0,0.0,312,0.048,"20,23,24",Czynszowa / Gocławek / Żerań FSO,631331.0,488555.0
+12647_9885_h7,Marymoncka,0.0,0.0,228,0.0,"6,17",Gocławek / PKP Służewiec,632392.0,494299.0
+12647_9885_h3,Marymoncka,0.0,0.0,228,0.0,"6,17",Metro Młociny / Winnica,632392.0,494299.0
+12646_9971_h6,Światowida,0.0,0.0,302,0.017,"2,17",Metro Młociny / PKP Służewiec,632308.0,498573.0
+12704_9746_h2,Towarowa × Okopowa,0.0,0.0,424,0.078,"1,9,22,24",Annopol / Nowe Bemowo / Piaski,635216.0,487330.0
+12703_9833_h3,Adama Mickiewicza,0.0,0.0,99,0.0,15,Marymont-Potok,635185.0,491650.0
+12713_9815_h7,Adama Mickiewicza,0.0,0.0,198,0.0,"6,15",Gocławek / P+R Al. Krakowska,635682.0,490778.0
+12686_9666_h1,Grójecka,0.0,0.0,422,0.031,"1,9,15",Annopol / Gocławek / Marymont-Potok,634342.0,483303.0
+12685_9812_h3,Władysława Broniewskiego,0.0,0.0,503,0.002,"16,19,22,28,33",Metro Młociny / Nowe Bemowo / Os. Górczewska,634297.0,490619.0
+12772_9857_h3,Rembielińska,0.0,0.0,511,0.004,"1,3,4,25",Annopol / Żerań Wschodni,638643.0,492895.0
+12771_9861_h7,Rembielińska,0.0,0.0,512,0.021,"1,3,4,25",Al. Lotników / Gocławek / P+R Al. Krakowska,638552.0,493094.0
+12685_9812_h0,Władysława Broniewskiego,0.0,0.0,512,0.012,"16,19,22,28,33",Dw. Wschodni (Kijowska) / Kielecka / Miasteczko Wilanów,634297.0,490619.0
+12685_9764_h7,Obozowa × Jana Ostroroga,0.0,0.0,309,0.013,"20,23,24",Czynszowa / Gocławek / Żerań FSO,634299.0,488212.0
+12680_9924_h3,Trakt Nadwiślański × Szafrańców,0.0,0.0,256,0.066,"2,17",Winnica,634018.0,496222.0
+12786_9664_h7,Jana III Sobieskiego,0.0,0.0,390,0.082,"14,16,19",Miasteczko Wilanów / Stegny,639338.0,483213.0
+12784_9782_h7,Targowa,0.0,0.0,593,0.025,"3,6,13,25,26,28",Dw. Wschodni (Kijowska) / Gocławek / Kawęczyńska - Bazylika,639231.0,489142.0
+12677_9918_h1,Aleja Pułkownika Ryszarda Kuklińskiego × Myśliborska,0.0,0.0,388,0.093,"2,17",Winnica,633888.0,495900.0
+12781_9814_h6,11 Listopada,0.0,0.0,318,0.031,"3,4,18,25",Al. Lotników / Gocławek / Pl. Narutowicza,639065.0,490702.0
+12698_9812_h7,Księdza Jerzego Popiełuszki,0.0,0.0,309,0.003,"17,27",Cm. Wolski / PKP Służewiec,634938.0,490628.0
+12698_9812_h3,Księdza Jerzego Popiełuszki,0.0,0.0,307,0.013,"17,27",Metro Marymont / Winnica,634943.0,490618.0
+12696_9826_h4,Juliusza Słowackiego,0.0,0.0,92,0.0,6,Metro Młociny,634802.0,491300.0
+12778_9679_h7,Belwederska,0.0,0.0,391,0.051,"14,16,19",Miasteczko Wilanów / Stegny,638900.0,483954.0
+12778_9678_h3,Belwederska,0.0,0.0,393,0.033,"14,16,19",Banacha / Nowe Bemowo / Piaski,638908.0,483940.0
+12713_9815_h3,Adama Mickiewicza,0.0,0.0,195,0.005,"6,15",Marymont-Potok / Metro Młociny,635682.0,490778.0
+12796_9787_h1,Kijowska,0.0,0.0,2,0.0,28,Dw. Wschodni (Kijowska),639846.0,489371.0
+12794_9773_h2,Aleja Zieleniecka,0.0,0.0,301,0.043,"7,22,25",Annopol / Kawęczyńska - Bazylika / Wiatraczna,639744.0,488660.0
+12793_9784_h5,Kijowska,0.0,0.0,305,0.016,"7,13,28",Banacha / Cm. Wolski / Os. Górczewska,639654.0,489246.0
+12793_9784_h1,Kijowska,0.0,0.0,303,0.017,"7,13,28",Dw. Wschodni (Kijowska) / Kawęczyńska - Bazylika,639654.0,489246.0
+12790_9782_h5,Kijowska,0.0,0.0,305,0.023,"7,13,28",Banacha / Cm. Wolski / Os. Górczewska,639545.0,489147.0
+12790_9685_h4,Jurija Gagarina,0.0,0.0,114,0.079,11,Cm. Wolski,639506.0,484256.0
+12713_9729_h7,Towarowa,0.0,0.0,415,0.031,"1,22,24",Gocławek / P+R Al. Krakowska / Wiatraczna,635665.0,486462.0
+12789_9685_h0,Jurija Gagarina,0.0,0.0,116,0.052,11,Sielce,639498.0,484256.0
+12708_9824_h7,Adama Mickiewicza,0.0,0.0,98,0.0,15,P+R Al. Krakowska,635404.0,491238.0
+12789_9659_h3,Jana III Sobieskiego × Ludwiga van Beethovena,0.0,0.0,394,0.041,"14,16,19",Banacha / Nowe Bemowo / Piaski,639487.0,482996.0
+12804_9775_h4,Grochowska,0.0,0.0,413,0.005,"3,6,22,26",Annopol / Metro Młociny / Piaski,640242.0,488779.0
+12708_9708_h1,Grójecka × Plac Gabriela Narutowicza,0.0,0.0,521,0.025,"1,7,9",Annopol / Gocławek / Kawęczyńska - Bazylika,635412.0,485426.0
+12804_9637_h3,Jana III Sobieskiego,0.0,0.0,393,0.046,"14,16,19",Banacha / Nowe Bemowo / Piaski,640245.0,481894.0
+12628_9715_h5,Połczyńska,0.0,0.0,264,0.008,"10,11,26",Metro Młociny / Nowe Bemowo / Os. Górczewska,631403.0,485772.0
+12721_9725_h4,Aleje Jerozolimskie,0.0,0.0,612,0.015,"7,9,22,24,25",Banacha / Nowe Bemowo / P+R Al. Krakowska,636056.0,486281.0
+12818_9761_h4,Aleja Jerzego Waszyngtona,0.0,0.0,300,0.007,"9,24",Nowe Bemowo / P+R Al. Krakowska,640923.0,488087.0
+12818_9761_h0,Aleja Jerzego Waszyngtona,0.0,0.0,305,0.026,"9,24",Gocławek,640923.0,488087.0
+12818_9617_h7,Jana III Sobieskiego,0.0,0.0,277,0.029,"14,16",Miasteczko Wilanów,640932.0,480899.0
+12720_9796_h1,Zygmunta Słomińskiego,0.0,0.0,203,0.03,1,Annopol,636045.0,489842.0
+12817_9619_h3,Jana III Sobieskiego,0.0,0.0,295,0.007,"14,16",Banacha / Piaski,640867.0,480994.0
+12814_9624_h7,Jana III Sobieskiego,0.0,0.0,291,0.014,"14,16",Miasteczko Wilanów,640714.0,481218.0
+12814_9624_h3,Jana III Sobieskiego,0.0,0.0,295,0.017,"14,16",Banacha / Piaski,640723.0,481205.0
+12825_9608_h3,Jana III Sobieskiego,0.0,0.0,294,0.014,"14,16",Banacha / Piaski,641253.0,480437.0
+12820_9762_h4,Aleja Jerzego Waszyngtona,0.0,0.0,300,0.0,"9,24",Nowe Bemowo / P+R Al. Krakowska,641015.0,488120.0
+12840_9772_h4,Grochowska,0.0,0.0,413,0.019,"3,6,22,26",Annopol / Metro Młociny / Piaski,642023.0,488647.0
+12835_9773_h4,Grochowska × Grenadierów,0.0,0.0,413,0.017,"3,6,22,26",Annopol / Metro Młociny / Piaski,641765.0,488665.0
+12720_9763_h7,Aleja Jana Pawła II,0.0,0.0,169,0.03,"17,19",PKP Służewiec / Stegny,636018.0,488176.0
+12833_9767_h4,Aleja Jerzego Waszyngtona × Międzyborska,0.0,0.0,299,0.07,"9,24",Nowe Bemowo / P+R Al. Krakowska,641691.0,488367.0
+12829_9598_h6,Aleja Rzeczypospolitej,0.0,0.0,292,0.017,"14,16",Miasteczko Wilanów,641456.0,479912.0
+12829_9598_h2,Aleja Rzeczypospolitej,0.0,0.0,293,0.061,"14,16",Banacha / Piaski,641456.0,479912.0
+12720_9763_h3,Aleja Jana Pawła II,0.0,0.0,401,0.015,"17,19,33",Metro Młociny / Nowe Bemowo / Winnica,636019.0,488176.0
+12624_9772_h7,Radiowa × Aleja Obrońców Grodna,0.0,0.0,210,0.014,"23,24",Czynszowa / Gocławek,631217.0,488620.0
+12719_9765_h3,Aleja Jana Pawła II,0.0,0.0,401,0.002,"17,19,33",Metro Młociny / Nowe Bemowo / Winnica,635961.0,488276.0
+12624_9772_h3,Radiowa × Aleja Obrońców Grodna,0.0,0.0,211,0.033,"23,24",Nowe Bemowo,631221.0,488618.0
+12696_9826_h0,Juliusza Słowackiego,0.0,0.0,93,0.011,6,Gocławek,634802.0,491300.0
+12695_9820_h6,Księdza Jerzego Popiełuszki,0.0,0.0,308,0.019,"17,27",Cm. Wolski / PKP Służewiec,634769.0,491015.0
+12799_9645_h7,Jana III Sobieskiego,0.0,0.0,369,0.008,"14,16,19",Miasteczko Wilanów / Stegny,639991.0,482266.0
+12718_9807_h7,Adama Mickiewicza,0.0,0.0,198,0.005,"6,15",Gocławek / P+R Al. Krakowska,635932.0,490365.0
+12808_9627_h1,Świętego Bonifacego,0.0,0.0,97,0.021,19,Nowe Bemowo,640411.0,481396.0
+12806_9626_h5,Świętego Bonifacego,0.0,0.0,101,0.01,19,Stegny,640344.0,481322.0
+12806_9625_h1,Świętego Bonifacego,0.0,0.0,97,0.0,19,Nowe Bemowo,640320.0,481296.0
+12639_9828_h5,Aleja Władysława Reymonta,0.0,0.0,311,0.016,"19,26,28",Nowe Bemowo / Os. Górczewska / Wiatraczna,631986.0,491426.0
+12804_9623_h5,Świętego Bonifacego,0.0,0.0,101,0.0,19,Stegny,640226.0,481193.0
+12804_9623_h1,Świętego Bonifacego,0.0,0.0,95,0.0,19,Nowe Bemowo,640226.0,481193.0
+12803_9791_h6,Kijowska,0.0,0.0,190,0.058,"7,13",Banacha / Cm. Wolski,640162.0,489573.0
+12717_9808_h7,Adama Mickiewicza × Plac Inwalidów,0.0,0.0,198,0.0,"6,15",Gocławek / P+R Al. Krakowska,635889.0,490427.0
+12803_9756_h4,Aleja Jerzego Waszyngtona,0.0,0.0,300,0.013,"9,24",Nowe Bemowo / P+R Al. Krakowska,640166.0,487813.0
+12717_9768_h7,Aleja Jana Pawła II,0.0,0.0,79,0.076,17,PKP Służewiec,635888.0,488407.0
+12802_9775_h4,Grochowska,0.0,0.0,413,0.005,"3,6,22,26",Annopol / Metro Młociny / Piaski,640144.0,488787.0
+12801_9789_h5,Kijowska,0.0,0.0,200,0.01,"7,13",Banacha / Cm. Wolski,640061.0,489487.0
+12800_9789_h1,Kijowska,0.0,0.0,194,0.005,"13,28",Dw. Wschodni (Kijowska) / Kawęczyńska - Bazylika,640023.0,489466.0
+12799_9788_h5,Kijowska,0.0,0.0,200,0.01,"7,13",Banacha / Cm. Wolski,639956.0,489432.0
+12820_9762_h1,Aleja Jerzego Waszyngtona,0.0,0.0,310,0.01,"9,24",Gocławek,641015.0,488120.0

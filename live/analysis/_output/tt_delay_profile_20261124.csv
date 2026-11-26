@@ -1,0 +1,1685 @@
+route_id,direction_id,stop_sequence,stop_name,delay_med_s,delay_p85_s,n
+1,0,0,Annopol,11.0,36.0,92
+1,0,1,Toruńska,27.0,51.0,93
+1,0,2,Metro Bródno,29.0,59.0,93
+1,0,3,Poborzańska,29.0,60.0,92
+1,0,4,Rembielińska,15.0,52.0,92
+1,0,5,Julianowska,28.0,66.0,93
+1,0,6,Budowlana,32.0,73.0,93
+1,0,7,Pożarowa,32.0,76.0,93
+1,0,8,Staniewicka,40.0,90.0,93
+1,0,9,Rondo Żaba,81.0,129.0,92
+1,0,10,Namysłowska,56.0,104.0,93
+1,0,11,Rondo Starzyńskiego,69.0,123.0,92
+1,0,12,Rondo Starzyńskiego,73.0,130.0,91
+1,0,13,Wybrzeże Helskie,86.0,139.0,89
+1,0,14,Most Gdański,66.0,128.0,88
+1,0,15,Park Traugutta,82.0,141.0,90
+1,0,16,Dw. Gdański,102.0,173.0,91
+1,0,17,Baseny Inflancka,54.0,142.0,92
+1,0,18,Powązkowska,92.0,180.0,92
+1,0,19,Niska,104.0,205.0,92
+1,0,20,Cm. Żydowski,120.0,223.0,92
+1,0,21,Żytnia,135.0,244.0,92
+1,0,22,Okopowa,125.0,201.0,92
+1,0,23,Muzeum Powstania Warszawskiego,130.0,238.0,92
+1,0,24,Rondo Daszyńskiego,127.0,197.0,92
+1,0,25,Pl. Zawiszy,146.0,248.0,92
+1,0,26,Ochota - Ratusz,82.0,177.0,91
+1,0,27,Pl. Narutowicza,75.0,183.0,90
+1,0,28,Wawelska,68.0,179.0,90
+1,0,29,Och-Teatr,64.0,176.0,90
+1,0,30,Bitwy Warszawskiej 1920 r.,68.0,214.0,90
+1,0,31,Hale Banacha,61.0,198.0,91
+1,0,32,Dickensa,69.0,194.0,91
+1,0,33,Korotyńskiego,81.0,212.0,91
+1,0,34,PKP Rakowiec,62.0,202.0,91
+1,0,35,Włochy - Ratusz,127.0,250.0,91
+1,0,36,Hynka,144.0,267.0,91
+1,0,37,Krakowiaków,111.0,239.0,91
+1,0,38,Lipowczana,99.0,228.0,91
+1,0,39,Instytut Lotnictwa,120.0,250.0,91
+1,0,40,P+R Al. Krakowska,,,0
+1,1,0,P+R Al. Krakowska,8.0,22.0,93
+1,1,1,P+R Al. Krakowska,26.0,59.0,95
+1,1,2,Instytut Lotnictwa,27.0,61.0,94
+1,1,3,Lipowczana,31.0,68.0,94
+1,1,4,Krakowiaków,47.0,94.0,94
+1,1,5,Hynka,63.0,126.0,95
+1,1,6,Włochy - Ratusz,71.0,141.0,95
+1,1,7,PKP Rakowiec,98.0,187.0,94
+1,1,8,Korotyńskiego,80.0,154.0,95
+1,1,9,Dickensa,131.0,191.0,95
+1,1,10,Hale Banacha,148.0,200.0,95
+1,1,11,Bitwy Warszawskiej 1920 r.,128.0,194.0,94
+1,1,12,Och-Teatr,119.0,189.0,94
+1,1,13,Wawelska,149.0,235.0,95
+1,1,14,Pl. Narutowicza,115.0,199.0,94
+1,1,15,Ochota - Ratusz,98.0,172.0,94
+1,1,16,Pl. Zawiszy,104.0,187.0,95
+1,1,17,Rondo Daszyńskiego,99.0,173.0,94
+1,1,18,Muzeum Powstania Warszawskiego,123.0,186.0,94
+1,1,19,Okopowa,74.0,184.0,95
+1,1,20,Żytnia,68.0,173.0,95
+1,1,21,Dzielna,66.0,176.0,95
+1,1,22,Cm. Żydowski,66.0,171.0,95
+1,1,23,Niska,80.0,187.0,94
+1,1,24,Powązkowska,65.0,197.0,95
+1,1,25,Rondo „Radosława”,82.0,209.0,95
+1,1,26,Baseny Inflancka,75.0,207.0,95
+1,1,27,Dw. Gdański,95.0,224.0,94
+1,1,28,Park Traugutta,69.0,190.0,94
+1,1,29,Most Gdański,64.0,188.0,93
+1,1,30,Wybrzeże Helskie,51.0,164.0,93
+1,1,31,Rondo Starzyńskiego,65.0,183.0,95
+1,1,32,Rondo Starzyńskiego,59.0,199.0,95
+1,1,33,Namysłowska,76.0,201.0,95
+1,1,34,Rondo Żaba,21.0,154.0,95
+1,1,35,Staniewicka,30.0,168.0,95
+1,1,36,Pożarowa,27.0,172.0,95
+1,1,37,Budowlana,51.0,196.0,95
+1,1,38,Julianowska,40.0,175.0,94
+1,1,39,Rembielińska,51.0,177.0,93
+1,1,40,Poborzańska,37.0,160.0,93
+1,1,41,Metro Bródno,40.0,166.0,93
+1,1,42,Toruńska,37.0,161.0,94
+1,1,43,Annopol,,,0
+10,0,0,Os. Górczewska,10.0,28.0,93
+10,0,1,Klemensiewicza,28.0,70.0,92
+10,0,2,Metro Bemowo,52.0,99.0,93
+10,0,3,Czumy,44.0,97.0,93
+10,0,4,Hala Wola,71.0,125.0,93
+10,0,5,Synów Pułku,26.0,84.0,93
+10,0,6,Ciepłownia Wola,7.0,56.0,93
+10,0,7,P+R Połczyńska,3.0,39.0,94
+10,0,8,Fort Wola,22.0,61.0,94
+10,0,9,Sowińskiego,10.0,56.0,94
+10,0,10,Reduta Wolska,11.0,62.0,94
+10,0,11,Ordona - WSA,40.0,95.0,94
+10,0,12,PKP Wola (Kasprzaka),26.0,96.0,93
+10,0,13,Szpital Wolski,43.0,116.0,93
+10,0,14,Karolkowa,68.0,122.0,94
+10,0,15,Rondo Daszyńskiego,42.0,78.0,94
+10,0,16,Norblin,22.0,84.0,93
+10,0,17,Rondo ONZ,33.0,141.0,93
+10,0,18,Dw. Centralny,57.0,165.0,93
+10,0,19,Koszykowa,54.0,191.0,93
+10,0,20,Nowowiejska,104.0,242.0,93
+10,0,21,Pl. Politechniki,67.0,215.0,92
+10,0,22,Metro Politechnika,96.0,216.0,92
+10,0,23,Trasa Łazienkowska,61.0,210.0,93
+10,0,24,Pl. Unii Lubelskiej,72.0,232.0,93
+10,0,25,Rakowiecka,53.0,238.0,93
+10,0,26,Dworkowa,65.0,218.0,93
+10,0,27,Morskie Oko,63.0,233.0,93
+10,0,28,Park Dreszera,32.0,212.0,91
+10,0,29,Malczewskiego,40.0,207.0,91
+10,0,30,Królikarnia,24.0,184.0,91
+10,0,31,Bukowińska,53.0,224.0,90
+10,0,32,Metro Wilanowska,33.0,201.0,92
+10,0,33,Niedźwiedzia,50.0,205.0,92
+10,0,34,Al. Lotników,77.0,203.0,92
+10,0,35,Al. Lotników,34.0,149.0,92
+10,0,36,Al. Lotników,,,0
+10,1,0,Al. Lotników,18.0,60.0,94
+10,1,1,Niedźwiedzia,35.0,75.0,95
+10,1,2,Metro Wilanowska,67.0,107.0,95
+10,1,3,Bukowińska,44.0,102.0,95
+10,1,4,Królikarnia,39.0,130.0,94
+10,1,5,Malczewskiego,44.0,128.0,94
+10,1,6,Park Dreszera,41.0,118.0,95
+10,1,7,Morskie Oko,25.0,93.0,95
+10,1,8,Dworkowa,40.0,121.0,95
+10,1,9,Goworka,160.0,274.0,94
+10,1,10,Pl. Unii Lubelskiej,135.0,237.0,93
+10,1,11,Pl. Zbawiciela,173.0,279.0,93
+10,1,12,Metro Politechnika,129.0,246.0,94
+10,1,13,Pl. Politechniki,146.0,280.0,93
+10,1,14,Nowowiejska,122.0,264.0,93
+10,1,15,Koszykowa,132.0,284.0,94
+10,1,16,Dw. Centralny,114.0,246.0,94
+10,1,17,Rondo ONZ,151.0,306.0,94
+10,1,18,Norblin,162.0,332.0,94
+10,1,19,Rondo Daszyńskiego,112.0,322.0,94
+10,1,20,Karolkowa,111.0,323.0,94
+10,1,21,Szpital Wolski,99.0,308.0,94
+10,1,22,PKP Wola (Kasprzaka),105.0,340.0,93
+10,1,23,Ordona - WSA,117.0,338.0,94
+10,1,24,Reduta Wolska,129.0,333.0,92
+10,1,25,Sowińskiego,132.0,341.0,92
+10,1,26,Fort Wola,98.0,350.0,93
+10,1,27,P+R Połczyńska,94.0,365.0,93
+10,1,28,Ciepłownia Wola,100.0,369.0,93
+10,1,29,Synów Pułku,125.0,360.0,93
+10,1,30,Hala Wola,127.0,359.0,93
+10,1,31,Pl. Kasztelański,118.0,343.0,93
+10,1,32,Czumy,112.0,351.0,93
+10,1,33,Metro Bemowo,126.0,362.0,92
+10,1,34,Klemensiewicza,106.0,332.0,92
+10,1,35,Os. Górczewska,,,0
+11,0,0,Cm. Wolski,10.0,21.0,45
+11,0,1,Sowińskiego,30.0,53.0,52
+11,0,2,Reduta Wolska,32.0,55.0,52
+11,0,3,Ordona - WSA,57.0,85.0,53
+11,0,4,PKP Wola (Kasprzaka),69.0,84.0,53
+11,0,5,Szpital Wolski,80.0,124.0,53
+11,0,6,Karolkowa,70.0,133.0,53
+11,0,7,Rondo Daszyńskiego,43.0,115.0,53
+11,0,8,Norblin,31.0,95.0,53
+11,0,9,Rondo ONZ,38.0,101.0,53
+11,0,10,Dw. Centralny,57.0,140.0,52
+11,0,11,Koszykowa,71.0,136.0,52
+11,0,12,Nowowiejska,117.0,190.0,54
+11,0,13,Pl. Politechniki,82.0,159.0,53
+11,0,14,Metro Politechnika,87.0,178.0,53
+11,0,15,Trasa Łazienkowska,69.0,170.0,52
+11,0,16,Pl. Unii Lubelskiej,64.0,213.0,53
+11,0,17,Goworka,85.0,226.0,53
+11,0,18,Spacerowa,84.0,229.0,53
+11,0,19,Sielecka,97.0,251.0,52
+11,0,20,Sielce,,,0
+11,1,0,Sielce,13.0,28.0,53
+11,1,1,Sielecka,60.0,107.0,53
+11,1,2,Spacerowa,56.0,99.0,53
+11,1,3,Goworka,64.0,111.0,53
+11,1,4,Pl. Unii Lubelskiej,41.0,112.0,53
+11,1,5,Pl. Zbawiciela,86.0,176.0,53
+11,1,6,Metro Politechnika,51.0,140.0,53
+11,1,7,Pl. Politechniki,62.0,157.0,53
+11,1,8,Nowowiejska,41.0,117.0,53
+11,1,9,Koszykowa,61.0,144.0,53
+11,1,10,Dw. Centralny,38.0,129.0,53
+11,1,11,Rondo ONZ,30.0,161.0,53
+11,1,12,Norblin,90.0,219.0,52
+11,1,13,Rondo Daszyńskiego,90.0,219.0,53
+11,1,14,Karolkowa,80.0,236.0,53
+11,1,15,Szpital Wolski,81.0,241.0,53
+11,1,16,PKP Wola (Kasprzaka),97.0,222.0,53
+11,1,17,Ordona - WSA,94.0,243.0,53
+11,1,18,Reduta Wolska,91.0,245.0,53
+11,1,19,Sowińskiego,87.0,262.0,52
+11,1,20,Cm. Wolski,,,0
+13,0,0,Kawęczyńska - Bazylika,12.0,30.0,64
+13,0,1,Kawęczyńska - Bazylika,37.0,64.0,72
+13,0,2,Wojnicka,59.0,85.0,76
+13,0,3,Zajezdnia Praga,61.0,93.0,88
+13,0,4,Dw. Wschodni (Kijowska),62.0,100.0,89
+13,0,5,Kijowska,38.0,105.0,89
+13,0,6,Ząbkowska,39.0,115.0,89
+13,0,7,Dw. Wileński,24.0,89.0,89
+13,0,8,Park Praski,43.0,103.0,89
+13,0,9,Stare Miasto,68.0,128.0,88
+13,0,10,Metro Ratusz Arsenał,64.0,148.0,89
+13,0,11,Kino Femina,92.0,158.0,89
+13,0,12,Wola - Ratusz,86.0,154.0,89
+13,0,13,Okopowa,75.0,172.0,89
+13,0,14,Zajezdnia Wola,80.0,161.0,89
+13,0,15,Metro Płocka,84.0,188.0,89
+13,0,16,Sokołowska,83.0,186.0,89
+13,0,17,PKP Wola (Wolska),128.0,209.0,88
+13,0,18,Elekcyjna,103.0,186.0,88
+13,0,19,Reduta Wolska,118.0,210.0,89
+13,0,20,Sowińskiego,122.0,221.0,89
+13,0,21,Cm. Wolski,,,0
+13,1,0,Cm. Wolski,14.0,24.0,87
+13,1,1,Sowińskiego,25.0,73.0,89
+13,1,2,Reduta Wolska,23.0,76.0,89
+13,1,3,Elekcyjna,50.0,107.0,89
+13,1,4,PKP Wola (Wolska),94.0,158.0,88
+13,1,5,Sokołowska,100.0,160.0,88
+13,1,6,Metro Płocka,67.0,126.0,89
+13,1,7,Zajezdnia Wola,80.0,138.0,89
+13,1,8,Okopowa,19.0,85.0,89
+13,1,9,Wola - Ratusz,9.0,40.0,88
+13,1,10,Kino Femina,31.0,79.0,89
+13,1,11,Metro Ratusz Arsenał,72.0,131.0,89
+13,1,12,Stare Miasto,67.0,129.0,88
+13,1,13,Park Praski,83.0,159.0,89
+13,1,14,Dw. Wileński,53.0,172.0,89
+13,1,15,Ząbkowska,102.0,240.0,89
+13,1,16,Kijowska,115.0,279.0,89
+13,1,17,Dw. Wschodni (Kijowska),153.0,300.0,88
+13,1,18,Zajezdnia Praga,124.0,228.0,87
+13,1,19,Wojnicka,112.0,190.0,78
+13,1,20,Kawęczyńska - Bazylika,,,0
+14,0,0,Banacha,12.0,24.0,97
+14,0,1,Banacha,17.0,31.0,97
+14,0,2,Bitwy Warszawskiej 1920 r.,42.0,95.0,97
+14,0,3,Och-Teatr,39.0,86.0,96
+14,0,4,Wawelska,82.0,149.0,96
+14,0,5,Pl. Narutowicza,68.0,152.0,98
+14,0,6,Raszyńska,53.0,134.0,98
+14,0,7,NIK,15.0,95.0,98
+14,0,8,Nowowiejska,16.0,96.0,98
+14,0,9,Pl. Politechniki,46.0,122.0,97
+14,0,10,Metro Politechnika,70.0,155.0,97
+14,0,11,Trasa Łazienkowska,51.0,137.0,97
+14,0,12,Pl. Unii Lubelskiej,59.0,160.0,97
+14,0,13,Goworka,59.0,165.0,96
+14,0,14,Spacerowa,33.0,144.0,96
+14,0,15,Dolna,70.0,181.0,95
+14,0,16,Kostrzewskiego,102.0,215.0,95
+14,0,17,Idzikowskiego,139.0,249.0,96
+14,0,18,Mangalia,162.0,264.0,96
+14,0,19,Czarnomorska,159.0,262.0,96
+14,0,20,Św. Bonifacego,137.0,248.0,96
+14,0,21,Nałęczowska,152.0,269.0,96
+14,0,22,Sobieskiego,125.0,246.0,95
+14,0,23,Oś Królewska,130.0,263.0,96
+14,0,24,Świątynia Opatrzności Bożej,154.0,312.0,96
+14,0,25,Miasteczko Wilanów,,,0
+14,1,0,Miasteczko Wilanów,24.0,40.0,97
+14,1,1,Świątynia Opatrzności Bożej,0.0,26.0,99
+14,1,2,Oś Królewska,58.0,68.0,98
+14,1,3,Sobieskiego,93.0,112.0,98
+14,1,4,Nałęczowska,116.0,180.0,98
+14,1,5,Św. Bonifacego,64.0,128.0,97
+14,1,6,Czarnomorska,67.0,141.0,97
+14,1,7,Mangalia,60.0,134.0,96
+14,1,8,Idzikowskiego,7.0,77.0,97
+14,1,9,Kostrzewskiego,54.0,119.0,98
+14,1,10,Dolna,72.0,149.0,98
+14,1,11,Spacerowa,90.0,188.0,98
+14,1,12,Goworka,103.0,186.0,97
+14,1,13,Pl. Unii Lubelskiej,82.0,189.0,98
+14,1,14,Pl. Zbawiciela,121.0,238.0,97
+14,1,15,Metro Politechnika,85.0,193.0,97
+14,1,16,Pl. Politechniki,107.0,212.0,98
+14,1,17,Nowowiejska,91.0,196.0,98
+14,1,18,NIK,82.0,191.0,98
+14,1,19,Raszyńska,56.0,179.0,96
+14,1,20,Pl. Narutowicza,93.0,201.0,97
+14,1,21,Wawelska,100.0,218.0,97
+14,1,22,Och-Teatr,101.0,230.0,97
+14,1,23,Bitwy Warszawskiej 1920 r.,103.0,234.0,97
+14,1,24,Banacha,,,0
+15,0,0,Marymont-Potok,16.0,32.0,91
+15,0,1,Bohomolca,34.0,58.0,94
+15,0,2,Pl. Wilsona,38.0,86.0,94
+15,0,3,Pl. Inwalidów,75.0,129.0,95
+15,0,4,Gen. Zajączka,19.0,79.0,95
+15,0,5,Dw. Gdański,24.0,84.0,95
+15,0,6,Muranowska,19.0,77.0,95
+15,0,7,Muranów,148.0,208.0,95
+15,0,8,Metro Ratusz Arsenał,131.0,177.0,95
+15,0,9,Pl. Bankowy,124.0,176.0,95
+15,0,10,Królewska,125.0,180.0,95
+15,0,11,Metro Świętokrzyska,146.0,203.0,94
+15,0,12,Centrum,155.0,242.0,95
+15,0,13,Hoża,201.0,274.0,94
+15,0,14,Pl. Konstytucji,207.0,276.0,93
+15,0,15,Pl. Zbawiciela,188.0,294.0,94
+15,0,16,Metro Politechnika,175.0,279.0,93
+15,0,17,Pl. Politechniki,187.0,291.0,93
+15,0,18,Nowowiejska,144.0,259.0,94
+15,0,19,NIK,139.0,249.0,94
+15,0,20,Raszyńska,110.0,244.0,93
+15,0,21,Pl. Narutowicza,148.0,256.0,94
+15,0,22,Wawelska,149.0,266.0,94
+15,0,23,Och-Teatr,144.0,249.0,94
+15,0,24,Bitwy Warszawskiej 1920 r.,145.0,312.0,93
+15,0,25,Hale Banacha,152.0,300.0,93
+15,0,26,Dickensa,240.0,308.0,92
+15,0,27,Korotyńskiego,242.0,316.0,92
+15,0,28,PKP Rakowiec,207.0,324.0,93
+15,0,29,Włochy - Ratusz,246.0,366.0,93
+15,0,30,Hynka,245.0,392.0,93
+15,0,31,Krakowiaków,209.0,354.0,93
+15,0,32,Lipowczana,198.0,346.0,93
+15,0,33,Instytut Lotnictwa,216.0,367.0,93
+15,0,34,P+R Al. Krakowska,,,0
+15,1,0,P+R Al. Krakowska,10.0,22.0,94
+15,1,1,P+R Al. Krakowska,25.0,62.0,95
+15,1,2,Instytut Lotnictwa,29.0,69.0,96
+15,1,3,Lipowczana,38.0,73.0,96
+15,1,4,Krakowiaków,47.0,89.0,96
+15,1,5,Hynka,64.0,104.0,95
+15,1,6,Włochy - Ratusz,71.0,127.0,96
+15,1,7,PKP Rakowiec,110.0,159.0,96
+15,1,8,Korotyńskiego,80.0,148.0,96
+15,1,9,Dickensa,128.0,190.0,95
+15,1,10,Hale Banacha,142.0,195.0,95
+15,1,11,Bitwy Warszawskiej 1920 r.,129.0,195.0,96
+15,1,12,Och-Teatr,125.0,212.0,96
+15,1,13,Wawelska,160.0,247.0,96
+15,1,14,Pl. Narutowicza,143.0,275.0,95
+15,1,15,Raszyńska,118.0,244.0,95
+15,1,16,NIK,81.0,211.0,96
+15,1,17,Nowowiejska,78.0,203.0,96
+15,1,18,Pl. Politechniki,108.0,241.0,96
+15,1,19,Metro Politechnika,120.0,249.0,95
+15,1,20,Pl. Konstytucji,81.0,220.0,95
+15,1,21,Hoża,83.0,244.0,96
+15,1,22,Centrum,94.0,236.0,96
+15,1,23,Metro Świętokrzyska,86.0,228.0,96
+15,1,24,Królewska,114.0,248.0,96
+15,1,25,Pl. Bankowy,80.0,239.0,96
+15,1,26,Metro Ratusz Arsenał,86.0,220.0,96
+15,1,27,Muranów,110.0,268.0,96
+15,1,28,Muranowska,96.0,241.0,95
+15,1,29,Dw. Gdański,87.0,227.0,95
+15,1,30,Gen. Zajączka,90.0,238.0,95
+15,1,31,Pl. Inwalidów,84.0,248.0,95
+15,1,32,Pl. Wilsona,101.0,249.0,96
+15,1,33,Pl. Wilsona,52.0,192.0,96
+15,1,34,Bohomolca,39.0,196.0,95
+15,1,35,Marymont-Potok,40.0,222.0,95
+15,1,36,Marymont-Potok,,,0
+16,0,0,Piaski,20.0,28.0,87
+16,0,1,Piaski,53.0,94.0,88
+16,0,2,Romaszewskiego,83.0,122.0,87
+16,0,3,Park Olszyna,101.0,155.0,87
+16,0,4,Włościańska,99.0,163.0,87
+16,0,5,Sady Żoliborskie,128.0,192.0,87
+16,0,6,Pl. Grunwaldzki,95.0,159.0,84
+16,0,7,Rondo „Radosława”,107.0,194.0,86
+16,0,8,Rondo „Radosława”,63.0,150.0,87
+16,0,9,Stawki,91.0,197.0,86
+16,0,10,Dzika,49.0,151.0,85
+16,0,11,Muranowska,63.0,175.0,86
+16,0,12,Muranów,58.0,162.0,87
+16,0,13,Metro Ratusz Arsenał,69.0,147.0,87
+16,0,14,Pl. Bankowy,56.0,144.0,87
+16,0,15,Królewska,86.0,159.0,86
+16,0,16,Metro Świętokrzyska,94.0,186.0,86
+16,0,17,Centrum,107.0,218.0,84
+16,0,18,Hoża,144.0,257.0,84
+16,0,19,Pl. Konstytucji,151.0,273.0,85
+16,0,20,Pl. Zbawiciela,140.0,273.0,85
+16,0,21,Trasa Łazienkowska,111.0,241.0,85
+16,0,22,Pl. Unii Lubelskiej,118.0,236.0,85
+16,0,23,Goworka,119.0,253.0,85
+16,0,24,Spacerowa,111.0,239.0,85
+16,0,25,Dolna,142.0,267.0,85
+16,0,26,Kostrzewskiego,159.0,291.0,85
+16,0,27,Idzikowskiego,190.0,321.0,84
+16,0,28,Mangalia,213.0,335.0,83
+16,0,29,Czarnomorska,206.0,337.0,84
+16,0,30,Św. Bonifacego,187.0,308.0,85
+16,0,31,Nałęczowska,190.0,332.0,85
+16,0,32,Sobieskiego,175.0,307.0,85
+16,0,33,Oś Królewska,189.0,313.0,84
+16,0,34,Świątynia Opatrzności Bożej,211.0,332.0,82
+16,0,35,Miasteczko Wilanów,,,0
+16,1,0,Miasteczko Wilanów,11.0,29.0,33
+16,1,1,Świątynia Opatrzności Bożej,-4.0,33.0,89
+16,1,2,Oś Królewska,60.0,69.0,88
+16,1,3,Sobieskiego,96.0,115.0,88
+16,1,4,Nałęczowska,116.0,145.0,88
+16,1,5,Św. Bonifacego,63.0,128.0,88
+16,1,6,Czarnomorska,69.0,136.0,88
+16,1,7,Mangalia,60.0,125.0,88
+16,1,8,Idzikowskiego,12.0,79.0,88
+16,1,9,Kostrzewskiego,50.0,128.0,86
+16,1,10,Dolna,79.0,161.0,87
+16,1,11,Spacerowa,92.0,160.0,89
+16,1,12,Goworka,100.0,171.0,89
+16,1,13,Pl. Unii Lubelskiej,63.0,160.0,88
+16,1,14,Pl. Zbawiciela,109.0,203.0,89
+16,1,15,Pl. Konstytucji,103.0,205.0,89
+16,1,16,Hoża,116.0,222.0,89
+16,1,17,Centrum,83.0,236.0,88
+16,1,18,Metro Świętokrzyska,83.0,247.0,89
+16,1,19,Królewska,105.0,277.0,88
+16,1,20,Pl. Bankowy,78.0,242.0,88
+16,1,21,Metro Ratusz Arsenał,73.0,233.0,87
+16,1,22,Muranów,147.0,255.0,86
+16,1,23,Muranowska,177.0,290.0,88
+16,1,24,Dzika,182.0,267.0,88
+16,1,25,Rondo „Radosława”,135.0,215.0,86
+16,1,26,Rondo „Radosława”,148.0,258.0,86
+16,1,27,Pl. Grunwaldzki,164.0,302.0,87
+16,1,28,Sady Żoliborskie,186.0,317.0,87
+16,1,29,Włościańska,179.0,303.0,87
+16,1,30,Park Olszyna,135.0,333.0,85
+16,1,31,Romaszewskiego,136.0,333.0,86
+16,1,32,Piaski,171.0,330.0,86
+16,1,33,Piaski,,,0
+17,0,0,Winnica,14.0,27.0,96
+17,0,1,Winnica,17.0,52.0,97
+17,0,2,Grzymalitów,16.0,56.0,98
+17,0,3,Nowodwory,4.0,51.0,98
+17,0,4,Stefanika,11.0,61.0,98
+17,0,5,Mehoffera,54.0,98.0,99
+17,0,6,Tarchomin,76.0,129.0,99
+17,0,7,Myśliborska,40.0,109.0,99
+17,0,8,Śreniawitów,68.0,137.0,100
+17,0,9,Stare Świdry,82.0,148.0,100
+17,0,10,Świderska,92.0,157.0,100
+17,0,11,Cm. Włoski,84.0,158.0,100
+17,0,12,Przy Agorze,90.0,169.0,100
+17,0,13,UKSW,95.0,180.0,100
+17,0,14,Szpital Bielański,93.0,182.0,100
+17,0,15,AWF,50.0,158.0,99
+17,0,16,Podleśna - IMGW,54.0,151.0,99
+17,0,17,Metro Słodowiec,72.0,185.0,100
+17,0,18,Park Kaskada,84.0,200.0,100
+17,0,19,Metro Marymont,71.0,195.0,100
+17,0,20,Ks. Popiełuszki,92.0,216.0,101
+17,0,21,Pl. Grunwaldzki,114.0,249.0,101
+17,0,22,Rondo „Radosława”,117.0,270.0,101
+17,0,23,Rondo „Radosława”,78.0,242.0,99
+17,0,24,Stawki,102.0,268.0,99
+17,0,25,Anielewicza,88.0,216.0,98
+17,0,26,Nowolipki,113.0,269.0,98
+17,0,27,Kino Femina,99.0,278.0,99
+17,0,28,Hala Mirowska,181.0,322.0,100
+17,0,29,Rondo ONZ,180.0,335.0,100
+17,0,30,Dw. Centralny,189.0,370.0,100
+17,0,31,Koszykowa,174.0,404.0,99
+17,0,32,Nowowiejska,216.0,415.0,99
+17,0,33,GUS,190.0,388.0,100
+17,0,34,Biblioteka Narodowa,184.0,383.0,100
+17,0,35,Metro Pole Mokotowskie,208.0,414.0,100
+17,0,36,Metro Pole Mokotowskie,195.0,395.0,99
+17,0,37,Kielecka,229.0,419.0,99
+17,0,38,Rakowiecka - Sanktuarium,183.0,394.0,99
+17,0,39,Kulskiego,188.0,400.0,99
+17,0,40,Wołoska - Szpital,189.0,397.0,99
+17,0,41,Wołoska,215.0,419.0,98
+17,0,42,Woronicza,162.0,393.0,97
+17,0,43,Konstruktorska,185.0,424.0,98
+17,0,44,Domaniewska,187.0,425.0,98
+17,0,45,Rondo Unii Europejskiej,186.0,429.0,98
+17,0,46,Postępu,174.0,419.0,98
+17,0,47,Wynalazek,146.0,376.0,97
+17,0,48,PKP Służewiec,,,0
+17,1,0,PKP Służewiec,10.0,21.0,98
+17,1,1,PKP Służewiec,38.0,58.0,98
+17,1,2,Wynalazek,50.0,67.0,98
+17,1,3,Postępu,37.0,57.0,98
+17,1,4,Rondo Unii Europejskiej,49.0,80.0,99
+17,1,5,Domaniewska,30.0,58.0,99
+17,1,6,Konstruktorska,28.0,55.0,97
+17,1,7,Woronicza,15.0,65.0,98
+17,1,8,Wołoska,3.0,66.0,99
+17,1,9,Wołoska - Szpital,7.0,67.0,99
+17,1,10,Kulskiego,14.0,73.0,100
+17,1,11,Rakowiecka - Sanktuarium,22.0,81.0,100
+17,1,12,Kielecka,37.0,105.0,100
+17,1,13,Metro Pole Mokotowskie,98.0,196.0,99
+17,1,14,Biblioteka Narodowa,54.0,152.0,99
+17,1,15,GUS,83.0,175.0,100
+17,1,16,Nowowiejska,38.0,161.0,100
+17,1,17,Koszykowa,52.0,175.0,100
+17,1,18,Dw. Centralny,48.0,187.0,100
+17,1,19,Rondo ONZ,80.0,207.0,96
+17,1,20,Hala Mirowska,135.0,267.0,97
+17,1,21,Kino Femina,156.0,281.0,98
+17,1,22,Nowolipki,98.0,233.0,98
+17,1,23,Anielewicza,96.0,227.0,98
+17,1,24,Stawki,124.0,240.0,98
+17,1,25,Rondo „Radosława”,114.0,257.0,98
+17,1,26,Rondo „Radosława”,133.0,277.0,98
+17,1,27,Pl. Grunwaldzki,132.0,277.0,98
+17,1,28,Ks. Popiełuszki,129.0,279.0,98
+17,1,29,Metro Marymont,148.0,301.0,98
+17,1,30,Park Kaskada,122.0,277.0,97
+17,1,31,Metro Słodowiec,122.0,275.0,98
+17,1,32,Podleśna - IMGW,162.0,305.0,96
+17,1,33,AWF,178.0,306.0,96
+17,1,34,Szpital Bielański,145.0,278.0,97
+17,1,35,UKSW,145.0,278.0,96
+17,1,36,Przy Agorze,157.0,301.0,97
+17,1,37,Cm. Włoski,147.0,294.0,97
+17,1,38,Świderska,136.0,294.0,97
+17,1,39,Stare Świdry,151.0,300.0,97
+17,1,40,Śreniawitów,160.0,316.0,96
+17,1,41,Myśliborska,133.0,281.0,96
+17,1,42,Tarchomin,159.0,311.0,97
+17,1,43,Mehoffera,191.0,343.0,97
+17,1,44,Stefanika,174.0,333.0,94
+17,1,45,Nowodwory,196.0,334.0,95
+17,1,46,Grzymalitów,145.0,288.0,94
+17,1,47,Winnica,201.0,354.0,94
+17,1,48,Winnica,,,0
+18,0,0,Żerań FSO,-112.0,9.0,38
+18,0,1,Żerań FSO,11.0,33.0,99
+18,0,2,Dyrekcja FSO,14.0,36.0,100
+18,0,3,Budzińskiej-Tylickiej,25.0,49.0,99
+18,0,4,Śliwice,21.0,52.0,98
+18,0,5,Batalionu Platerówek,84.0,111.0,98
+18,0,6,PIMOT,92.0,114.0,100
+18,0,7,Golędzinów,126.0,131.0,100
+18,0,8,Rondo Starzyńskiego,99.0,124.0,100
+18,0,9,Wybrzeże Helskie,106.0,143.0,100
+18,0,10,Most Gdański,87.0,124.0,100
+18,0,11,Park Traugutta,94.0,152.0,99
+18,0,12,KS Polonia,48.0,112.0,100
+18,0,13,Muranowska,74.0,110.0,100
+18,0,14,Muranów,208.0,221.0,100
+18,0,15,Metro Ratusz Arsenał,176.0,209.0,99
+18,0,16,Pl. Bankowy,166.0,202.0,99
+18,0,17,Królewska,163.0,210.0,99
+18,0,18,Metro Świętokrzyska,191.0,224.0,98
+18,0,19,Centrum,176.0,277.0,98
+18,0,20,Hoża,188.0,325.0,98
+18,0,21,Pl. Konstytucji,206.0,329.0,99
+18,0,22,Pl. Zbawiciela,208.0,347.0,99
+18,0,23,Trasa Łazienkowska,174.0,308.0,98
+18,0,24,Pl. Unii Lubelskiej,152.0,304.0,98
+18,0,25,Rakowiecka,136.0,253.0,99
+18,0,26,Dworkowa,128.0,246.0,99
+18,0,27,Morskie Oko,128.0,275.0,98
+18,0,28,Park Dreszera,128.0,241.0,99
+18,0,29,Malczewskiego,124.0,264.0,98
+18,0,30,Królikarnia,125.0,294.0,97
+18,0,31,Królikarnia,110.0,276.0,97
+18,0,32,Metro Wierzbno,128.0,277.0,97
+18,0,33,Telewizja Polska,127.0,304.0,97
+18,0,34,Samochodowa,89.0,278.0,98
+18,0,35,Woronicza,39.0,258.0,97
+18,0,36,Konstruktorska,71.0,289.0,97
+18,0,37,Domaniewska,92.0,297.0,98
+18,0,38,Rondo Unii Europejskiej,81.0,265.0,98
+18,0,39,Postępu,66.0,248.0,98
+18,0,40,Wynalazek,46.0,227.0,98
+18,0,41,PKP Służewiec,,,0
+18,1,0,PKP Służewiec,-21.0,13.0,80
+18,1,1,PKP Służewiec,10.0,43.0,98
+18,1,2,Wynalazek,25.0,59.0,99
+18,1,3,Postępu,14.0,52.0,99
+18,1,4,Rondo Unii Europejskiej,37.0,70.0,99
+18,1,5,Domaniewska,1.0,52.0,100
+18,1,6,Konstruktorska,-2.0,53.0,100
+18,1,7,Woronicza,-4.0,49.0,100
+18,1,8,Samochodowa,9.0,84.0,100
+18,1,9,Telewizja Polska,-18.0,16.0,100
+18,1,10,Metro Wierzbno,-23.0,28.0,100
+18,1,11,Królikarnia,21.0,71.0,100
+18,1,12,Królikarnia,13.0,65.0,100
+18,1,13,Malczewskiego,33.0,93.0,99
+18,1,14,Park Dreszera,16.0,90.0,99
+18,1,15,Morskie Oko,-30.0,54.0,100
+18,1,16,Dworkowa,3.0,69.0,100
+18,1,17,Goworka,133.0,237.0,99
+18,1,18,Pl. Unii Lubelskiej,115.0,207.0,98
+18,1,19,Pl. Zbawiciela,147.0,252.0,99
+18,1,20,Pl. Konstytucji,132.0,248.0,99
+18,1,21,Hoża,157.0,278.0,99
+18,1,22,Centrum,129.0,253.0,98
+18,1,23,Metro Świętokrzyska,134.0,253.0,99
+18,1,24,Królewska,157.0,296.0,99
+18,1,25,Pl. Bankowy,130.0,271.0,99
+18,1,26,Metro Ratusz Arsenał,101.0,237.0,99
+18,1,27,Muranów,151.0,294.0,99
+18,1,28,Muranowska,152.0,282.0,98
+18,1,29,KS Polonia,174.0,312.0,97
+18,1,30,Park Traugutta,190.0,336.0,98
+18,1,31,Most Gdański,186.0,344.0,98
+18,1,32,Wybrzeże Helskie,173.0,327.0,98
+18,1,33,Rondo Starzyńskiego,190.0,368.0,98
+18,1,34,Golędzinów,144.0,382.0,98
+18,1,35,PIMOT,156.0,395.0,98
+18,1,36,Batalionu Platerówek,190.0,427.0,98
+18,1,37,Śliwice,196.0,438.0,98
+18,1,38,Budzińskiej-Tylickiej,207.0,459.0,97
+18,1,39,Dyrekcja FSO,213.0,461.0,97
+18,1,40,Żerań FSO,,,0
+19,0,0,Nowe Bemowo,5.0,28.0,77
+19,0,1,Piastów Śląskich,53.0,130.0,84
+19,0,2,Ogrody Działkowe Bemowo,48.0,125.0,84
+19,0,3,Conrada,57.0,126.0,84
+19,0,4,Al. Reymonta,97.0,163.0,84
+19,0,5,Piaski,99.0,210.0,86
+19,0,6,Romaszewskiego,130.0,244.0,85
+19,0,7,Park Olszyna,122.0,243.0,85
+19,0,8,Włościańska,130.0,240.0,85
+19,0,9,Sady Żoliborskie,155.0,269.0,85
+19,0,10,Pl. Grunwaldzki,127.0,229.0,86
+19,0,11,Rondo „Radosława”,149.0,297.0,84
+19,0,12,Rondo „Radosława”,98.0,248.0,85
+19,0,13,Stawki,156.0,280.0,84
+19,0,14,Anielewicza,109.0,266.0,85
+19,0,15,Nowolipki,141.0,277.0,84
+19,0,16,Kino Femina,76.0,280.0,84
+19,0,17,Hala Mirowska,189.0,353.0,84
+19,0,18,Rondo ONZ,190.0,328.0,84
+19,0,19,Dw. Centralny,192.0,358.0,83
+19,0,20,Koszykowa,195.0,363.0,84
+19,0,21,Nowowiejska,223.0,407.0,83
+19,0,22,GUS,199.0,374.0,84
+19,0,23,Biblioteka Narodowa,189.0,365.0,84
+19,0,24,Metro Pole Mokotowskie,225.0,408.0,84
+19,0,25,Metro Pole Mokotowskie,229.0,429.0,83
+19,0,26,Mokotów - Ratusz,168.0,370.0,83
+19,0,27,Goworka,150.0,377.0,84
+19,0,28,Spacerowa,144.0,354.0,84
+19,0,29,Dolna,183.0,392.0,84
+19,0,30,Kostrzewskiego,211.0,436.0,84
+19,0,31,Idzikowskiego,220.0,469.0,84
+19,0,32,Mangalia,254.0,483.0,84
+19,0,33,Czarnomorska,241.0,488.0,82
+19,0,34,Św. Bonifacego,232.0,517.0,80
+19,0,35,Stegny,,,0
+19,1,0,Stegny,13.0,25.0,83
+19,1,1,Stegny,60.0,117.0,83
+19,1,2,Św. Bonifacego,94.0,156.0,85
+19,1,3,Czarnomorska,98.0,162.0,85
+19,1,4,Mangalia,84.0,156.0,85
+19,1,5,Idzikowskiego,47.0,111.0,85
+19,1,6,Kostrzewskiego,85.0,154.0,85
+19,1,7,Dolna,98.0,178.0,86
+19,1,8,Spacerowa,120.0,216.0,86
+19,1,9,Rakowiecka,44.0,180.0,84
+19,1,10,Mokotów - Ratusz,57.0,193.0,86
+19,1,11,Metro Pole Mokotowskie,127.0,292.0,86
+19,1,12,Biblioteka Narodowa,86.0,243.0,86
+19,1,13,GUS,99.0,268.0,86
+19,1,14,Nowowiejska,62.0,221.0,86
+19,1,15,Koszykowa,71.0,242.0,87
+19,1,16,Dw. Centralny,52.0,212.0,86
+19,1,17,Rondo ONZ,77.0,253.0,86
+19,1,18,Hala Mirowska,139.0,293.0,85
+19,1,19,Kino Femina,156.0,299.0,86
+19,1,20,Nowolipki,101.0,260.0,85
+19,1,21,Anielewicza,102.0,274.0,84
+19,1,22,Stawki,106.0,344.0,84
+19,1,23,Rondo „Radosława”,103.0,316.0,86
+19,1,24,Rondo „Radosława”,121.0,328.0,85
+19,1,25,Pl. Grunwaldzki,145.0,343.0,83
+19,1,26,Sady Żoliborskie,144.0,380.0,84
+19,1,27,Włościańska,180.0,383.0,84
+19,1,28,Park Olszyna,129.0,340.0,84
+19,1,29,Romaszewskiego,127.0,358.0,84
+19,1,30,Piaski,122.0,332.0,83
+19,1,31,Al. Reymonta,156.0,394.0,84
+19,1,32,Conrada,83.0,355.0,84
+19,1,33,Ogrody Działkowe Bemowo,76.0,360.0,84
+19,1,34,Piastów Śląskich,69.0,351.0,83
+19,1,35,Nowe Bemowo,79.0,364.0,83
+19,1,36,Nowe Bemowo,,,0
+2,0,0,Winnica,-101.0,14.0,27
+2,0,1,Winnica,18.0,47.0,111
+2,0,2,Grzymalitów,26.0,56.0,112
+2,0,3,Nowodwory,6.0,45.0,112
+2,0,4,Stefanika,21.0,61.0,114
+2,0,5,Mehoffera,48.0,99.0,116
+2,0,6,Tarchomin,74.0,128.0,116
+2,0,7,Myśliborska,37.0,101.0,116
+2,0,8,Śreniawitów,61.0,128.0,116
+2,0,9,Stare Świdry,67.0,148.0,114
+2,0,10,Świderska,75.0,158.0,114
+2,0,11,Zajezdnia Żoliborz,69.0,158.0,115
+2,0,12,Metro Młociny,,,0
+2,1,0,Metro Młociny,97.0,187.0,101
+2,1,1,Metro Młociny,72.0,162.0,116
+2,1,2,Zajezdnia Żoliborz,55.0,166.0,115
+2,1,3,Świderska,66.0,187.0,116
+2,1,4,Stare Świdry,83.0,193.0,117
+2,1,5,Śreniawitów,91.0,207.0,116
+2,1,6,Myśliborska,60.0,188.0,116
+2,1,7,Tarchomin,85.0,210.0,115
+2,1,8,Mehoffera,118.0,251.0,114
+2,1,9,Stefanika,87.0,218.0,110
+2,1,10,Nowodwory,99.0,234.0,110
+2,1,11,Grzymalitów,58.0,189.0,109
+2,1,12,Winnica,71.0,206.0,108
+2,1,13,Winnica,,,0
+20,0,0,Żerań FSO,-130.0,8.0,43
+20,0,1,Żerań FSO,12.0,32.0,97
+20,0,2,Dyrekcja FSO,11.0,34.0,99
+20,0,3,Budzińskiej-Tylickiej,17.0,39.0,99
+20,0,4,Śliwice,16.0,48.0,99
+20,0,5,Batalionu Platerówek,44.0,99.0,99
+20,0,6,PIMOT,47.0,102.0,99
+20,0,7,Golędzinów,68.0,128.0,99
+20,0,8,Rondo Starzyńskiego,61.0,130.0,98
+20,0,9,Pl. Hallera,66.0,133.0,98
+20,0,10,Ratuszowa - Zoo,67.0,147.0,98
+20,0,11,Ratuszowa,82.0,165.0,98
+20,0,12,Dw. Wileński,66.0,145.0,98
+20,0,13,Park Praski,71.0,155.0,99
+20,0,14,Stare Miasto,93.0,177.0,99
+20,0,15,Metro Ratusz Arsenał,75.0,166.0,98
+20,0,16,Kino Femina,93.0,208.0,99
+20,0,17,Wola - Ratusz,90.0,178.0,99
+20,0,18,Okopowa,81.0,187.0,99
+20,0,19,Zajezdnia Wola,149.0,242.0,96
+20,0,20,Młynarska,163.0,265.0,96
+20,0,21,Długosza,178.0,270.0,96
+20,0,22,Pl. Pole Elekcyjne,140.0,232.0,97
+20,0,23,Wawrzyszewska,128.0,221.0,97
+20,0,24,PKP Koło,96.0,216.0,97
+20,0,25,Magistracka,84.0,195.0,97
+20,0,26,Deotymy,84.0,195.0,97
+20,0,27,Dalibora,67.0,189.0,97
+20,0,28,Koło,75.0,195.0,97
+20,0,29,Marynin,130.0,271.0,96
+20,0,30,Siodlarska,180.0,319.0,97
+20,0,31,Dywizjonu 303,125.0,275.0,97
+20,0,32,Os. Zielony Staw,119.0,270.0,97
+20,0,33,Fort Blizne,115.0,269.0,97
+20,0,34,Kocjana,157.0,311.0,97
+20,0,35,WAT,150.0,307.0,93
+20,0,36,Archimedesa,149.0,304.0,90
+20,0,37,Stare Bemowo,159.0,309.0,81
+20,0,38,Boernerowo,,,0
+20,1,0,Boernerowo,13.0,148.0,54
+20,1,1,Stare Bemowo,73.0,313.0,92
+20,1,2,Archimedesa,104.0,332.0,97
+20,1,3,WAT,126.0,347.0,98
+20,1,4,Kocjana,122.0,340.0,98
+20,1,5,Fort Blizne,93.0,325.0,98
+20,1,6,Os. Zielony Staw,96.0,317.0,99
+20,1,7,Dywizjonu 303,95.0,322.0,99
+20,1,8,Siodlarska,95.0,323.0,99
+20,1,9,Marynin,66.0,294.0,98
+20,1,10,Koło,80.0,319.0,99
+20,1,11,Dalibora,66.0,314.0,99
+20,1,12,Deotymy,64.0,312.0,99
+20,1,13,Magistracka,64.0,310.0,99
+20,1,14,PKP Koło,63.0,370.0,99
+20,1,15,Wawrzyszewska,68.0,351.0,99
+20,1,16,Pl. Pole Elekcyjne,59.0,342.0,99
+20,1,17,Długosza,70.0,347.0,99
+20,1,18,Młynarska,74.0,355.0,98
+20,1,19,Zajezdnia Wola,84.0,383.0,98
+20,1,20,Okopowa,65.0,369.0,98
+20,1,21,Wola - Ratusz,26.0,328.0,97
+20,1,22,Kino Femina,35.0,334.0,97
+20,1,23,Metro Ratusz Arsenał,90.0,379.0,97
+20,1,24,Stare Miasto,98.0,396.0,97
+20,1,25,Park Praski,122.0,421.0,98
+20,1,26,Dw. Wileński,151.0,457.0,97
+20,1,27,Ratuszowa - Zoo,155.0,446.0,98
+20,1,28,Pl. Hallera,146.0,437.0,98
+20,1,29,Rondo Starzyńskiego,170.0,452.0,98
+20,1,30,Golędzinów,150.0,442.0,98
+20,1,31,PIMOT,156.0,450.0,97
+20,1,32,Batalionu Platerówek,192.0,501.0,96
+20,1,33,Śliwice,206.0,502.0,97
+20,1,34,Budzińskiej-Tylickiej,204.0,511.0,96
+20,1,35,Dyrekcja FSO,204.0,518.0,96
+20,1,36,Żerań FSO,,,0
+22,0,0,Piaski,10.0,22.0,90
+22,0,1,Piaski,41.0,92.0,91
+22,0,2,Romaszewskiego,71.0,120.0,91
+22,0,3,Park Olszyna,96.0,147.0,90
+22,0,4,Włościańska,70.0,154.0,91
+22,0,5,Sady Żoliborskie,108.0,181.0,91
+22,0,6,Pl. Grunwaldzki,64.0,155.0,91
+22,0,7,Rondo „Radosława”,91.0,161.0,91
+22,0,8,Powązkowska,66.0,144.0,90
+22,0,9,Niska,81.0,160.0,91
+22,0,10,Cm. Żydowski,93.0,179.0,91
+22,0,11,Żytnia,110.0,194.0,91
+22,0,12,Okopowa,79.0,186.0,91
+22,0,13,Muzeum Powstania Warszawskiego,111.0,214.0,91
+22,0,14,Rondo Daszyńskiego,107.0,220.0,91
+22,0,15,Pl. Zawiszy,121.0,222.0,89
+22,0,16,Pl. Zawiszy,104.0,219.0,89
+22,0,17,Pl. Starynkiewicza,78.0,188.0,90
+22,0,18,Dw. Centralny,102.0,219.0,90
+22,0,19,Centrum,98.0,216.0,90
+22,0,20,Krucza,106.0,217.0,90
+22,0,21,Muzeum Narodowe,128.0,240.0,90
+22,0,22,Most Poniatowskiego,89.0,213.0,90
+22,0,23,Rondo Waszyngtona,113.0,227.0,90
+22,0,24,Rondo Waszyngtona,112.0,223.0,90
+22,0,25,Al. Zieleniecka,96.0,225.0,89
+22,0,26,Lubelska,91.0,214.0,89
+22,0,27,Bliska,89.0,219.0,89
+22,0,28,Gocławska,92.0,215.0,89
+22,0,29,Praga-Płd. - Ratusz,90.0,218.0,88
+22,0,30,Międzyborska,78.0,199.0,88
+22,0,31,Kickiego,70.0,205.0,88
+22,0,32,Wiatraczna,111.0,238.0,89
+22,0,33,Wiatraczna,,,0
+22,1,0,Wiatraczna,10.0,23.0,88
+22,1,1,Wiatraczna,55.0,95.0,90
+22,1,2,Kickiego,49.0,89.0,90
+22,1,3,Międzyborska,47.0,96.0,91
+22,1,4,Praga-Płd. - Ratusz,50.0,95.0,91
+22,1,5,Gocławska,54.0,100.0,91
+22,1,6,Bliska,53.0,105.0,91
+22,1,7,Lubelska,67.0,111.0,91
+22,1,8,Al. Zieleniecka,61.0,112.0,90
+22,1,9,Rondo Waszyngtona,72.0,132.0,90
+22,1,10,Rondo Waszyngtona,67.0,137.0,91
+22,1,11,Most Poniatowskiego,57.0,125.0,90
+22,1,12,Muzeum Narodowe,38.0,119.0,89
+22,1,13,Krucza,55.0,132.0,90
+22,1,14,Centrum,58.0,144.0,91
+22,1,15,Dw. Centralny,96.0,189.0,91
+22,1,16,Pl. Starynkiewicza,83.0,182.0,89
+22,1,17,Pl. Zawiszy,86.0,178.0,91
+22,1,18,Pl. Zawiszy,61.0,148.0,91
+22,1,19,Rondo Daszyńskiego,40.0,157.0,91
+22,1,20,Muzeum Powstania Warszawskiego,65.0,182.0,91
+22,1,21,Okopowa,23.0,143.0,91
+22,1,22,Żytnia,9.0,140.0,91
+22,1,23,Dzielna,26.0,132.0,90
+22,1,24,Cm. Żydowski,18.0,125.0,90
+22,1,25,Niska,28.0,144.0,91
+22,1,26,Powązkowska,41.0,126.0,91
+22,1,27,Rondo „Radosława”,42.0,144.0,91
+22,1,28,Pl. Grunwaldzki,83.0,190.0,91
+22,1,29,Sady Żoliborskie,99.0,213.0,91
+22,1,30,Włościańska,105.0,207.0,91
+22,1,31,Park Olszyna,62.0,171.0,90
+22,1,32,Romaszewskiego,68.0,174.0,90
+22,1,33,Piaski,76.0,215.0,91
+22,1,34,Piaski,,,0
+23,0,0,Nowe Bemowo,7.0,15.0,84
+23,0,1,Nowe Bemowo,23.0,37.0,96
+23,0,2,Wrocławska,33.0,85.0,96
+23,0,3,Radiowa,68.0,123.0,95
+23,0,4,Orlich Gniazd,71.0,121.0,96
+23,0,5,Marynin,93.0,152.0,96
+23,0,6,Koło,92.0,169.0,95
+23,0,7,Dalibora,76.0,150.0,94
+23,0,8,Deotymy,68.0,151.0,94
+23,0,9,Magistracka,69.0,151.0,94
+23,0,10,PKP Koło,78.0,162.0,93
+23,0,11,Wawrzyszewska,68.0,161.0,92
+23,0,12,Pl. Pole Elekcyjne,64.0,162.0,94
+23,0,13,Długosza,78.0,173.0,94
+23,0,14,Młynarska,90.0,185.0,94
+23,0,15,Zajezdnia Wola,95.0,175.0,92
+23,0,16,Okopowa,113.0,157.0,93
+23,0,17,Wola - Ratusz,68.0,101.0,94
+23,0,18,Kino Femina,83.0,145.0,92
+23,0,19,Metro Ratusz Arsenał,127.0,249.0,88
+23,0,20,Stare Miasto,114.0,243.0,92
+23,0,21,Park Praski,132.0,257.0,93
+23,0,22,Dw. Wileński,144.0,267.0,93
+23,0,23,Inżynierska,112.0,256.0,92
+23,0,24,Konopacka,118.0,262.0,93
+23,0,25,Środkowa,143.0,278.0,93
+23,0,26,Czynszowa,,,0
+23,1,0,Czynszowa,16.0,32.0,75
+23,1,1,Konopacka,29.0,71.0,96
+23,1,2,Inżynierska,51.0,124.0,95
+23,1,3,Dw. Wileński,66.0,156.0,96
+23,1,4,Park Praski,85.0,169.0,96
+23,1,5,Stare Miasto,94.0,192.0,95
+23,1,6,Metro Ratusz Arsenał,87.0,256.0,91
+23,1,7,Kino Femina,98.0,272.0,89
+23,1,8,Wola - Ratusz,89.0,265.0,96
+23,1,9,Okopowa,79.0,273.0,95
+23,1,10,Zajezdnia Wola,150.0,364.0,96
+23,1,11,Młynarska,160.0,381.0,96
+23,1,12,Długosza,165.0,397.0,96
+23,1,13,Pl. Pole Elekcyjne,125.0,360.0,96
+23,1,14,Wawrzyszewska,113.0,350.0,96
+23,1,15,PKP Koło,95.0,318.0,96
+23,1,16,Magistracka,82.0,303.0,96
+23,1,17,Deotymy,79.0,301.0,96
+23,1,18,Dalibora,70.0,282.0,96
+23,1,19,Koło,95.0,308.0,95
+23,1,20,Marynin,150.0,365.0,97
+23,1,21,Orlich Gniazd,150.0,367.0,97
+23,1,22,Radiowa,160.0,350.0,93
+23,1,23,Wrocławska,204.0,453.0,97
+23,1,24,Nowe Bemowo,159.0,372.0,93
+23,1,25,Nowe Bemowo,,,0
+24,0,0,Nowe Bemowo,5.0,14.0,93
+24,0,1,Nowe Bemowo,20.0,39.0,94
+24,0,2,Wrocławska,39.0,86.0,94
+24,0,3,Radiowa,84.0,128.0,93
+24,0,4,Orlich Gniazd,89.0,137.0,92
+24,0,5,Marynin,98.0,151.0,93
+24,0,6,Koło,109.0,160.0,94
+24,0,7,Dalibora,97.0,157.0,93
+24,0,8,Deotymy,95.0,158.0,93
+24,0,9,Magistracka,93.0,157.0,94
+24,0,10,PKP Koło,95.0,203.0,94
+24,0,11,Wawrzyszewska,90.0,183.0,93
+24,0,12,Pl. Pole Elekcyjne,84.0,176.0,93
+24,0,13,Długosza,96.0,186.0,92
+24,0,14,Młynarska,105.0,191.0,94
+24,0,15,Zajezdnia Wola,100.0,217.0,94
+24,0,16,Okopowa,69.0,185.0,94
+24,0,17,Muzeum Powstania Warszawskiego,79.0,202.0,92
+24,0,18,Rondo Daszyńskiego,92.0,188.0,91
+24,0,19,Pl. Zawiszy,104.0,239.0,92
+24,0,20,Pl. Zawiszy,96.0,216.0,94
+24,0,21,Pl. Starynkiewicza,62.0,216.0,94
+24,0,22,Dw. Centralny,85.0,220.0,93
+24,0,23,Centrum,69.0,215.0,91
+24,0,24,Krucza,88.0,241.0,91
+24,0,25,Muzeum Narodowe,97.0,258.0,91
+24,0,26,Most Poniatowskiego,45.0,227.0,93
+24,0,27,Rondo Waszyngtona,79.0,245.0,92
+24,0,28,Berezyńska,86.0,260.0,93
+24,0,29,Park Skaryszewski,80.0,234.0,93
+24,0,30,Kinowa,65.0,216.0,93
+24,0,31,Grenadierów,136.0,276.0,93
+24,0,32,Wiatraczna,94.0,255.0,93
+24,0,33,Czapelska,70.0,250.0,93
+24,0,34,Wspólna Droga,68.0,254.0,93
+24,0,35,Pl. Szembeka,27.0,209.0,91
+24,0,36,Żółkiewskiego,31.0,212.0,91
+24,0,37,Kwatery Głównej,21.0,191.0,91
+24,0,38,Gocławek,36.0,219.0,92
+24,0,39,Gocławek,,,0
+24,1,0,Gocławek,8.0,24.0,93
+24,1,1,Gocławek,6.0,26.0,94
+24,1,2,Kwatery Głównej,37.0,76.0,95
+24,1,3,Żółkiewskiego,39.0,79.0,95
+24,1,4,Pl. Szembeka,41.0,83.0,95
+24,1,5,Wspólna Droga,59.0,103.0,95
+24,1,6,Czapelska,54.0,101.0,94
+24,1,7,Wiatraczna,7.0,49.0,95
+24,1,8,Grenadierów,9.0,60.0,95
+24,1,9,Kinowa,39.0,101.0,94
+24,1,10,Park Skaryszewski,68.0,129.0,95
+24,1,11,Berezyńska,70.0,125.0,95
+24,1,12,Rondo Waszyngtona,36.0,97.0,94
+24,1,13,Most Poniatowskiego,29.0,92.0,92
+24,1,14,Muzeum Narodowe,21.0,99.0,96
+24,1,15,Krucza,36.0,110.0,96
+24,1,16,Centrum,40.0,130.0,95
+24,1,17,Dw. Centralny,91.0,198.0,96
+24,1,18,Pl. Starynkiewicza,75.0,170.0,96
+24,1,19,Pl. Zawiszy,59.0,165.0,96
+24,1,20,Pl. Zawiszy,26.0,130.0,96
+24,1,21,Rondo Daszyńskiego,34.0,141.0,96
+24,1,22,Muzeum Powstania Warszawskiego,56.0,172.0,95
+24,1,23,Okopowa,9.0,131.0,94
+24,1,24,Zajezdnia Wola,40.0,163.0,94
+24,1,25,Młynarska,66.0,196.0,94
+24,1,26,Długosza,76.0,207.0,94
+24,1,27,Pl. Pole Elekcyjne,38.0,172.0,94
+24,1,28,Wawrzyszewska,31.0,162.0,93
+24,1,29,PKP Koło,33.0,150.0,94
+24,1,30,Magistracka,21.0,130.0,94
+24,1,31,Deotymy,13.0,130.0,94
+24,1,32,Dalibora,4.0,122.0,94
+24,1,33,Koło,10.0,143.0,94
+24,1,34,Marynin,71.0,199.0,93
+24,1,35,Orlich Gniazd,71.0,200.0,93
+24,1,36,Radiowa,87.0,211.0,93
+24,1,37,Wrocławska,132.0,281.0,93
+24,1,38,Nowe Bemowo,87.0,230.0,90
+24,1,39,Nowe Bemowo,,,0
+25,0,0,Pl. Narutowicza,0.0,8.0,57
+25,0,1,Ochota - Ratusz,41.0,67.0,75
+25,0,2,Pl. Zawiszy,32.0,52.0,75
+25,0,3,Pl. Starynkiewicza,3.0,61.0,75
+25,0,4,Dw. Centralny,10.0,66.0,75
+25,0,5,Centrum,7.0,57.0,74
+25,0,6,Krucza,19.0,68.0,75
+25,0,7,Muzeum Narodowe,38.0,108.0,75
+25,0,8,Most Poniatowskiego,10.0,69.0,75
+25,0,9,Rondo Waszyngtona,28.0,68.0,75
+25,0,10,Rondo Waszyngtona,26.0,90.0,74
+25,0,11,Al. Zieleniecka,9.0,71.0,75
+25,0,12,Kijowska,-1.0,62.0,75
+25,0,13,Ząbkowska,34.0,97.0,75
+25,0,14,Dw. Wileński,60.0,169.0,75
+25,0,15,Inżynierska,63.0,154.0,74
+25,0,16,Bródnowska,39.0,125.0,75
+25,0,17,Rondo Żaba,52.0,138.0,74
+25,0,18,Staniewicka,59.0,144.0,75
+25,0,19,Pożarowa,64.0,144.0,75
+25,0,20,Budowlana,88.0,173.0,75
+25,0,21,Julianowska,70.0,154.0,75
+25,0,22,Rembielińska,71.0,163.0,75
+25,0,23,Poborzańska,62.0,152.0,75
+25,0,24,Metro Bródno,84.0,174.0,75
+25,0,25,Toruńska,83.0,177.0,74
+25,0,26,Annopol,,,0
+25,1,0,Annopol,12.0,23.0,75
+25,1,1,Toruńska,29.0,39.0,75
+25,1,2,Metro Bródno,31.0,59.0,75
+25,1,3,Poborzańska,31.0,61.0,75
+25,1,4,Rembielińska,23.0,54.0,75
+25,1,5,Julianowska,32.0,67.0,75
+25,1,6,Budowlana,37.0,72.0,75
+25,1,7,Pożarowa,35.0,69.0,75
+25,1,8,Staniewicka,50.0,91.0,75
+25,1,9,Rondo Żaba,91.0,130.0,75
+25,1,10,Bródnowska,73.0,123.0,75
+25,1,11,Inżynierska,45.0,95.0,75
+25,1,12,Dw. Wileński,61.0,132.0,74
+25,1,13,Ząbkowska,76.0,142.0,74
+25,1,14,Kijowska,101.0,129.0,75
+25,1,15,Al. Zieleniecka,76.0,127.0,75
+25,1,16,Rondo Waszyngtona,84.0,131.0,75
+25,1,17,Rondo Waszyngtona,81.0,128.0,75
+25,1,18,Most Poniatowskiego,71.0,130.0,75
+25,1,19,Muzeum Narodowe,64.0,129.0,75
+25,1,20,Krucza,84.0,150.0,75
+25,1,21,Centrum,97.0,168.0,75
+25,1,22,Dw. Centralny,131.0,226.0,75
+25,1,23,Pl. Starynkiewicza,103.0,198.0,75
+25,1,24,Pl. Zawiszy,90.0,196.0,75
+25,1,25,Ochota - Ratusz,90.0,203.0,75
+25,1,26,Pl. Narutowicza,129.0,253.0,75
+25,1,27,Pl. Narutowicza,,,0
+26,0,0,Metro Młociny,-12.0,8.0,60
+26,0,1,Metro Młociny,83.0,118.0,92
+26,0,2,Metro Młociny,69.0,103.0,93
+26,0,3,Nocznickiego,98.0,133.0,93
+26,0,4,Popiela,115.0,173.0,92
+26,0,5,Bogusławskiego,119.0,173.0,92
+26,0,6,Cm. Wawrzyszewski,117.0,172.0,93
+26,0,7,Aspekt,67.0,130.0,93
+26,0,8,Al. Reymonta,95.0,159.0,93
+26,0,9,Conrada,115.0,174.0,92
+26,0,10,Ogrody Działkowe Bemowo,107.0,176.0,92
+26,0,11,Piastów Śląskich,123.0,173.0,93
+26,0,12,Nowe Bemowo,78.0,156.0,93
+26,0,13,Nowe Bemowo,103.0,188.0,92
+26,0,14,Wrocławska,126.0,233.0,90
+26,0,15,Radiowa,133.0,246.0,92
+26,0,16,Dywizjonu 303,157.0,269.0,92
+26,0,17,Kazubów,146.0,234.0,92
+26,0,18,Metro Bemowo,135.0,221.0,92
+26,0,19,Czumy,135.0,232.0,92
+26,0,20,Hala Wola,161.0,284.0,92
+26,0,21,Synów Pułku,138.0,240.0,92
+26,0,22,Ciepłownia Wola,100.0,218.0,92
+26,0,23,P+R Połczyńska,91.0,201.0,92
+26,0,24,Fort Wola,108.0,243.0,92
+26,0,25,Sowińskiego,95.0,228.0,91
+26,0,26,Reduta Wolska,95.0,224.0,92
+26,0,27,Elekcyjna,125.0,252.0,91
+26,0,28,PKP Wola (Wolska),160.0,306.0,90
+26,0,29,Sokołowska,162.0,317.0,90
+26,0,30,Metro Płocka,130.0,270.0,91
+26,0,31,Zajezdnia Wola,117.0,296.0,91
+26,0,32,Okopowa,77.0,263.0,91
+26,0,33,Wola - Ratusz,27.0,210.0,91
+26,0,34,Kino Femina,41.0,222.0,91
+26,0,35,Metro Ratusz Arsenał,119.0,271.0,91
+26,0,36,Stare Miasto,101.0,274.0,91
+26,0,37,Park Praski,127.0,296.0,91
+26,0,38,Dw. Wileński,123.0,340.0,90
+26,0,39,Ząbkowska,186.0,377.0,89
+26,0,40,Kijowska,179.0,360.0,89
+26,0,41,Al. Zieleniecka,162.0,339.0,90
+26,0,42,Lubelska,149.0,332.0,90
+26,0,43,Bliska,151.0,338.0,90
+26,0,44,Gocławska,149.0,343.0,90
+26,0,45,Praga-Płd. - Ratusz,144.0,346.0,90
+26,0,46,Międzyborska,136.0,332.0,90
+26,0,47,Kickiego,126.0,325.0,90
+26,0,48,Wiatraczna,165.0,385.0,90
+26,0,49,Wiatraczna,,,0
+26,1,0,Wiatraczna,10.0,24.0,90
+26,1,1,Wiatraczna,53.0,89.0,93
+26,1,2,Kickiego,39.0,84.0,93
+26,1,3,Międzyborska,38.0,84.0,93
+26,1,4,Praga-Płd. - Ratusz,35.0,78.0,94
+26,1,5,Gocławska,38.0,83.0,93
+26,1,6,Bliska,39.0,82.0,93
+26,1,7,Lubelska,41.0,92.0,94
+26,1,8,Al. Zieleniecka,47.0,135.0,94
+26,1,9,Kijowska,36.0,105.0,94
+26,1,10,Ząbkowska,85.0,143.0,94
+26,1,11,Dw. Wileński,75.0,139.0,93
+26,1,12,Park Praski,97.0,161.0,93
+26,1,13,Stare Miasto,108.0,169.0,94
+26,1,14,Metro Ratusz Arsenał,121.0,185.0,94
+26,1,15,Kino Femina,146.0,211.0,93
+26,1,16,Wola - Ratusz,140.0,213.0,94
+26,1,17,Okopowa,128.0,194.0,94
+26,1,18,Zajezdnia Wola,102.0,207.0,94
+26,1,19,Metro Płocka,99.0,209.0,94
+26,1,20,Sokołowska,110.0,217.0,94
+26,1,21,PKP Wola (Wolska),135.0,245.0,94
+26,1,22,Elekcyjna,110.0,212.0,94
+26,1,23,Reduta Wolska,146.0,239.0,94
+26,1,24,Sowińskiego,150.0,251.0,94
+26,1,25,Fort Wola,141.0,245.0,94
+26,1,26,P+R Połczyńska,141.0,245.0,93
+26,1,27,Ciepłownia Wola,141.0,246.0,93
+26,1,28,Synów Pułku,138.0,249.0,94
+26,1,29,Hala Wola,147.0,274.0,94
+26,1,30,Pl. Kasztelański,144.0,272.0,94
+26,1,31,Czumy,147.0,272.0,93
+26,1,32,Metro Bemowo,186.0,299.0,93
+26,1,33,Kazubów,192.0,307.0,93
+26,1,34,Dywizjonu 303,208.0,327.0,94
+26,1,35,Radiowa,218.0,323.0,94
+26,1,36,Wrocławska,262.0,369.0,94
+26,1,37,Nowe Bemowo,218.0,324.0,94
+26,1,38,Piastów Śląskich,246.0,367.0,94
+26,1,39,Ogrody Działkowe Bemowo,229.0,361.0,94
+26,1,40,Conrada,234.0,357.0,94
+26,1,41,Al. Reymonta,216.0,385.0,94
+26,1,42,Aspekt,173.0,330.0,94
+26,1,43,Cm. Wawrzyszewski,178.0,337.0,94
+26,1,44,Bogusławskiego,179.0,344.0,94
+26,1,45,Popiela,205.0,344.0,92
+26,1,46,Nocznickiego,215.0,352.0,93
+26,1,47,Metro Młociny,218.0,383.0,94
+26,1,48,Metro Młociny,,,0
+27,0,0,Metro Marymont,6.0,12.0,92
+27,0,1,Metro Marymont,30.0,65.0,98
+27,0,2,Ks. Popiełuszki,51.0,86.0,98
+27,0,3,Pl. Grunwaldzki,67.0,102.0,98
+27,0,4,Rondo „Radosława”,92.0,154.0,97
+27,0,5,Powązkowska,68.0,132.0,97
+27,0,6,Niska,88.0,158.0,98
+27,0,7,Cm. Żydowski,96.0,170.0,96
+27,0,8,Żytnia,106.0,190.0,97
+27,0,9,Okopowa,65.0,134.0,98
+27,0,10,Zajezdnia Wola,64.0,147.0,98
+27,0,11,Metro Płocka,62.0,163.0,98
+27,0,12,Sokołowska,68.0,166.0,98
+27,0,13,PKP Wola (Wolska),100.0,191.0,98
+27,0,14,Elekcyjna,80.0,175.0,98
+27,0,15,Reduta Wolska,118.0,178.0,98
+27,0,16,Sowińskiego,109.0,187.0,98
+27,0,17,Cm. Wolski,,,0
+27,1,0,Cm. Wolski,15.0,30.0,99
+27,1,1,Sowińskiego,20.0,58.0,98
+27,1,2,Reduta Wolska,19.0,55.0,98
+27,1,3,Elekcyjna,44.0,90.0,99
+27,1,4,PKP Wola (Wolska),82.0,141.0,99
+27,1,5,Sokołowska,93.0,153.0,99
+27,1,6,Metro Płocka,64.0,116.0,98
+27,1,7,Zajezdnia Wola,71.0,145.0,99
+27,1,8,Okopowa,53.0,133.0,98
+27,1,9,Żytnia,40.0,130.0,99
+27,1,10,Dzielna,38.0,129.0,99
+27,1,11,Cm. Żydowski,31.0,125.0,99
+27,1,12,Niska,38.0,142.0,99
+27,1,13,Powązkowska,41.0,116.0,99
+27,1,14,Rondo „Radosława”,57.0,158.0,99
+27,1,15,Pl. Grunwaldzki,52.0,161.0,98
+27,1,16,Ks. Popiełuszki,44.0,158.0,99
+27,1,17,Metro Marymont,51.0,184.0,99
+27,1,18,Metro Marymont,,,0
+28,0,0,Os. Górczewska,9.0,30.0,94
+28,0,1,Klemensiewicza,12.0,69.0,95
+28,0,2,Metro Bemowo,37.0,103.0,95
+28,0,3,Kazubów,41.0,112.0,94
+28,0,4,Dywizjonu 303,67.0,124.0,93
+28,0,5,Radiowa,50.0,129.0,94
+28,0,6,Wrocławska,102.0,179.0,95
+28,0,7,Nowe Bemowo,58.0,130.0,95
+28,0,8,Piastów Śląskich,69.0,192.0,93
+28,0,9,Ogrody Działkowe Bemowo,58.0,189.0,92
+28,0,10,Conrada,64.0,189.0,94
+28,0,11,Al. Reymonta,94.0,242.0,95
+28,0,12,Piaski,103.0,259.0,94
+28,0,13,Romaszewskiego,143.0,280.0,95
+28,0,14,Park Olszyna,160.0,267.0,95
+28,0,15,Włościańska,160.0,296.0,94
+28,0,16,Sady Żoliborskie,191.0,313.0,95
+28,0,17,Pl. Grunwaldzki,158.0,281.0,95
+28,0,18,Rondo „Radosława”,191.0,338.0,92
+28,0,19,Rondo „Radosława”,138.0,289.0,92
+28,0,20,Baseny Inflancka,127.0,295.0,91
+28,0,21,Dw. Gdański,149.0,314.0,93
+28,0,22,Park Traugutta,114.0,296.0,94
+28,0,23,Most Gdański,111.0,296.0,91
+28,0,24,Wybrzeże Helskie,101.0,280.0,92
+28,0,25,Rondo Starzyńskiego,105.0,296.0,94
+28,0,26,Rondo Starzyńskiego,105.0,288.0,93
+28,0,27,Pl. Hallera,108.0,301.0,94
+28,0,28,Ratuszowa - Zoo,112.0,299.0,95
+28,0,29,Ratuszowa,129.0,313.0,94
+28,0,30,Dw. Wileński,122.0,327.0,93
+28,0,31,Ząbkowska,127.0,323.0,94
+28,0,32,Kijowska,159.0,350.0,93
+28,0,33,Dw. Wschodni (Kijowska),152.0,361.0,93
+28,0,34,Dw. Wschodni (Kijowska),108.0,339.0,91
+28,0,35,Dw. Wschodni (Kijowska),,,0
+28,1,0,Dw. Wschodni (Kijowska),30.0,62.0,90
+28,1,1,Kijowska,-10.0,56.0,92
+28,1,2,Ząbkowska,2.0,98.0,93
+28,1,3,Dw. Wileński,59.0,180.0,93
+28,1,4,Ratuszowa - Zoo,70.0,188.0,92
+28,1,5,Pl. Hallera,68.0,174.0,93
+28,1,6,Rondo Starzyńskiego,95.0,189.0,93
+28,1,7,Rondo Starzyńskiego,81.0,177.0,93
+28,1,8,Wybrzeże Helskie,92.0,199.0,91
+28,1,9,Most Gdański,74.0,185.0,93
+28,1,10,Park Traugutta,89.0,220.0,94
+28,1,11,Dw. Gdański,106.0,236.0,94
+28,1,12,Baseny Inflancka,76.0,179.0,93
+28,1,13,Rondo „Radosława”,121.0,211.0,92
+28,1,14,Pl. Grunwaldzki,143.0,248.0,94
+28,1,15,Sady Żoliborskie,150.0,271.0,94
+28,1,16,Włościańska,152.0,271.0,93
+28,1,17,Park Olszyna,109.0,220.0,93
+28,1,18,Romaszewskiego,115.0,228.0,92
+28,1,19,Piaski,103.0,217.0,93
+28,1,20,Al. Reymonta,152.0,250.0,91
+28,1,21,Conrada,69.0,233.0,93
+28,1,22,Ogrody Działkowe Bemowo,76.0,218.0,92
+28,1,23,Piastów Śląskich,70.0,205.0,92
+28,1,24,Nowe Bemowo,85.0,215.0,91
+28,1,25,Nowe Bemowo,113.0,245.0,90
+28,1,26,Wrocławska,110.0,278.0,91
+28,1,27,Radiowa,129.0,301.0,93
+28,1,28,Dywizjonu 303,149.0,317.0,92
+28,1,29,Kazubów,121.0,286.0,91
+28,1,30,Metro Bemowo,106.0,260.0,90
+28,1,31,Klemensiewicza,108.0,248.0,90
+28,1,32,Os. Górczewska,,,0
+3,0,0,Annopol,10.0,21.0,95
+3,0,1,Toruńska,26.0,40.0,91
+3,0,2,Metro Bródno,29.0,53.0,91
+3,0,3,Poborzańska,31.0,56.0,95
+3,0,4,Rembielińska,16.0,54.0,95
+3,0,5,Julianowska,25.0,61.0,94
+3,0,6,Budowlana,28.0,64.0,92
+3,0,7,Pożarowa,26.0,62.0,92
+3,0,8,Staniewicka,38.0,79.0,90
+3,0,9,Rondo Żaba,85.0,129.0,93
+3,0,10,Bródnowska,68.0,120.0,93
+3,0,11,Inżynierska,45.0,96.0,94
+3,0,12,Dw. Wileński,71.0,87.0,93
+3,0,13,Ząbkowska,78.0,136.0,95
+3,0,14,Kijowska,66.0,125.0,94
+3,0,15,Al. Zieleniecka,51.0,126.0,91
+3,0,16,Lubelska,42.0,120.0,93
+3,0,17,Bliska,48.0,129.0,92
+3,0,18,Gocławska,52.0,141.0,91
+3,0,19,Praga-Płd. - Ratusz,53.0,147.0,91
+3,0,20,Międzyborska,32.0,123.0,93
+3,0,21,Kickiego,27.0,118.0,92
+3,0,22,Wiatraczna,57.0,157.0,92
+3,0,23,Czapelska,48.0,142.0,93
+3,0,24,Wspólna Droga,39.0,141.0,92
+3,0,25,Pl. Szembeka,6.0,128.0,92
+3,0,26,Żółkiewskiego,10.0,120.0,94
+3,0,27,Kwatery Głównej,-14.0,95.0,92
+3,0,28,Gocławek,21.0,133.0,93
+3,0,29,Gocławek,,,0
+3,1,0,Gocławek,4.0,21.0,95
+3,1,1,Gocławek,8.0,23.0,94
+3,1,2,Kwatery Głównej,43.0,69.0,94
+3,1,3,Żółkiewskiego,48.0,82.0,94
+3,1,4,Pl. Szembeka,54.0,84.0,94
+3,1,5,Wspólna Droga,68.0,115.0,94
+3,1,6,Czapelska,66.0,114.0,93
+3,1,7,Wiatraczna,24.0,70.0,91
+3,1,8,Kickiego,11.0,66.0,91
+3,1,9,Międzyborska,10.0,70.0,94
+3,1,10,Praga-Płd. - Ratusz,15.0,72.0,94
+3,1,11,Gocławska,25.0,93.0,94
+3,1,12,Bliska,20.0,91.0,94
+3,1,13,Lubelska,33.0,99.0,93
+3,1,14,Al. Zieleniecka,50.0,121.0,93
+3,1,15,Kijowska,38.0,109.0,95
+3,1,16,Ząbkowska,82.0,142.0,94
+3,1,17,Dw. Wileński,104.0,176.0,93
+3,1,18,Inżynierska,70.0,156.0,95
+3,1,19,Bródnowska,47.0,145.0,95
+3,1,20,Rondo Żaba,57.0,168.0,95
+3,1,21,Staniewicka,68.0,175.0,94
+3,1,22,Pożarowa,80.0,186.0,92
+3,1,23,Budowlana,110.0,213.0,94
+3,1,24,Julianowska,99.0,202.0,96
+3,1,25,Rembielińska,107.0,206.0,96
+3,1,26,Poborzańska,93.0,185.0,95
+3,1,27,Metro Bródno,109.0,191.0,94
+3,1,28,Toruńska,116.0,203.0,94
+3,1,29,Annopol,,,0
+31,0,0,Metro Wilanowska,-10.0,11.0,81
+31,0,1,Metro Wilanowska,16.0,38.0,92
+31,0,2,Bukowińska,18.0,72.0,94
+31,0,3,Królikarnia,34.0,96.0,94
+31,0,4,Metro Wierzbno,56.0,119.0,93
+31,0,5,Telewizja Polska,69.0,143.0,94
+31,0,6,Samochodowa,24.0,98.0,94
+31,0,7,Woronicza,15.0,89.0,94
+31,0,8,Konstruktorska,35.0,130.0,94
+31,0,9,Domaniewska,36.0,129.0,94
+31,0,10,Rondo Unii Europejskiej,21.0,122.0,94
+31,0,11,Postępu,7.0,105.0,94
+31,0,12,Wynalazek,-14.0,86.0,94
+31,0,13,PKP Służewiec,,,0
+31,1,0,PKP Służewiec,-48.0,-3.0,77
+31,1,1,PKP Służewiec,-9.0,26.0,96
+31,1,2,Wynalazek,5.0,45.0,96
+31,1,3,Postępu,-4.0,30.0,96
+31,1,4,Rondo Unii Europejskiej,31.0,50.0,96
+31,1,5,Domaniewska,-5.0,40.0,95
+31,1,6,Konstruktorska,-5.0,40.0,95
+31,1,7,Woronicza,-15.0,45.0,96
+31,1,8,Samochodowa,9.0,81.0,96
+31,1,9,Telewizja Polska,-33.0,10.0,96
+31,1,10,Metro Wierzbno,-22.0,23.0,95
+31,1,11,Królikarnia,10.0,78.0,96
+31,1,12,Bukowińska,-7.0,77.0,96
+31,1,13,Metro Wilanowska,-18.0,59.0,94
+31,1,14,Metro Wilanowska,,,0
+33,0,0,Kielecka,23.0,35.0,69
+33,0,1,Kielecka,41.0,64.0,80
+33,0,2,Metro Pole Mokotowskie,111.0,183.0,88
+33,0,3,Biblioteka Narodowa,61.0,144.0,88
+33,0,4,GUS,69.0,183.0,89
+33,0,5,Nowowiejska,34.0,132.0,89
+33,0,6,Koszykowa,51.0,152.0,88
+33,0,7,Dw. Centralny,32.0,127.0,88
+33,0,8,Rondo ONZ,34.0,177.0,87
+33,0,9,Hala Mirowska,98.0,249.0,86
+33,0,10,Kino Femina,109.0,279.0,87
+33,0,11,Nowolipki,66.0,225.0,88
+33,0,12,Anielewicza,85.0,217.0,88
+33,0,13,Stawki,112.0,234.0,88
+33,0,14,Rondo „Radosława”,128.0,233.0,87
+33,0,15,Rondo „Radosława”,153.0,293.0,86
+33,0,16,Pl. Grunwaldzki,169.0,306.0,87
+33,0,17,Sady Żoliborskie,185.0,336.0,86
+33,0,18,Włościańska,191.0,338.0,86
+33,0,19,Park Olszyna,141.0,314.0,86
+33,0,20,Romaszewskiego,152.0,323.0,87
+33,0,21,Piaski,130.0,315.0,86
+33,0,22,Al. Reymonta,172.0,361.0,86
+33,0,23,Aspekt,139.0,325.0,86
+33,0,24,Cm. Wawrzyszewski,141.0,335.0,87
+33,0,25,Bogusławskiego,144.0,351.0,87
+33,0,26,Popiela,185.0,368.0,87
+33,0,27,Nocznickiego,186.0,364.0,87
+33,0,28,Metro Młociny,191.0,353.0,85
+33,0,29,Metro Młociny,,,0
+33,1,0,Metro Młociny,3.0,10.0,70
+33,1,1,Metro Młociny,65.0,103.0,86
+33,1,2,Metro Młociny,54.0,91.0,87
+33,1,3,Nocznickiego,82.0,120.0,87
+33,1,4,Popiela,98.0,160.0,86
+33,1,5,Bogusławskiego,106.0,165.0,86
+33,1,6,Cm. Wawrzyszewski,98.0,160.0,87
+33,1,7,Aspekt,41.0,127.0,87
+33,1,8,Al. Reymonta,53.0,115.0,86
+33,1,9,Piaski,65.0,159.0,87
+33,1,10,Romaszewskiego,96.0,181.0,88
+33,1,11,Park Olszyna,110.0,210.0,85
+33,1,12,Włościańska,118.0,222.0,87
+33,1,13,Sady Żoliborskie,148.0,238.0,88
+33,1,14,Pl. Grunwaldzki,114.0,215.0,88
+33,1,15,Rondo „Radosława”,131.0,239.0,88
+33,1,16,Rondo „Radosława”,91.0,192.0,87
+33,1,17,Stawki,98.0,225.0,87
+33,1,18,Anielewicza,58.0,204.0,88
+33,1,19,Nowolipki,81.0,228.0,87
+33,1,20,Kino Femina,55.0,229.0,87
+33,1,21,Hala Mirowska,127.0,299.0,87
+33,1,22,Rondo ONZ,156.0,300.0,87
+33,1,23,Dw. Centralny,165.0,338.0,85
+33,1,24,Koszykowa,172.0,364.0,86
+33,1,25,Nowowiejska,216.0,397.0,86
+33,1,26,GUS,180.0,362.0,86
+33,1,27,Biblioteka Narodowa,169.0,351.0,86
+33,1,28,Metro Pole Mokotowskie,208.0,369.0,85
+33,1,29,Metro Pole Mokotowskie,175.0,357.0,82
+33,1,30,Kielecka,196.0,346.0,72
+33,1,31,Kielecka,,,0
+4,0,0,Żerań Wschodni,15.0,25.0,99
+4,0,1,Faradaya,8.0,31.0,99
+4,0,2,Odlewnicza,18.0,40.0,100
+4,0,3,Inowłodzka,22.0,52.0,101
+4,0,4,Toruńska,24.0,68.0,100
+4,0,5,Metro Bródno,22.0,83.0,100
+4,0,6,Poborzańska,22.0,84.0,100
+4,0,7,Rembielińska,7.0,70.0,100
+4,0,8,Julianowska,21.0,83.0,99
+4,0,9,Budowlana,25.0,86.0,101
+4,0,10,Pożarowa,26.0,93.0,100
+4,0,11,Staniewicka,36.0,99.0,100
+4,0,12,Rondo Żaba,78.0,146.0,100
+4,0,13,Bródnowska,57.0,128.0,98
+4,0,14,Inżynierska,40.0,109.0,98
+4,0,15,Dw. Wileński,26.0,129.0,98
+4,0,16,Park Praski,38.0,154.0,98
+4,0,17,Stare Miasto,60.0,165.0,98
+4,0,18,Metro Ratusz Arsenał,73.0,187.0,97
+4,0,19,Pl. Bankowy,66.0,175.0,99
+4,0,20,Królewska,75.0,176.0,99
+4,0,21,Metro Świętokrzyska,96.0,202.0,97
+4,0,22,Centrum,101.0,228.0,97
+4,0,23,Hoża,144.0,249.0,99
+4,0,24,Pl. Konstytucji,154.0,250.0,95
+4,0,25,Pl. Zbawiciela,148.0,287.0,95
+4,0,26,Trasa Łazienkowska,99.0,253.0,97
+4,0,27,Pl. Unii Lubelskiej,103.0,253.0,99
+4,0,28,Rakowiecka,80.0,240.0,98
+4,0,29,Dworkowa,70.0,231.0,98
+4,0,30,Morskie Oko,99.0,246.0,97
+4,0,31,Park Dreszera,63.0,213.0,98
+4,0,32,Malczewskiego,63.0,213.0,99
+4,0,33,Królikarnia,54.0,220.0,98
+4,0,34,Bukowińska,82.0,228.0,98
+4,0,35,Metro Wilanowska,53.0,203.0,98
+4,0,36,Niedźwiedzia,58.0,212.0,97
+4,0,37,Al. Lotników,80.0,229.0,96
+4,0,38,Al. Lotników,52.0,207.0,94
+4,0,39,Al. Lotników,,,0
+4,1,0,Al. Lotników,25.0,63.0,94
+4,1,1,Niedźwiedzia,41.0,86.0,95
+4,1,2,Metro Wilanowska,63.0,122.0,96
+4,1,3,Bukowińska,52.0,123.0,96
+4,1,4,Królikarnia,39.0,137.0,96
+4,1,5,Malczewskiego,40.0,130.0,98
+4,1,6,Park Dreszera,38.0,122.0,97
+4,1,7,Morskie Oko,2.0,96.0,96
+4,1,8,Dworkowa,16.0,105.0,98
+4,1,9,Goworka,161.0,267.0,98
+4,1,10,Pl. Unii Lubelskiej,136.0,239.0,96
+4,1,11,Pl. Zbawiciela,186.0,271.0,95
+4,1,12,Pl. Konstytucji,167.0,257.0,97
+4,1,13,Hoża,188.0,282.0,97
+4,1,14,Centrum,160.0,303.0,94
+4,1,15,Metro Świętokrzyska,156.0,282.0,96
+4,1,16,Królewska,191.0,309.0,96
+4,1,17,Pl. Bankowy,160.0,288.0,97
+4,1,18,Metro Ratusz Arsenał,164.0,289.0,97
+4,1,19,Stare Miasto,159.0,298.0,97
+4,1,20,Park Praski,188.0,314.0,95
+4,1,21,Dw. Wileński,203.0,374.0,97
+4,1,22,Inżynierska,167.0,356.0,98
+4,1,23,Bródnowska,146.0,334.0,96
+4,1,24,Rondo Żaba,146.0,363.0,98
+4,1,25,Staniewicka,153.0,370.0,97
+4,1,26,Pożarowa,147.0,373.0,95
+4,1,27,Budowlana,167.0,406.0,95
+4,1,28,Julianowska,155.0,393.0,94
+4,1,29,Rembielińska,159.0,408.0,95
+4,1,30,Poborzańska,149.0,396.0,97
+4,1,31,Metro Bródno,158.0,402.0,97
+4,1,32,Toruńska,161.0,403.0,96
+4,1,33,Inowłodzka,124.0,372.0,95
+4,1,34,Odlewnicza,130.0,363.0,96
+4,1,35,Faradaya,171.0,381.0,96
+4,1,36,Żerań Wschodni,,,0
+6,0,0,Metro Młociny,13.0,28.0,78
+6,0,1,Zajezdnia Żoliborz,3.0,42.0,84
+6,0,2,Cm. Włoski,41.0,84.0,81
+6,0,3,Przy Agorze,54.0,94.0,82
+6,0,4,UKSW,66.0,101.0,81
+6,0,5,Szpital Bielański,64.0,101.0,84
+6,0,6,AWF,29.0,80.0,81
+6,0,7,Podleśna - IMGW,39.0,84.0,82
+6,0,8,Metro Słodowiec,64.0,107.0,82
+6,0,9,Park Kaskada,75.0,120.0,82
+6,0,10,Metro Marymont,64.0,122.0,84
+6,0,11,Teatr Komedia,81.0,140.0,85
+6,0,12,Pl. Wilsona,66.0,124.0,87
+6,0,13,Pl. Inwalidów,119.0,183.0,82
+6,0,14,Gen. Zajączka,68.0,128.0,83
+6,0,15,Dw. Gdański,70.0,141.0,82
+6,0,16,KS Polonia,33.0,101.0,82
+6,0,17,Park Traugutta,61.0,132.0,82
+6,0,18,Most Gdański,65.0,134.0,82
+6,0,19,Wybrzeże Helskie,46.0,126.0,82
+6,0,20,Rondo Starzyńskiego,67.0,148.0,83
+6,0,21,Rondo Starzyńskiego,62.0,139.0,83
+6,0,22,Pl. Hallera,69.0,147.0,79
+6,0,23,Ratuszowa - Zoo,76.0,155.0,78
+6,0,24,Ratuszowa,95.0,171.0,80
+6,0,25,Dw. Wileński,71.0,191.0,81
+6,0,26,Ząbkowska,84.0,194.0,82
+6,0,27,Kijowska,72.0,183.0,81
+6,0,28,Al. Zieleniecka,62.0,167.0,81
+6,0,29,Lubelska,55.0,160.0,80
+6,0,30,Bliska,56.0,176.0,80
+6,0,31,Gocławska,53.0,181.0,81
+6,0,32,Praga-Płd. - Ratusz,64.0,185.0,82
+6,0,33,Międzyborska,43.0,160.0,82
+6,0,34,Kickiego,44.0,153.0,81
+6,0,35,Wiatraczna,83.0,188.0,82
+6,0,36,Czapelska,84.0,188.0,81
+6,0,37,Wspólna Droga,81.0,188.0,80
+6,0,38,Pl. Szembeka,40.0,145.0,78
+6,0,39,Żółkiewskiego,43.0,153.0,79
+6,0,40,Kwatery Głównej,24.0,119.0,81
+6,0,41,Gocławek,58.0,137.0,80
+6,0,42,Gocławek,,,0
+6,1,0,Gocławek,9.0,21.0,82
+6,1,1,Gocławek,11.0,30.0,83
+6,1,2,Kwatery Głównej,52.0,70.0,81
+6,1,3,Żółkiewskiego,54.0,77.0,81
+6,1,4,Pl. Szembeka,56.0,82.0,83
+6,1,5,Wspólna Droga,72.0,103.0,82
+6,1,6,Czapelska,72.0,104.0,83
+6,1,7,Wiatraczna,23.0,64.0,81
+6,1,8,Kickiego,10.0,52.0,81
+6,1,9,Międzyborska,11.0,59.0,81
+6,1,10,Praga-Płd. - Ratusz,16.0,59.0,81
+6,1,11,Gocławska,29.0,67.0,82
+6,1,12,Bliska,16.0,68.0,81
+6,1,13,Lubelska,32.0,78.0,82
+6,1,14,Al. Zieleniecka,40.0,92.0,82
+6,1,15,Kijowska,35.0,104.0,83
+6,1,16,Ząbkowska,85.0,140.0,81
+6,1,17,Dw. Wileński,103.0,180.0,83
+6,1,18,Ratuszowa - Zoo,114.0,203.0,82
+6,1,19,Pl. Hallera,110.0,205.0,81
+6,1,20,Rondo Starzyńskiego,128.0,216.0,82
+6,1,21,Rondo Starzyńskiego,112.0,199.0,82
+6,1,22,Wybrzeże Helskie,129.0,209.0,81
+6,1,23,Most Gdański,112.0,192.0,83
+6,1,24,Park Traugutta,133.0,209.0,82
+6,1,25,KS Polonia,98.0,176.0,81
+6,1,26,Dw. Gdański,99.0,186.0,82
+6,1,27,Gen. Zajączka,121.0,201.0,83
+6,1,28,Pl. Inwalidów,112.0,201.0,83
+6,1,29,Pl. Wilsona,120.0,210.0,81
+6,1,30,Pl. Wilsona,85.0,168.0,82
+6,1,31,Metro Marymont,93.0,192.0,83
+6,1,32,Park Kaskada,73.0,171.0,82
+6,1,33,Metro Słodowiec,72.0,175.0,82
+6,1,34,Podleśna - IMGW,101.0,215.0,79
+6,1,35,AWF,113.0,222.0,81
+6,1,36,Szpital Bielański,79.0,189.0,82
+6,1,37,UKSW,72.0,187.0,82
+6,1,38,Przy Agorze,94.0,218.0,82
+6,1,39,Cm. Włoski,86.0,212.0,82
+6,1,40,Zajezdnia Żoliborz,79.0,193.0,80
+6,1,41,Metro Młociny,67.0,204.0,80
+6,1,42,Metro Młociny,,,0
+7,0,0,Banacha,12.0,23.0,99
+7,0,1,Banacha,19.0,33.0,97
+7,0,2,Bitwy Warszawskiej 1920 r.,85.0,102.0,99
+7,0,3,Och-Teatr,78.0,116.0,99
+7,0,4,Wawelska,101.0,169.0,100
+7,0,5,Pl. Narutowicza,69.0,141.0,99
+7,0,6,Ochota - Ratusz,47.0,133.0,99
+7,0,7,Pl. Zawiszy,40.0,117.0,99
+7,0,8,Pl. Starynkiewicza,33.0,117.0,99
+7,0,9,Dw. Centralny,44.0,124.0,100
+7,0,10,Centrum,37.0,126.0,100
+7,0,11,Krucza,43.0,131.0,100
+7,0,12,Muzeum Narodowe,60.0,160.0,101
+7,0,13,Most Poniatowskiego,40.0,140.0,98
+7,0,14,Rondo Waszyngtona,42.0,149.0,98
+7,0,15,Rondo Waszyngtona,41.0,142.0,98
+7,0,16,Al. Zieleniecka,36.0,151.0,100
+7,0,17,Kijowska,23.0,95.0,99
+7,0,18,Dw. Wschodni (Kijowska),39.0,121.0,99
+7,0,19,Zajezdnia Praga,38.0,113.0,98
+7,0,20,Wojnicka,31.0,148.0,96
+7,0,21,Kawęczyńska - Bazylika,,,0
+7,1,0,Kawęczyńska - Bazylika,13.0,26.0,95
+7,1,1,Kawęczyńska - Bazylika,39.0,53.0,95
+7,1,2,Wojnicka,62.0,77.0,96
+7,1,3,Zajezdnia Praga,64.0,82.0,97
+7,1,4,Dw. Wschodni (Kijowska),68.0,94.0,99
+7,1,5,Kijowska,38.0,90.0,100
+7,1,6,Al. Zieleniecka,45.0,101.0,96
+7,1,7,Rondo Waszyngtona,36.0,94.0,97
+7,1,8,Rondo Waszyngtona,31.0,94.0,97
+7,1,9,Most Poniatowskiego,32.0,86.0,98
+7,1,10,Muzeum Narodowe,30.0,88.0,99
+7,1,11,Krucza,38.0,97.0,98
+7,1,12,Centrum,51.0,119.0,98
+7,1,13,Dw. Centralny,92.0,166.0,98
+7,1,14,Pl. Starynkiewicza,70.0,151.0,98
+7,1,15,Pl. Zawiszy,63.0,185.0,97
+7,1,16,Ochota - Ratusz,61.0,154.0,97
+7,1,17,Pl. Narutowicza,45.0,161.0,96
+7,1,18,Wawelska,56.0,164.0,98
+7,1,19,Och-Teatr,71.0,156.0,98
+7,1,20,Bitwy Warszawskiej 1920 r.,93.0,164.0,95
+7,1,21,Banacha,,,0
+9,0,0,Gocławek,6.0,13.0,100
+9,0,1,Gocławek,7.0,26.0,99
+9,0,2,Kwatery Głównej,38.0,66.0,99
+9,0,3,Żółkiewskiego,38.0,68.0,98
+9,0,4,Pl. Szembeka,39.0,69.0,99
+9,0,5,Wspólna Droga,61.0,93.0,100
+9,0,6,Czapelska,57.0,87.0,100
+9,0,7,Wiatraczna,2.0,61.0,99
+9,0,8,Grenadierów,2.0,60.0,100
+9,0,9,Kinowa,36.0,92.0,100
+9,0,10,Park Skaryszewski,63.0,107.0,100
+9,0,11,Berezyńska,61.0,97.0,100
+9,0,12,Rondo Waszyngtona,25.0,75.0,99
+9,0,13,Most Poniatowskiego,11.0,81.0,100
+9,0,14,Muzeum Narodowe,6.0,73.0,100
+9,0,15,Krucza,14.0,85.0,100
+9,0,16,Centrum,7.0,89.0,98
+9,0,17,Dw. Centralny,54.0,149.0,98
+9,0,18,Pl. Starynkiewicza,55.0,140.0,99
+9,0,19,Pl. Zawiszy,39.0,121.0,98
+9,0,20,Ochota - Ratusz,44.0,121.0,98
+9,0,21,Pl. Narutowicza,36.0,116.0,99
+9,0,22,Wawelska,32.0,124.0,99
+9,0,23,Och-Teatr,36.0,141.0,99
+9,0,24,Bitwy Warszawskiej 1920 r.,65.0,178.0,99
+9,0,25,Hale Banacha,54.0,159.0,99
+9,0,26,Dickensa,65.0,175.0,98
+9,0,27,Korotyńskiego,69.0,183.0,99
+9,0,28,PKP Rakowiec,47.0,151.0,99
+9,0,29,Włochy - Ratusz,123.0,192.0,98
+9,0,30,Hynka,126.0,198.0,97
+9,0,31,Krakowiaków,97.0,175.0,97
+9,0,32,Lipowczana,82.0,166.0,98
+9,0,33,Instytut Lotnictwa,94.0,183.0,98
+9,0,34,P+R Al. Krakowska,,,0
+9,1,0,P+R Al. Krakowska,-7.0,7.0,95
+9,1,1,P+R Al. Krakowska,7.0,41.0,98
+9,1,2,Instytut Lotnictwa,9.0,49.0,98
+9,1,3,Lipowczana,20.0,52.0,100
+9,1,4,Krakowiaków,31.0,70.0,99
+9,1,5,Hynka,56.0,103.0,100
+9,1,6,Włochy - Ratusz,61.0,125.0,100
+9,1,7,PKP Rakowiec,92.0,149.0,100
+9,1,8,Korotyńskiego,58.0,128.0,99
+9,1,9,Dickensa,88.0,189.0,99
+9,1,10,Hale Banacha,101.0,190.0,100
+9,1,11,Bitwy Warszawskiej 1920 r.,80.0,191.0,100
+9,1,12,Och-Teatr,81.0,186.0,100
+9,1,13,Wawelska,126.0,220.0,99
+9,1,14,Pl. Narutowicza,83.0,180.0,98
+9,1,15,Ochota - Ratusz,55.0,150.0,99
+9,1,16,Pl. Zawiszy,36.0,113.0,98
+9,1,17,Pl. Starynkiewicza,19.0,95.0,99
+9,1,18,Dw. Centralny,30.0,124.0,98
+9,1,19,Centrum,36.0,133.0,99
+9,1,20,Krucza,34.0,151.0,99
+9,1,21,Muzeum Narodowe,52.0,155.0,99
+9,1,22,Most Poniatowskiego,17.0,126.0,98
+9,1,23,Rondo Waszyngtona,40.0,130.0,99
+9,1,24,Berezyńska,52.0,157.0,99
+9,1,25,Park Skaryszewski,47.0,152.0,99
+9,1,26,Kinowa,28.0,131.0,99
+9,1,27,Grenadierów,71.0,189.0,97
+9,1,28,Wiatraczna,49.0,171.0,96
+9,1,29,Czapelska,34.0,156.0,98
+9,1,30,Wspólna Droga,33.0,150.0,98
+9,1,31,Pl. Szembeka,1.0,114.0,98
+9,1,32,Żółkiewskiego,9.0,114.0,98
+9,1,33,Kwatery Głównej,-10.0,69.0,97
+9,1,34,Gocławek,12.0,106.0,97
+9,1,35,Gocławek,,,0

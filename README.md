@@ -174,3 +174,10 @@ Other analysis: `delay_map.py` (tram slow-time per junction segment), `map_trace
 First stuck-point pass done on 04:26–14:00 (top: Bitwy Warszawskiej, Pole Mokotowskie, Okopowa, Pl. Zawiszy — trams, all day,
 not depot pull-outs). Per-vehicle loss and line speeds added (04:27–14:19: trams avg 18.7 km/h, fastest 2 / slowest 31; buses 20.0 km/h,
 slowest 106/128/356). Next: merge cells into junction clusters, full-day rerun, rush-hour split.
+
+**Tram analysis vs timetable (`live/analysis/`, see its README)** — done for the full day 2026-11-24 (04:27–23:12).
+Every tram fix tied to its GTFS trip via line + brigade (97 % of fixes, 6,914 / 7,139 trips), so delay, direction and
+actual tram model are known per trip. Junction approaches per travel heading, signal stop rates (OSM signals),
+Wilanów corridor verdict (priority works on most of it; Goworka × Puławska N, Belwederska, Św. Bonifacego don't),
+priority scenario (≈ 192 tram-h/day, 13.8 trams of peak cycle time), timetable realism, headway regularity, dwell by model.
+Run with `py -3.11`. Report artifact: https://claude.ai/artifact/Wrj38hkTvnX8opgUAxGT7w. Next: buses, a full week.

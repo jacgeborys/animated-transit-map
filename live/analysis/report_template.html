@@ -1,0 +1,347 @@
+<title>Where Warsaw's Trams Wait</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~72ch) with wide figure blocks; sections are the questions asked, in order. */
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#15171a; --ink2:#4c5058; --muted:#7c818a; --rule:#e3e4e1; --grid:#eceeeb;
+  --tram:#b60000; --tram-ink:#ffffff;
+  --lost:#eb6834; --s1:#fbd9c8; --s2:#f4a57f; --s3:#eb6834; --s4:#b9461b; --s5:#7c2a0c;
+  --ok:#1baf7a; --net:#c9ccd1; --move:#d3d6da; --plat:#1baf7a; --hatch:#9aa0a8;
+  --f-head:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141518; --surface:#1c1e22; --ink:#eef0f2; --ink2:#b9bec6; --muted:#8a9099; --rule:#2c2f35; --grid:#25282d;
+  --tram:#d42a2a; --s1:#4a2414; --s2:#8a3a17; --s3:#d95926; --s4:#f08a5c; --s5:#ffc4a6; --lost:#d95926;
+  --ok:#199e70; --net:#3a3e45; --move:#3a3e45; --plat:#199e70; --hatch:#6b717a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141518; --surface:#1c1e22; --ink:#eef0f2; --ink2:#b9bec6; --muted:#8a9099; --rule:#2c2f35; --grid:#25282d;
+  --tram:#d42a2a; --s1:#4a2414; --s2:#8a3a17; --s3:#d95926; --s4:#f08a5c; --s5:#ffc4a6; --lost:#d95926;
+  --ok:#199e70; --net:#3a3e45; --move:#3a3e45; --plat:#199e70; --hatch:#6b717a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,5vw,3.1rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.65rem;font-weight:600}
+h3{font-size:1.1rem;font-weight:600}
+p{margin:0;max-width:72ch}
+.eyebrow{font:500 .78rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+.lede{font-size:1.12rem;color:var(--ink2)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.7em;height:1.45em;padding:0 .3em;background:var(--tram);color:var(--tram-ink);font:600 .82rem/1 var(--f-head);border-radius:2px;margin:1px 2px 1px 0}
+.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.answer{background:var(--surface);border:1px solid var(--rule);padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.answer b.big{font:600 1.9rem/1.1 var(--f-head)}
+.answer span{color:var(--ink2);font-size:.92rem}
+.fig{background:var(--surface);border:1px solid var(--rule);padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.fig .cap{color:var(--muted);font-size:.85rem}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{font:500 .72rem/1.2 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+td.r,th.r{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td .sub{display:block;color:var(--muted);font-size:.8rem}
+.meter{display:inline-block;height:8px;border-radius:0 4px 4px 0;background:var(--lost);vertical-align:middle;margin-left:6px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--ink2);align-items:center}
+.sw{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+svg text{fill:var(--ink2);font-family:var(--f-body)}
+svg .axis{stroke:var(--rule)}
+svg .gridl{stroke:var(--grid)}
+#tip{position:fixed;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--rule);box-shadow:0 4px 16px rgba(0,0,0,.14);padding:8px 10px;font-size:.82rem;line-height:1.4;max-width:300px;z-index:20}
+.two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.note{border-left:3px solid var(--rule);padding:2px 0 2px 14px;color:var(--ink2);font-size:.92rem}
+ul{margin:0;padding-left:1.2em;max-width:72ch} li{margin:4px 0}
+.verdict{font:600 1.05rem/1.3 var(--f-head)}
+.mapbox svg{width:100%;height:auto;display:block;max-height:78vh}
+.mapbox circle{cursor:pointer}
+.mapbox circle:hover{stroke:var(--ink);stroke-width:30}
+:focus-visible{outline:2px solid var(--tram);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow" id="hdr-meta"></div>
+  <h1>Where Warsaw's trams wait</h1>
+  <p class="lede" id="lede"></p>
+</header>
+
+<section>
+  <div class="answers" id="answers"></div>
+</section>
+
+<section>
+  <div class="eyebrow">Time budget</div>
+  <h2>One tram-hour in ten is spent standing away from a platform</h2>
+  <p id="split-text"></p>
+  <div class="fig">
+    <svg id="split" viewBox="0 0 1000 70" role="img" aria-label="Split of tram-hours in service"></svg>
+    <div class="legend" id="split-legend"></div>
+  </div>
+  <div class="fig">
+    <h3>Tram-hours standing away from platforms, by hour</h3>
+    <svg id="hourly" viewBox="0 0 1000 230" role="img" aria-label="Tram-hours standing per hour"></svg>
+    <div class="cap">Share of in-service time in the tooltip. The share rises only from about 8 % to 10 % in the peaks, which suggests most of the loss comes from the signal plans rather than congestion.</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Places, per direction of travel</div>
+  <h2>The map of lost time</h2>
+  <p>Every circle is one junction approach in one direction of travel, pooled over all tram lines. Its size is tram-hours lost in the day and its colour is how often a passing tram has to stop. Hover a circle for details.</p>
+  <div class="fig mapbox">
+    <svg id="map" role="img" aria-label="Map of tram stand-still places"></svg>
+    <div class="legend" id="map-legend"></div>
+  </div>
+  <div class="fig">
+    <h3>The 15 approaches that cost the most tram time</h3>
+    <div class="scroll"><table id="t-places"></table></div>
+    <div class="cap">"Stop rate" counts trams that stood still at least once in the approach (any line). Standing at the platform itself is not counted here.</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Direction matters</div>
+  <h2>Junctions that work in one direction only</h2>
+  <p>The same crossing, opposite directions. When one direction almost never stops and the other almost always does, the priority or the signal coordination exists but serves one direction only.</p>
+  <div class="fig"><div class="scroll"><table id="t-asym"></table></div></div>
+</section>
+
+<section>
+  <div class="eyebrow">Goworka – Miasteczko Wilanów</div>
+  <h2>Does the Wilanów line have priority?</h2>
+  <p class="verdict" id="wil-verdict"></p>
+  <p id="wil-text"></p>
+  <div class="fig" id="wil-figs"></div>
+</section>
+
+<section>
+  <div class="eyebrow">Scenario</div>
+  <h2>What working priority would buy</h2>
+  <p id="prio-text"></p>
+  <div class="two">
+    <div class="fig">
+      <h3>Trams freed in the morning peak, per line</h3>
+      <svg id="freed" role="img" aria-label="Trams freed per line"></svg>
+      <div class="cap">Round-trip time saved ÷ peak headway. A whole tram can leave the line once the saving reaches one headway.</div>
+    </div>
+    <div class="fig">
+      <h3>Peak round trip vs. the timetable</h3>
+      <div class="scroll"><table id="t-rt"></table></div>
+    </div>
+  </div>
+  <div class="fig">
+    <h3>Signal approaches with the most passenger time to gain</h3>
+    <div class="scroll"><table id="t-app"></table></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Live vs. timetable</div>
+  <h2>Where the timetable is fiction</h2>
+  <p>The median peak running time between two stops compared with the scheduled time, departure to departure. Delay is born where the timetable is too tight. Where it is too loose, trams wait at stops to stay on time.</p>
+  <div class="two">
+    <div class="fig"><h3>Too tight (peak)</h3><div class="scroll"><table id="t-seg"></table></div></div>
+    <div class="fig"><h3>Too loose (all day)</h3><div class="scroll"><table id="t-pad"></table></div></div>
+  </div>
+  <div class="fig">
+    <h3>Irregular headways: extra waiting time per passenger</h3>
+    <svg id="ewt" role="img" aria-label="Excess waiting time per line"></svg>
+    <div class="cap" id="ewt-cap"></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Fleet</div>
+  <h2>Which trams ran, and does the model matter?</h2>
+  <p id="fleet-text"></p>
+  <div class="fig"><div class="scroll"><table id="t-mod"></table></div>
+  <div class="cap">Dwell excess compares standing time at a platform with the median of all trams at that stop in that hour, so busy stops do not bias the comparison. GPS fixes arrive every 5–15 s, so differences of one or two seconds are the limit of what this data can show.</div></div>
+</section>
+
+<section>
+  <div class="eyebrow">Method</div>
+  <h2>How this was measured</h2>
+  <ul id="method"></ul>
+  <h3>Assumptions (scenario only)</h3>
+  <ul id="assume"></ul>
+  <h3>Next steps</h3>
+  <ul>
+    <li>Repeat over a full week, including a Saturday, to separate the signal plans from one-day noise.</li>
+    <li>Run the same pipeline for buses. The data is already collected, and bus lanes plus bus priority are the natural next question.</li>
+    <li>Add OSM tags for tram priority (or ZDM's list) to test the stop-rate threshold against known priority junctions.</li>
+    <li>Before/after: keep the collector running while ZDM retunes a junction (e.g. Goworka × Puławska) and measure the change.</li>
+    <li>Passenger counts: ZTM publishes yearly stop-level boardings. With them, the passenger-hours become a measurement rather than a load-factor scenario.</li>
+  </ul>
+</section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D=/*__DATA__*/{};
+const $=id=>document.getElementById(id);
+const fmt=(v,d=0)=>v==null?"–":Number(v).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct=v=>v==null?"–":Math.round(v*100)+" %";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const badges=s=>String(s||"").split(",").filter(Boolean).slice(0,8).map(l=>`<span class="badge">${esc(l)}</span>`).join("");
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+const tip=$("tip");
+function showTip(ev,html){tip.innerHTML=html;tip.hidden=false;const w=tip.offsetWidth,h=tip.offsetHeight;
+  let x=ev.clientX+14,y=ev.clientY+14;if(x+w>innerWidth-8)x=ev.clientX-w-14;if(y+h>innerHeight-8)y=ev.clientY-h-14;tip.style.left=x+"px";tip.style.top=y+"px"}
+function hideTip(){tip.hidden=true}
+function bindTip(node,html){node.addEventListener("pointermove",e=>showTip(e,html));node.addEventListener("pointerleave",hideTip)}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ramp=sp=>sp<.2?"var(--s1)":sp<.4?"var(--s2)":sp<.6?"var(--s3)":sp<.8?"var(--s4)":"var(--s5)";
+const HD={E:"east",NE:"north-east",N:"north",NW:"north-west",W:"west",SW:"south-west",S:"south",SE:"south-east"};
+
+/* ---------- header */
+const S=D.split, inService=S.moving+S.platform+S.line;
+$("hdr-meta").textContent=`${D.weekday} ${D.date} · ${D.span} · live GPS vs. GTFS timetable`;
+$("lede").innerHTML=`${fmt(D.n_fixes)} GPS positions from ${D.n_trams} trams, each tied to its scheduled trip through line and brigade. ${fmt(D.n_trips_obs)} of ${fmt(D.n_trips_sched)} scheduled trips were seen. Trams spent <b>${fmt(S.line)} tram-hours</b> standing still away from platforms: at red lights, in queues before junctions and behind other trams.`;
+
+const W=D.wil["0"],W1=D.wil["1"];
+const wilBad=[...W.signals,...W1.signals].filter(s=>!s.plat&&s.sp>=.4).length;
+const wilAll=[...W.signals,...W1.signals].filter(s=>!s.plat);
+const wilGood=wilAll.filter(s=>s.sp<=.15).length;
+const best=D.prio.slice(0,4).map(p=>p.line);
+$("answers").innerHTML=[
+ [`${fmt(S.line)} h`,`tram-hours a day standing away from platforms, ${Math.round(S.line/inService*100)} % of time in service`],
+ [`${D.prio_tot.freed}`,`trams freed in the peak if every signal worked as well as the good ones on the Wilanów line. In whole brigades that means about one each on lines ${best.join(", ")}.`],
+ [`${fmt(D.prio_tot.pax)} h`,`passenger-hours a day saved in that scenario (assumes ${Math.round(D.assume.lf_peak*100)} % peak / ${Math.round(D.assume.lf_off*100)} % off-peak load)`],
+ [`${wilGood} of ${wilAll.length}`,`signals on the Wilanów section stop ≤ 15 % of trams, so priority works there. ${wilBad} approaches stop ≥ 40 % of trams, and they decide the run time.`],
+].map(([b,s])=>`<div class="answer"><b class="big num">${b}</b><span>${s}</span></div>`).join("");
+
+/* ---------- split bar */
+(()=>{const svg=$("split"),parts=[["moving","Moving","var(--move)"],["platform","Standing at a platform","var(--plat)"],["line","Standing elsewhere","var(--lost)"]];
+ let x=0;parts.forEach(([k,l,c])=>{const w=S[k]/inService*1000;const r=el("rect",{x:x+1,y:8,width:Math.max(w-2,0),height:34,fill:c,rx:2},svg);
+  bindTip(r,`<b>${l}</b><br>${fmt(S[k])} tram-hours · ${Math.round(S[k]/inService*100)} %`);
+  if(w>90){const t=el("text",{x:x+8,y:62,"font-size":15},svg);t.textContent=`${l} · ${Math.round(S[k]/inService*100)} %`}x+=w});
+ $("split-legend").innerHTML=parts.map(([k,l,c])=>`<span><span class="sw" style="background:${c}"></span>${l} ${fmt(S[k])} h</span>`).join("");
+ $("split-text").innerHTML=`Of ${fmt(inService)} tram-hours in service (termini and layovers excluded: another ${fmt(D.terminus_h)} h), ${Math.round(S.moving/inService*100)} % is spent moving and ${Math.round(S.platform/inService*100)} % standing at platforms. The remaining <b>${Math.round(S.line/inService*100)} %</b> is standing still between stops. That part can be engineered away with signal priority, while platform time cannot, beyond boarding.`;
+})();
+
+/* ---------- hourly */
+(()=>{const svg=$("hourly"),H=D.hourly,L=60,R=990,T=14,B=196,max=Math.ceil(Math.max(...H.map(h=>h.line))/10)*10;
+ const bw=(R-L)/H.length;
+ for(let v=0;v<=max;v+=10){const y=B-(v/max)*(B-T);el("line",{x1:L,x2:R,y1:y,y2:y,class:v?"gridl":"axis"},svg);const t=el("text",{x:L-8,y:y+4,"text-anchor":"end","font-size":12},svg);t.textContent=v}
+ H.forEach((h,i)=>{const hgt=(h.line/max)*(B-T),x=L+i*bw+3;
+  const p=el("path",{d:`M${x},${B}V${B-hgt+4}q0,-4 4,-4h${bw-14}q4,0 4,4V${B}Z`,fill:"var(--lost)"},svg);
+  const hit=el("rect",{x:L+i*bw,y:T,width:bw,height:B-T,fill:"transparent"},svg);
+  bindTip(hit,`<b>${String(h.h).padStart(2,"0")}:00–${String(h.h+1).padStart(2,"0")}:00</b><br>${fmt(h.line,1)} tram-hours standing away from platforms<br>${fmt(h.share,1)} % of ${fmt(h.service)} in-service tram-hours`);
+  if(i%2===0){const t=el("text",{x:L+i*bw+bw/2,y:B+18,"text-anchor":"middle","font-size":12},svg);t.textContent=String(h.h).padStart(2,"0")}});
+ const t=el("text",{x:L,y:228,"font-size":12},svg);t.textContent="hour of day · tram-hours";
+})();
+
+/* ---------- map */
+(()=>{const svg=$("map");svg.setAttribute("viewBox",D.vb.join(" "));
+ const g=el("g",{},svg);
+ D.net.forEach(n=>el("path",{d:n.d,fill:"none",stroke:"var(--net)","stroke-width":22,"stroke-linejoin":"round","stroke-linecap":"round"},g));
+ const maxH=Math.max(...D.places.map(p=>p.h));
+ [...D.places].sort((a,b)=>b.h-a.h).forEach(p=>{
+  const c=el("circle",{cx:p.x,cy:p.y,r:12+Math.sqrt(p.h/maxH)*95,fill:ramp(p.sp),"fill-opacity":.88,stroke:"var(--surface)","stroke-width":8,tabindex:0},svg);
+  bindTip(c,`<b>${esc(p.name||p.stop)}</b><br>heading ${HD[p.hd]||p.hd} · towards ${esc(p.to)}<br>${badges(p.lines)}<br>stop rate <b>${pct(p.sp)}</b> of ${fmt(p.passes)} trams<br>${fmt(p.spp,1)} s lost per tram · ${fmt(p.h,1)} tram-h/day`)});
+ const lab=[...D.places].sort((a,b)=>b.h-a.h).slice(0,10),placed=[];
+ lab.forEach(p=>{if(placed.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<260))return;placed.push(p);
+  const t=el("text",{x:p.x+60,y:p.y+12,"font-size":44,"font-weight":600,style:"paint-order:stroke;stroke:var(--surface);stroke-width:10px"},svg);t.textContent=(p.stop||p.name)});
+ $("map-legend").innerHTML=`<span>stop rate:</span>`+[["< 20 %",.1],["20–40 %",.3],["40–60 %",.5],["60–80 %",.7],["≥ 80 %",.9]].map(([l,v])=>`<span><span class="sw" style="background:${ramp(v)}"></span>${l}</span>`).join("")+`<span>· circle area = tram-hours lost · top ${D.places.length} places</span>`;
+})();
+
+/* ---------- tables */
+function table(id,cols,rows){$(id).innerHTML=`<thead><tr>${cols.map(c=>`<th class="${c.r?"r":""}">${c.h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td class="${c.r?"r":""}">${c.f(r)}</td>`).join("")}</tr>`).join("")}</tbody>`}
+const meter=(v,max,px=60)=>`<span class="meter" style="width:${Math.max(2,v/max*px)}px"></span>`;
+const P=[...D.places].sort((a,b)=>b.h-a.h).slice(0,15),mx=P[0].h;
+table("t-places",[
+ {h:"Place",f:p=>`${esc(p.name||p.stop)}<span class="sub">stop ${esc(p.stop)} · heading ${p.hd} → ${esc(p.to)}</span>`},
+ {h:"Lines",f:p=>badges(p.lines)},
+ {h:"Trams",r:1,f:p=>fmt(p.passes)},
+ {h:"Stop rate",r:1,f:p=>pct(p.sp)},
+ {h:"s / tram",r:1,f:p=>fmt(p.spp,0)},
+ {h:"Tram-h / day",r:1,f:p=>fmt(p.h,1)+meter(p.h,mx)}],P);
+table("t-asym",[
+ {h:"Junction",f:a=>`${esc(a.name)}`},{h:"Lines",f:a=>badges(a.lines)},
+ {h:"Bad direction",f:a=>`${HD[a.bad_hd]} → ${esc(a.bad_to)}`},{h:"Stop rate",r:1,f:a=>`<b>${pct(a.bad_sp)}</b>`},{h:"s / tram",r:1,f:a=>fmt(a.bad_spp,0)},
+ {h:"Good direction",f:a=>`${HD[a.good_hd]} → ${esc(a.good_to)}`},{h:"Stop rate",r:1,f:a=>pct(a.good_sp)}],D.asym);
+
+/* ---------- Wilanów */
+(()=>{const box=$("wil-figs");
+ ["0","1"].forEach(d=>{const w=D.wil[d];
+  const h=document.createElement("h3");h.textContent=`${w.from} → ${w.to} (${fmt(w.len,1)} km, line 16; line 14 is the same)`;box.appendChild(h);
+  const svg=el("svg",{viewBox:"0 0 1000 250",role:"img","aria-label":`Stop rate at signals ${w.from} to ${w.to}`});box.appendChild(svg);
+  const L=46,R=985,T=12,B=150,X=km=>L+km/w.len*(R-L),Y=v=>B-v*(B-T);
+  [0,.25,.5,.75,1].forEach(v=>{el("line",{x1:L,x2:R,y1:Y(v),y2:Y(v),class:v?"gridl":"axis"},svg);const t=el("text",{x:L-6,y:Y(v)+4,"text-anchor":"end","font-size":11},svg);t.textContent=Math.round(v*100)+"%"});
+  el("rect",{x:L,y:Y(.15),width:R-L,height:B-Y(.15),fill:"var(--ok)","fill-opacity":.08},svg);
+  const tl=el("text",{x:R,y:Y(.15)-4,"text-anchor":"end","font-size":11},svg);tl.textContent="≤ 15 % = priority works";
+  w.signals.forEach(s=>{if(s.km<0||s.km>w.len+.02)return;const x=X(s.km),hg=Math.max(B-Y(s.sp),2);
+   const r=el("path",{d:`M${x-6},${B}V${B-hg+3}q0,-3 3,-3h6q3,0 3,3V${B}Z`,fill:s.plat?"var(--hatch)":ramp(s.sp)},svg);
+   const hit=el("rect",{x:x-10,y:T,width:20,height:B-T,fill:"transparent"},svg);
+   bindTip(hit,`<b>${esc(s.name)}</b><br>km ${fmt(s.km,2)} from ${esc(w.from)}<br>stop rate <b>${pct(s.sp)}</b> · ${fmt(s.spp,1)} s lost per tram (${s.n} trams)${s.plat?"<br><i>platform inside the approach, so the red phase is partly hidden in the dwell</i>":""}`);
+   if(s.sp>=.35){const t=el("text",{x,y:B-hg-6,"text-anchor":"middle","font-size":11,"font-weight":600},svg);t.textContent=(s.name.split(" × ").pop()||"").replace("Aleja ","Al. ").slice(0,18)}});
+  w.stops.forEach(s=>{const x=X(s.km);el("line",{x1:x,x2:x,y1:B,y2:B+6,stroke:"var(--muted)"},svg);
+   const t=el("text",{x:x+3,y:B+12,"font-size":10.5,transform:`rotate(40 ${x+3} ${B+12})`},svg);t.textContent=s.name});
+ });
+ const lg=document.createElement("div");lg.className="legend";lg.innerHTML=`<span><span class="sw" style="background:var(--s5)"></span>stop rate bar (colour = rate)</span><span><span class="sw" style="background:var(--hatch)"></span>signal with a platform in the approach (lower bound)</span><span>ticks = stops</span>`;box.appendChild(lg);
+ const bad=[...W.signals.map(s=>({...s,dir:W.from+" → "+W.to})),...W1.signals.map(s=>({...s,dir:W1.from+" → "+W1.to}))].filter(s=>s.sp>=.4).sort((a,b)=>b.spp-a.spp);
+ $("wil-verdict").textContent=`Mostly yes. Along Sobieskiego and Aleja Rzeczypospolitej trams sail through. A handful of junctions still stop half the trams or more.`;
+ $("wil-text").innerHTML=`Of ${wilAll.length} signalised approaches on the section without a platform, ${wilGood} stop 15 % of trams or fewer. A fixed-time signal would stop 40–70 %, so these have working priority. For comparison, the city-wide median for such approaches is ${pct(D.city_q["0.5"])} and the top quarter is above ${pct(D.city_q["0.75"])}. The problem junctions are: ${bad.map(s=>`<b>${esc(s.name)}</b> (${esc(s.dir)}, ${pct(s.sp)}, ${fmt(s.spp,0)} s/tram)`).join("; ")}. The worst of them, Goworka × Puławska northbound, is where the Wilanów trams merge into Puławska. The same junction also holds up the Puławska lines 4, 10 and 18: the timetable gives them 2 min from Dworkowa to Goworka, and in the peak they need over 4.`;
+})();
+
+/* ---------- priority */
+(()=>{const T=D.prio_tot,A=D.assume;
+ $("prio-text").innerHTML=`Scenario: every signalised approach is brought to a ${Math.round(A.target*100)} % stop rate, the level the good Wilanów signals already reach. Each avoided stop also saves ${A.accel} s of braking and accelerating. Approaches with a platform inside are left out, which makes the estimate conservative. Today trams stand <b>${fmt(T.sig_h)} h a day</b> at these signals. The scenario saves <b>${fmt(T.save_h)} tram-hours</b> and about <b>${fmt(T.pax)} passenger-hours a day</b> (≈ ${fmt(T.pln)} PLN/day at ${A.vot} PLN/h). That adds up to ${T.freed} trams' worth of peak cycle time. Since trams can only be cut per line, about ${T.whole}–4 whole brigades come out, on the lines that run every 4–6 minutes. Many lines also run 3–7 minutes per round trip behind the timetable in the peak, and the first minutes saved there would buy punctuality, not trams.`;
+ const rows=[...D.prio].sort((a,b)=>b.freed-a.freed),svg=$("freed"),rh=22,H=rows.length*rh+30;svg.setAttribute("viewBox",`0 0 520 ${H}`);
+ const L=52,R=500,max=Math.max(1.2,...rows.map(r=>r.freed)),X=v=>L+v/max*(R-L);
+ [0,.5,1].forEach(v=>{el("line",{x1:X(v),x2:X(v),y1:4,y2:H-22,class:v?"gridl":"axis"},svg);const t=el("text",{x:X(v),y:H-6,"text-anchor":"middle","font-size":11},svg);t.textContent=v});
+ rows.forEach((r,i)=>{const y=6+i*rh;
+  el("rect",{x:6,y:y+1,width:34,height:rh-6,fill:"var(--tram)",rx:2},svg);const b=el("text",{x:23,y:y+rh/2+3,"text-anchor":"middle","font-size":12,"font-weight":600,style:"fill:var(--tram-ink)"},svg);b.textContent=r.line;
+  const w=X(r.freed)-L;el("path",{d:`M${L},${y+2}h${Math.max(w-4,0)}q4,0 4,4v${rh-14}q0,4 -4,4h${-Math.max(w-4,0)}Z`,fill:r.freed>=1?"var(--s4)":"var(--s3)"},svg);
+  const t=el("text",{x:X(r.freed)+6,y:y+rh/2+3,"font-size":11.5},svg);t.textContent=`${fmt(r.freed,2)} · ${fmt(r.save,1)} min/round trip`;
+  const hit=el("rect",{x:0,y,width:520,height:rh,fill:"transparent"},svg);
+  bindTip(hit,`<b>Line ${r.line}</b><br>${r.trams} trams in the peak, every ${fmt(r.hw,1)} min<br>round trip saved: ${fmt(r.save,1)} min<br>passenger-h/day saved: ${fmt(r.pax)}<br>tram-h/day standing at signals: ${fmt(r.sig_h,1)}`)});
+ table("t-rt",[{h:"Line",f:r=>badges(r.line)},{h:"Timetable",r:1,f:r=>fmt(r.rt_s,0)+"′"},{h:"Actual",r:1,f:r=>fmt(r.rt_a,0)+"′"},{h:"Behind",r:1,f:r=>(r.late>0?"+":"")+fmt(r.late,1)+"′"},{h:"Saved",r:1,f:r=>fmt(r.save,1)+"′"}],[...D.prio].sort((a,b)=>b.late-a.late));
+ table("t-app",[{h:"Approach",f:a=>`${esc(a.name)}<span class="sub">heading ${HD[a.hd]||a.hd} → ${esc(a.to)}</span>`},{h:"Lines",f:a=>badges(a.lines)},{h:"Trams",r:1,f:a=>fmt(a.passes)},{h:"Stop rate",r:1,f:a=>pct(a.sp)},{h:"Tram-h saved",r:1,f:a=>fmt(a.save_h,1)},{h:"Pax-h / day",r:1,f:a=>fmt(a.pax)+meter(a.pax,D.prio_app[0].pax)}],D.prio_app.slice(0,15));
+})();
+
+/* ---------- timetable */
+table("t-seg",[{h:"Line",f:s=>badges(s.line)},{h:"Segment",f:s=>`${esc(s.a)} → ${esc(s.b)}<span class="sub">towards ${esc(s.to_hs)}</span>`},{h:"Plan",r:1,f:s=>fmt(s.sched)+" s"},{h:"Real",r:1,f:s=>fmt(s.act)+" s"},{h:"+",r:1,f:s=>"+"+fmt(s.ex)+" s"}],D.seg.slice(0,12));
+table("t-pad",[{h:"Line",f:s=>badges(s.line)},{h:"Segment",f:s=>`${esc(s.a)} → ${esc(s.b)}<span class="sub">towards ${esc(s.to_hs)}</span>`},{h:"Plan",r:1,f:s=>fmt(s.sched)+" s"},{h:"Real",r:1,f:s=>fmt(s.act)+" s"}],D.pad);
+(()=>{const rows=D.hw.slice(0,16),svg=$("ewt"),rh=24,H=rows.length*rh+30;svg.setAttribute("viewBox",`0 0 1000 ${H}`);
+ const L=330,R=900,max=Math.ceil(Math.max(...rows.map(r=>r.ewt))*2)/2,X=v=>L+v/max*(R-L);
+ for(let v=0;v<=max;v+=.5){el("line",{x1:X(v),x2:X(v),y1:4,y2:H-22,class:v?"gridl":"axis"},svg);const t=el("text",{x:X(v),y:H-6,"text-anchor":"middle","font-size":11},svg);t.textContent=v+" min"}
+ rows.forEach((r,i)=>{const y=6+i*rh;
+  el("rect",{x:4,y:y+2,width:30,height:rh-7,fill:"var(--tram)",rx:2},svg);const b=el("text",{x:19,y:y+rh/2+3,"text-anchor":"middle","font-size":12,"font-weight":600,style:"fill:var(--tram-ink)"},svg);b.textContent=r.line;
+  const t=el("text",{x:42,y:y+rh/2+3,"font-size":12},svg);t.textContent=`→ ${r.to} · at ${r.stop} · every ${fmt(r.hw,0)} min`;
+  const w=X(r.ewt)-L;el("path",{d:`M${L},${y+3}h${Math.max(w-4,0)}q4,0 4,4v${rh-15}q0,4 -4,4h${-Math.max(w-4,0)}Z`,fill:"var(--lost)"},svg);
+  const v=el("text",{x:X(r.ewt)+6,y:y+rh/2+3,"font-size":11.5},svg);v.textContent=`+${fmt(r.ewt,2)} min`;
+  const hit=el("rect",{x:0,y,width:1000,height:rh,fill:"transparent"},svg);
+  bindTip(hit,`<b>Line ${r.line} → ${esc(r.to)}</b> at ${esc(r.stop)}, 06–20<br>average wait: ${fmt(r.awt_a,1)} min (timetable ${fmt(r.awt_s,1)})<br>bunched (< ½ headway): ${fmt(r.bunch)} % · gaps (> 1½): ${fmt(r.gaps)} %`)});
+ $("ewt-cap").textContent=`Excess waiting time is the average wait for a passenger arriving at random, minus the wait the timetable promises. Mean over all lines and directions: +${fmt(D.ewt_mean,2)} min. Measured at the middle stop of each route, 06:00–20:00.`;
+})();
+
+/* ---------- fleet */
+(()=>{const M=[...D.models].sort((a,b)=>b.veh-a.veh),mx=Math.max(...M.map(m=>m.excess));
+ const nVeh=M.reduce((s,m)=>s+m.veh,0);
+ $("fleet-text").innerHTML=`The GPS reports a fleet number, which maps to a type (ranges and capacities from tramwar.pl). ${nVeh} trams ran on the day. The planned type in the GTFS is often not what turned up: ${fmt(D.mismatch_2w)} of ${fmt(D.n_2w)} trips planned for a two-car 105N set ran with a modern low-floor tram. The model hardly changes dwell, with all types within about 2 seconds of the stop median. Trams lose time at signals, not at doors.`;
+ table("t-mod",[{h:"Type",f:m=>esc(m.model)},{h:"Trams",r:1,f:m=>m.veh},{h:"Length",r:1,f:m=>fmt(m.len,1)+" m"},{h:"Places",r:1,f:m=>m.places},{h:"Stop visits",r:1,f:m=>fmt(m.visits)},{h:"Dwell vs. stop median",r:1,f:m=>"+"+fmt(m.excess,1)+" s ± "+fmt(m.ci,1)+meter(m.excess,mx,50)}],M);
+})();
+
+/* ---------- method */
+$("method").innerHTML=[
+ `Positions: ZTM live API polled every 10 s (positions older than 60 s dropped), ${D.weekday} ${D.date}, ${D.span}. Timetable: mkuran.pl GTFS for the same day.`,
+ `Matching: each fix is projected onto every trip its brigade has scheduled around that time, and the trip with the most consistent lateness wins. This separates the two directions on a shared street. ${Math.round(D.n_trips_obs/D.n_trips_sched*100)} % of scheduled trips were observed.`,
+ `Standing = speed below 5 km/h between consecutive fixes. Platform zone = 50 m before to 25 m after a stop. The first and last 150 m of each trip count as terminus. Single stand-stills over 8 minutes are treated as incidents and excluded.`,
+ `Places pool all lines on a 40 m grid per travel heading (8 sectors). Signal approaches use OSM traffic-signal nodes within 18 m of the route and a 90 m approach window.`,
+ `Stop rate is a tram-level measure. A tram meeting a fixed-time signal stops about as often as its red share (40–70 %). Working active priority typically gives 5–20 %.`,
+].map(s=>`<li>${s}</li>`).join("");
+$("assume").innerHTML=[
+ `Load factor ${Math.round(D.assume.lf_peak*100)} % of nominal places in the peaks (07–09, 15–18) and ${Math.round(D.assume.lf_off*100)} % otherwise. This is not measured. Passenger-hours scale linearly with it.`,
+ `Target stop rate ${Math.round(D.assume.target*100)} %, plus ${D.assume.accel} s saved per avoided stop.`,
+ `Value of time ${D.assume.vot} PLN per passenger-hour, an order of magnitude for illustration.`,
+ `Capacities from tramwar.pl, which mixes norms between types (±15 %). The GPS of a two-car 105N set reports one car, and the set is counted as 2 × 97 places.`,
+].map(s=>`<li>${s}</li>`).join("");
+</script>
